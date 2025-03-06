@@ -1,178 +1,84 @@
-# 🚀 CrowdInfra - Infrastructure Demand & Supply Platform
+# GeoSense
 
-## 🌍 About the Project
-**CrowdInfra** is a decentralized platform designed to connect communities with service providers for essential infrastructure needs. Users can request, upvote, and track demands for services like ATMs, hospitals, public transport, etc. Service providers can browse aggregated demand and offer their services efficiently. The platform leverages **Google Maps API**, **Machine Learning**, and **Blockchain** to optimize infrastructure distribution.
+## Table of Contents
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Technical Implementation](#technical-implementation)
+- [Technical Dependencies](#technical-dependencies)
+- [Installation Process](#installation-process)
+  - [1. Repository Setup](#1-repository-setup)
+  - [2. Development Server](#2-development-server)
+- [Project Structure](#project-structure)
+- [Licensing](#licensing)
 
-## 🏗️ Tech Stack
-### 🖥️ **Frontend (Next.js)**
-- **Framework**: Next.js (React-based for SSR & CSR)
-- **Styling**: Tailwind CSS
-- **State Management**: SWR (Client-side data fetching)
-- **Maps & Location**: Google Maps API
-- **Authentication**: Auth.js / Clerk / Firebase
+## Overview
 
-### ⚙️ **Backend (Express.js)**
-- **Server**: Node.js with Express.js
-- **Database**: MongoDB (with Mongoose ORM)
-- **Authentication**: JWT (JSON Web Tokens)
-- **API Communication**: REST APIs
-- **Crowdfunding (Optional)**: Stripe / Razorpay
+GeoSense-Backend is an advanced machine learning system designed for precise land boundary detection. The system utilizes the Segment-Anything Model (SAM) architecture to achieve highly accurate boundary detection in geospatial data. Through integration with Roboflow for data annotation, the system provides comprehensive land segmentation capabilities with documented accuracy rates of 75-90%.
 
-### 🧠 **Machine Learning Model (FastAPI & Python)**
-- **Algorithm**: Regression & Classification for demand prediction
-- **Libraries**: Scikit-learn, Pandas, TensorFlow
-- **Deployment**: Google Cloud AI / Heroku
+## Key Features
 
-### ☁️ **Cloud & Deployment**
-- **Frontend**: Vercel
-- **Backend**: AWS / DigitalOcean / GCP
-- **Database**: MongoDB Atlas
-- **Serverless Functions**: AWS Lambda (for scaling)
+- **Interactive Maps**: Utilize dynamic maps to visualize geospatial data seamlessly.
+- **Responsive Design**: Ensures optimal viewing across various devices with Tailwind CSS integration.
+- **Fast Performance**: Built with Next.js for server-side rendering and efficient performance.
+- **Google Maps API Integration**: Uses Google Maps API for advanced mapping capabilities.
 
----
+## Technical Implementation
 
-## 🎯 Key Features
-### 🔹 User Features
-✅ **Request Services** - Users can request infrastructure services in their locality.  
-✅ **Upvote & Comment** - Upvote existing requests & add comments for additional details.  
-✅ **Live Map View** - View demand hotspots via **Google Maps heatmap**.  
-✅ **Search for Services** - Find nearby infrastructure requests & trending demands.  
-✅ **Crowdfunding (Optional)** - Contribute to fund essential infrastructure.  
+GeoSense leverages modern web technologies to deliver a robust geospatial analysis platform:
 
-### 🔹 Service Provider Features
-✅ **View Aggregated Requests** - Service providers can browse grouped requests.  
-✅ **Accept & Schedule Services** - Providers can respond to bulk demands.  
-✅ **Trend Analysis** - Leverage ML-based demand prediction to optimize service allocation.  
+- **Frontend Framework**: Developed using Next.js, enabling server-side rendering and optimized performance.
+- **Styling**: Tailwind CSS is employed for efficient and consistent styling across the application.
+- **Mapping Integration**: Incorporates mapping libraries and Google Maps API to render interactive geospatial data visualizations.
 
-### 🔹 Admin Features
-✅ **Moderate Requests & Comments** - Ensure a clean and authentic demand platform.  
-✅ **Generate Demand Reports** - Use ML-driven insights for better decision-making.  
+## Technical Dependencies
 
----
+The project relies on the following primary components:
 
-## 🗺️ Google Maps API Integration
-- **Interactive Maps**: Display demand clusters & service locations.
-- **Geolocation**: Auto-detect user location & suggest nearby services.
-- **Route Optimization**: Provide the best service routes for providers.
+- **Next.js**: React-based framework for server-side rendering and static site generation.
+- **Tailwind CSS**: Utility-first CSS framework for rapid UI development.
+- **Mapping Libraries**: Tools and libraries for embedding and interacting with maps.
+- **Google Maps API**: Provides accurate geospatial data and mapping functionality.
 
----
+## Installation Process
 
-## 🤖 Machine Learning Model
-The ML model analyzes **historical service requests, population density, and real-time trends** to predict upcoming infrastructure demands.  
-- **Example API Call:**
+### 1. Repository Setup
+
+Clone the repository and navigate into the project directory:
+
 ```bash
-GET /predict?service=atm&lat=28.6139&lng=77.209
-```
-- **Response:**
-```json
-{
-  "predicted_demand": 120
-}
+git clone https://github.com/Sidharth-Singh10/geosense.git
+cd geosense
 ```
 
----
+### 2. Development Server
 
-## 🚀 How to Run Locally
-### 🔧 Prerequisites
-Ensure you have the following installed:
-- Node.js (>=16)
-- MongoDB Atlas or Local MongoDB
-- Google Cloud API Key
+Install the necessary dependencies and start the development server:
 
-### 🏗️ Setup
-#### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/yourusername/crowdinfra.git
-cd crowdinfra
-```
-
-#### 2️⃣ Install Dependencies
-**Frontend:**
-```bash
-cd frontend
 npm install
-```
-**Backend:**
-```bash
-cd backend
-npm install
-```
-
-#### 3️⃣ Setup Environment Variables
-Create a `.env` file in both `frontend` and `backend` directories with:
-```env
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret_key
-```
-
-#### 4️⃣ Start the Application
-```bash
-# Start backend
-cd backend
-npm start
-
-# Start frontend
-cd frontend
 npm run dev
 ```
 
----
+Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
 
-## 📦 API Endpoints
-### 🔹 Authentication
-- `POST /auth/register` - User Registration
-- `POST /auth/login` - User Login
+## Project Structure
 
-### 🔹 Requests
-- `POST /requests/new` - Create a new request
-- `GET /requests` - Fetch all requests
-- `PUT /requests/:id/upvote` - Upvote a request
-- `POST /requests/:id/comment` - Comment on a request
-
-### 🔹 Search & Analytics
-- `GET /search?service=atm` - Search infrastructure needs
-- `GET /trends` - Get ML-based demand trends
-
----
-
-## 🚀 Deployment
-### 🔹 Frontend
-```bash
-git push origin main  # Auto-deployed via Vercel
 ```
-### 🔹 Backend
-```bash
-npm run build && npm start  # Deploy on AWS/GCP
-```
-### 🔹 Machine Learning Model
-```bash
-uvicorn app:app --host 0.0.0.0 --port 8000  # Deploy FastAPI server
+geosense/
+├── app/
+│   ├── page.js                # Main page component
+│   └── ...                    # Other application components
+├── public/                    # Public assets
+├── styles/
+│   ├── globals.css            # Global CSS file
+│   └── ...                    # Other styling files
+├── .gitignore                 # Git ignore file
+├── README.md                  # Project documentation
+├── next.config.js             # Next.js configuration
+├── package.json               # Project metadata and dependencies
+└── ...                        # Other configuration and source files
 ```
 
----
+## Licensing
 
-## 🎯 Future Enhancements
-🔹 **Real-time WebSockets** - Live updates on demand spikes.  
-🔹 **Blockchain Integration** - Smart contracts for transparent funding.  
-🔹 **AI Chatbot** - AI-powered recommendations for service providers.  
-
----
-
-## 🤝 Contributing
-Contributions are welcome! 🚀
-- Fork the repo & create a new branch.
-- Make changes & raise a PR.
-
----
-
-## 📜 License
-This project is licensed under the MIT License.
-
----
-
-## 📞 Contact
-📧 Email: your.email@example.com  
-🌐 LinkedIn: [CrowdInfra](https://linkedin.com/in/yourprofile)  
-🐦 Twitter: [CrowdInfra](https://twitter.com/yourhandle)  
-
+This project is licensed under the MIT License. For more details, refer to the [LICENSE](https://github.com/Sidharth-Singh10/geosense/blob/main/LICENSE) file in the repository.
