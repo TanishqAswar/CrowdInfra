@@ -131,7 +131,7 @@ export default function LandingPage() {
                                     parentClassName="text-xl italic"
                                 />
 
-                                <Link href="/globe">
+                                <Link href="/home">
                                     <button className="mt-6 bg-blue-500 text-white text-lg font-medium px-6 py-3 rounded-full hover:bg-blue-600 transition">
                                         Get Started →
                                     </button>
