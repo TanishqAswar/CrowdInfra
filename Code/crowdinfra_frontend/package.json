@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-google-maps/api": "^2.20.6",
     "@react-spring/web": "^9.7.5",
     "@vis.gl/react-google-maps": "^1.5.1",
     "@xata.io/screenshot": "^1.0.0",

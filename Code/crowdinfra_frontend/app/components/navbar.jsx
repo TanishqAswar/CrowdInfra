@@ -20,28 +20,54 @@ export default function Navbar() {
         
       </div>
 
-      {/* Center Section - Navigation Icons */}
-      <div className="flex items-center space-x-10">
-        <MapPin className="w-6 h-6 text-black hover:text-black transition duration-300 cursor-pointer" />
-        <Route
-          className={`w-6 h-6 cursor-pointer transition duration-300 ${
-            overlayOn ? "text-blue-500" : "text-black hover:text-black"
-          }`}
-          onClick={() => setOverlayOn((prev) => !prev)}
-        />
-        <RefreshCcw className="w-6 h-6 text-black hover:text-black transition duration-300 cursor-pointer" />
-      </div>
+     {/* Center Section - Navigation Icons */}
+     <div className="flex items-center space-x-10">
+       <Link href="/raise-request">
+         <MapPin className="w-6 h-6 text-gray-500 hover:text-black transition duration-300 cursor-pointer" title="Raise a Request" />
+       </Link>
+       
+       <Link href="/search-demands">
+         <Search className="w-6 h-6 text-gray-500 hover:text-black transition duration-300 cursor-pointer" title="Search Demands" />
+       </Link>
+
+       <Link href="/property">
+         <Route
+           className={`w-6 h-6 cursor-pointer transition duration-300 ${
+             overlayOn ? "text-blue-500" : "text-gray-500 hover:text-black"
+           }`}
+           title="Raise Your Property"
+         />
+       </Link>
+     </div>
 
       {/* Right Section - Geosense Logo */}
-      <div className="flex items-center ml-auto">
-        <Link href="/">
-          <Image
-            className="w-12 h-12 cursor-pointer"
-            src="/logo.png"
-            width={80}
-            height={80}
-            alt="geosense"
-          />
+      <div className="flex items-center gap-4 ml-auto">
+        <Link href="/profile">
+          <div className="w-8 h-8 rounded-full bg-gray-300 hover:bg-gray-400 transition-all duration-300 cursor-pointer flex items-center justify-center" title="Profile">
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              className="h-5 w-5 text-gray-600"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path 
+                fillRule="evenodd"
+                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </div>
+        </Link>
+        <Link href="/home">
+          <div className="w-10 h-10 relative">
+            <Image
+              className="object-contain cursor-pointer hover:opacity-80 transition-opacity duration-300"
+              src="/logo.png"
+              fill
+              sizes="40px"
+              alt="crowdinfra"
+            />
+          </div>
         </Link>
       </div>
     </nav>
