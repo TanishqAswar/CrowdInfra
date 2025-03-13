@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Navbar from '../components/navbar'
 import { Camera, Upload } from 'lucide-react'
 
-const SignupPage = () => {
+const SignupPage = ({setIsLogin}) => {
   const fileInputRef = useRef(null)
   const [formData, setFormData] = useState({
     name: '',
@@ -95,6 +95,7 @@ const SignupPage = () => {
         // Redirect to login or dashboard
         alert('Registration successful! Redirecting to login...')
         // window.location.href = "/login";
+        setIsLogin(true)
       } catch (error) {
         console.error('Registration error:', error)
         setErrors({ submit: 'Failed to register. Please try again.' })
@@ -108,7 +109,6 @@ const SignupPage = () => {
 
   return (
     <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-5 text-white'>
-      <Navbar />
 
       <div className='container mx-auto px-4 py-8'>
         <div className='max-w-2xl mx-auto'>
@@ -447,9 +447,9 @@ const SignupPage = () => {
             <div className='mt-6 text-center'>
               <p className='text-gray-400'>
                 Already have an account?{' '}
-                <Link href='/login' className='text-blue-400 hover:underline'>
+                <a className='text-blue-400 hover:underline' onClick={() => {setIsLogin(true)}}>
                   Log in
-                </Link>
+                </a>
               </p>
             </div>
           </div>

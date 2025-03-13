@@ -6,12 +6,11 @@ import Navbar from '../components/navbar'
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(false)
-
+  // isLogin means whether to show Login.
   return (
     <>
-      {/* <Navbar /> */}
       {isLogin ? (
-        <Login setIsLogin={setIsLogin}  />
+        <Login setIsLogin={setIsLogin} />
       ) : (
         <SignUpForm setIsLogin={setIsLogin} />
       )}

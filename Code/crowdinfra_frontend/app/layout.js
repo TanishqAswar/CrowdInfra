@@ -5,6 +5,8 @@ import { UserProvider } from "./components/user_context";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { useState } from 'react'
+
 
 
 const geistSans = Geist({
@@ -18,6 +20,10 @@ const geistMono = Geist_Mono({
 });
 
 export default function RootLayout({ children }) {
+
+  const [isLogin, setIsLogin] = useState(false)
+
+
   return (
     <html lang="en" style={{maxWidth: "100vw", overflowX: "hidden"}}>
       <body
