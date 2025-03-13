@@ -31,20 +31,20 @@ const ProfilePage = () => {
     id: 'google-maps-script'
   });
 
-  // Fetch user data (from backend API)
-  useEffect(() => {
-    // Code to fetch data from backend will go here
-    // const fetchUserData = async () => {
-    //   try {
-    //     const response = await fetch('/api/user/profile');
-    //     const data = await response.json();
-    //     setUser(data);
-    //   } catch (error) {
-    //     console.error('Error fetching user data:', error);
-    //   }
-    // };
-    // fetchUserData();
-  }, []);
+  // // Fetch user data (from backend API)
+  // useEffect(() => {
+  //   // Code to fetch data from backend will go here
+  //   // const fetchUserData = async () => {
+  //   //   try {
+  //   //     const response = await fetch('/api/user/profile');
+  //   //     const data = await response.json();
+  //   //     setUser(data);
+  //   //   } catch (error) {
+  //   //     console.error('Error fetching user data:', error);
+  //   //   }
+  //   // };
+  //   // fetchUserData();
+  // }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-5 text-white">
