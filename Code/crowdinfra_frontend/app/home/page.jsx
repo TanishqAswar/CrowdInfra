@@ -201,11 +201,11 @@ export default function GlobePage() {
         <div id="navC" className="bg-black pt-4 md:pt-8 pb-2 md:pb-4 sticky top-0 z-[999]">
           <Navbar />
         </div>
-        <div style={{ margin: 0 }} className="z-10 h-[50vh] md:h-[70vh] lg:h-[80vh]">
+        <div style={{ margin: "0px", padding:"0px" }} className="z-10 h-[50vh] md:h-[70vh] lg:h-[80vh]">
           <div ref={globeRef} id="globeViz" className="z-1000 cursor-pointer w-full h-full" />
         </div>
 
-        <div className="bg-black py-8 md:py-16 px-4 text-white">
+        <div className="bg-black py-8 md:py-16 px-4 text-white" style={{marginTop: "-1px"}}>
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-8 md:mb-16">
               <h1 className="text-3xl md:text-5xl font-bold mb-4 md:mb-6 bg-clip-text text-transparent bg-gray-200">CrowdInfra - India's First Crowdsourced Infrastructure Platform</h1>
