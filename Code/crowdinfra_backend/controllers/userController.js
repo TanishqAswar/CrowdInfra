@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const getUserModel = require('../models/User')
-const path = require('path')
+const path = require('path');
 const fs = require('fs')
 const colors = require('colors')
 
