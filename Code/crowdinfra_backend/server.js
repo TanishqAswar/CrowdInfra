@@ -11,7 +11,7 @@ const morgan = require('morgan')
 
 //> Import Routes
 // const userRoutes = require("./routes/userRoutes");
-// const propertyRoutes = require("./routes/propertyRoutes");
+const propertyRoutes = require("./routes/property");
 // const demandRoutes = require("./routes/demandRoutes");
 const authRoutes = require('./routes/auth')
 
@@ -29,6 +29,7 @@ const app = express()
 
     // Routes
     app.use('/api/auth', authRoutes)
+    app.use('/api/property' ,propertyRoutes)
 
     // Environment Variables
     console.log('=========================================='.yellow)
