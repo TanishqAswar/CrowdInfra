@@ -56,4 +56,4 @@ const demandSchema = new mongoose.Schema(
 // **GeoSpatial Index for Efficient Location-Based Queries**
 demandSchema.index({ location: '2dsphere' })
 
-export const Demand = global.demandsDB.model('Demand', demandSchema)
+export const Demand = demandsDB.model('Demand', demandSchema)

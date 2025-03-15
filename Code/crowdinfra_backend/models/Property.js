@@ -33,4 +33,4 @@ const propertySchema = new mongoose.Schema(
 // **Create Geospatial Index**
 propertySchema.index({ location: '2dsphere' })
 
-export const Property = global.propertiesDB.model('Property', propertySchema)
+export const Property = propertiesDB.model('Property', propertySchema)
