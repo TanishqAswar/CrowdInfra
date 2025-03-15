@@ -1,15 +1,33 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const getUserModel = require('../models/User')
+const path = require('path')
+const fs = require('fs')
+const colors = require('colors')
 
 const JWT_SECRET = process.env.JWT_SECRET || 'default_secret_key'
 
-// > Signup Controller
+const saveProfilePhoto = (email, file) => {
+  if (!file) return '' // No file uploaded
+
+  const uploadDir = path.join(__dirname, '../uploads')
+  if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true })
+
+  const ext = path.extname(file.originalname) // Get file extension
+  const filename = `${email}${ext}` // Store as email.extension
+  const filePath = path.join(uploadDir, filename)
+
+  fs.writeFileSync(filePath, file.buffer) // Save file
+
+  return `/uploads/${filename}` // Return file path
+}
+
+//> Signup Controller
 const signupUser = async (req, res) => {
   const User = await getUserModel()
 
-  const { name, email, password, phone, address, gender, bio, profile_image } =
-    req.body
+  const { name, email, password, phone, address, gender, bio } = req.body
+  const profilePhoto = req.file // Uploaded file
 
   try {
     // Check if user already exists
@@ -21,6 +39,11 @@ const signupUser = async (req, res) => {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, bcrypt.genSaltSync(10))
 
+    // Save profile photo (if uploaded)
+    const profileImagePath = profilePhoto
+      ? saveProfilePhoto(email, profilePhoto)
+      : '';
+
     // Create user
     user = new User({
       name,
@@ -30,8 +53,10 @@ const signupUser = async (req, res) => {
       address,
       gender,
       bio,
-      profile_image: profile_image || '',
+      profile_image: profileImagePath,
     })
+
+    console.log(JSON.stringify(user, null, 2))
 
     // Save user to database
     await user.save()
@@ -46,7 +71,7 @@ const signupUser = async (req, res) => {
         address: user.address,
         gender: user.gender,
         bio: user.bio,
-        profile_image: user.profile_image || '',
+        profile_image: profileImagePath,
         role: user.role,
         createdAt: user.createdAt,
       },

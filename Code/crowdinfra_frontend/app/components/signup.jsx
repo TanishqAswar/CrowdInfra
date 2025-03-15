@@ -2,11 +2,10 @@
 
 import { useState, useRef } from 'react'
 import Link from 'next/link'
-import Navbar from '../components/navbar'
 import { Camera, Upload } from 'lucide-react'
-import { Router } from 'next/router'
+import axios from 'axios'
 
-const SignupPage = ({setIsLogin}) => {
+const SignupPage = ({ setIsLogin }) => {
   const fileInputRef = useRef(null)
   const [formData, setFormData] = useState({
     name: '',
@@ -76,30 +75,42 @@ const SignupPage = ({setIsLogin}) => {
     if (Object.keys(newErrors).length === 0) {
       setIsSubmitting(true)
       try {
-        // Here you would typically make an API call to register the user
-        // For example:
-        // const formDataWithPhoto = new FormData();
-        // Object.keys(formData).forEach(key => {
-        //   formDataWithPhoto.append(key, formData[key]);
-        // });
-        // if (profilePhoto) {
-        //   formDataWithPhoto.append('profilePhoto', profilePhoto);
-        // }
-        // await fetch('/api/register', {
-        //   method: 'POST',
-        //   body: formDataWithPhoto
-        // });
+        // ✅ Create FormData object
+        const formDataWithPhoto = new FormData()
+        Object.keys(formData).forEach((key) => {
+          formDataWithPhoto.append(key, formData[key])
+        })
 
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        // ✅ Append profile photo correctly
+        if (profilePhoto) {
+          formDataWithPhoto.append('profilePhoto', profilePhoto)
+        }
 
-        // Redirect to login or dashboard
+        // ✅ Log the request before sending
+        for (let pair of formDataWithPhoto.entries()) {
+          console.log(pair[0], pair[1]) // Logs each field and value
+        }
+
+        // ✅ Make API request using Axios
+        const response = await axios.post(
+          'http://localhost:5050/api/auth/signup',
+          formDataWithPhoto,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        )
+
         alert('Registration successful! Redirecting to login...')
-        // window.location.href = "/login";
         setIsLogin(true)
       } catch (error) {
         console.error('Registration error:', error)
-        setErrors({ submit: 'Failed to register. Please try again.' })
+        setErrors({
+          submit:
+            error.response?.data?.message ||
+            'Failed to register. Please try again.',
+        })
       } finally {
         setIsSubmitting(false)
       }
@@ -110,7 +121,6 @@ const SignupPage = ({setIsLogin}) => {
 
   return (
     <div className='min-h-screen w-full bg-black py-5 text-white'>
-
       <div className='container mx-auto px-4 py-8'>
         <div className='max-w-full mx-auto'>
           <div className='bg-black backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden p-8'>
@@ -140,7 +150,11 @@ const SignupPage = ({setIsLogin}) => {
                     <Camera className='w-10 h-10 text-gray-400' />
                   </div>
                 )}
-                <div className='absolute bottom-0 right-0 bg-blue-600 rounded-full p-1'>
+                {/* Ensure clicking the upload icon also triggers file input */}
+                <div
+                  className='absolute bottom-0 right-0 bg-blue-600 rounded-full p-1 cursor-pointer'
+                  onClick={triggerFileInput}
+                >
                   <Upload className='w-4 h-4' />
                 </div>
               </div>
