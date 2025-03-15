@@ -198,6 +198,8 @@ export default function GlobePage() {
   return (
     <>
         <Script src="//unpkg.com/globe.gl" onLoad={initGlobe} />
+        {/* <script src="https://cdn.jsdelivr.net/npm/globe.gl" onLoad={initGlobe}/> */}
+
         <div id="navC" className="bg-black pt-4 md:pt-8 pb-2 md:pb-4 sticky top-0 z-[999]">
           <Navbar />
         </div>
