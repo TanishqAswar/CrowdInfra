@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import Link from 'next/link'
 import Navbar from '../components/navbar'
 import { Camera, Upload } from 'lucide-react'
+import { Router } from 'next/router'
 
 const SignupPage = ({setIsLogin}) => {
   const fileInputRef = useRef(null)
@@ -108,10 +109,10 @@ const SignupPage = ({setIsLogin}) => {
   }
 
   return (
-    <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-5 text-white'>
+    <div className='min-h-screen w-full bg-black py-5 text-white'>
 
       <div className='container mx-auto px-4 py-8'>
-        <div className='max-w-2xl mx-auto'>
+        <div className='max-w-full mx-auto'>
           <div className='bg-gray-800/50 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden border border-gray-700/50 p-8'>
             <div className='text-center mb-8'>
               <h1 className='text-3xl font-bold text-white'>
@@ -443,15 +444,6 @@ const SignupPage = ({setIsLogin}) => {
                 </div>
               </div>
             </form>
-
-            <div className='mt-6 text-center'>
-              <p className='text-gray-400'>
-                Already have an account?{' '}
-                <a className='text-blue-400 hover:underline' onClick={() => {setIsLogin(true)}}>
-                  Log in
-                </a>
-              </p>
-            </div>
           </div>
         </div>
       </div>

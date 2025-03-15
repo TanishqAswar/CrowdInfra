@@ -2,15 +2,15 @@ const mongoose = require('mongoose')
 
 const connectDBs = async () => {
   try {
-    global.usersDB = mongoose.createConnection(process.env.USERS_DB_URI, {
+    usersDB =await  mongoose.createConnection(process.env.USERS_DB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     })
-    global.propertiesDB = mongoose.createConnection(
+    propertiesDB = await mongoose.createConnection(
       process.env.PROPERTIES_DB_URI,
       { useNewUrlParser: true, useUnifiedTopology: true }
     )
-    global.demandsDB = mongoose.createConnection(process.env.DEMANDS_DB_URI, {
+    demandsDB = await  mongoose.createConnection(process.env.DEMANDS_DB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     })

@@ -72,25 +72,7 @@ export default function Navbar() {
             </div>
           </Link>
         ) : (
-          <div className='flex items-center gap-2'>
-            <Link href='/auth'>
-              <button
-                className='flex items-center gap-1 px-3 py-1.5 bg-transparent border border-white/30 text-white rounded-full hover:bg-white/10 transition duration-300'
-                title='Log In'
-              >
-                <LogIn className='w-4 h-4' />
-                <span className='text-sm'>Login</span>
-              </button>
-            </Link>
-            <Link href='/auth'>
-              <button
-                className='flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300'
-                title='Sign Up'
-              >
-                <UserPlus className='w-4 h-4' />
-                <span className='text-sm'>Signup</span>
-              </button>
-            </Link>
+         <div>
           </div>
         )}
 

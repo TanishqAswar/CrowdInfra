@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Navbar from '../components/navbar'
+import { useRouter } from 'next/navigation'; // For redirection
 
 const LoginPage = ({ setIsLogin }) => {
   const [formData, setFormData] = useState({
@@ -11,7 +12,7 @@ const LoginPage = ({ setIsLogin }) => {
   })
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
-
+  const router = useRouter();
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData({
@@ -45,6 +46,7 @@ const LoginPage = ({ setIsLogin }) => {
         await new Promise((resolve) => setTimeout(resolve, 1000))
         alert('Login successful! Redirecting...')
         setIsLogin(true)
+        router.push("/home")
       } catch (error) {
         console.error('Login error:', error)
         setErrors({ submit: 'Failed to login. Please try again.' })
@@ -57,11 +59,9 @@ const LoginPage = ({ setIsLogin }) => {
   }
 
   return (
-    <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-5 text-white'>
-      {/* <Navbar /> */}
-
+    <div className='min-h-screen w-full bg-black py-5 text-white'>
       <div className='container mx-auto px-4 py-8'>
-        <div className='max-w-md mx-auto'>
+        <div className='max-w-full mx-auto'>
           <div className='bg-gray-800/50 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden border border-gray-700/50 p-8'>
             <div className='text-center mb-8'>
               <h1 className='text-3xl font-bold text-white'>Login</h1>
@@ -128,14 +128,6 @@ const LoginPage = ({ setIsLogin }) => {
                 {isSubmitting ? 'Logging in...' : 'Login'}
               </button>
             </form>
-
-            {/* Signup Redirect */}
-            <p className='text-gray-400 text-sm mt-4 text-center'>
-              Don't have an account?{' '}
-              <a href='/signup' className='text-blue-400 hover:underline' onClick={() => setIsLogin(false)}>
-                Sign up
-              </a>
-            </p>
           </div>
         </div>
       </div>

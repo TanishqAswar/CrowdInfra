@@ -5,9 +5,9 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 
 // Import Routes
-const userRoutes = require("./routes/userRoutes");
-const propertyRoutes = require("./routes/propertyRoutes");
-const demandRoutes = require("./routes/demandRoutes");
+// const userRoutes = require("./routes/userRoutes");
+// const propertyRoutes = require("./routes/propertyRoutes");
+// const demandRoutes = require("./routes/demandRoutes");
 const authRoutes = require("./routes/auth");
 
 // Configs
@@ -23,9 +23,9 @@ app.use(cors());
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/properties', propertyRoutes);
-app.use('/api/demands', demandRoutes);
+// app.use('/api/users', userRoutes);
+// app.use('/api/properties', propertyRoutes);
+// app.use('/api/demands', demandRoutes);
 
 
 // Server
