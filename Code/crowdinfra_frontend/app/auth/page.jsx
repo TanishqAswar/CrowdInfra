@@ -26,7 +26,7 @@ export default function Auth() {
         {/* Form Section */}
         <div className="flex-1 flex flex-col items-center justify-center ">
            {/* Toggle Link */}
-           <p className="mt-4 text-sm text-gray-600">
+           <p className="mt-8 text-base text-gray-600">
             {isLogin ? "Don't have an account?" : "Already have an account?"}
             <button
               onClick={() => setIsLogin(!isLogin)}

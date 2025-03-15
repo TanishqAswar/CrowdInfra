@@ -62,7 +62,7 @@ const LoginPage = ({ setIsLogin }) => {
     <div className='min-h-screen w-full bg-black py-5 text-white'>
       <div className='container mx-auto px-4 py-8'>
         <div className='max-w-full mx-auto'>
-          <div className='bg-gray-800/50 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden border border-gray-700/50 p-8'>
+          <div className='bg-black backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden  p-8'>
             <div className='text-center mb-8'>
               <h1 className='text-3xl font-bold text-white'>Login</h1>
               <p className='text-blue-400 mt-2'>
