@@ -13,6 +13,7 @@ const LoginPage = ({ setIsLogin }) => {
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter();
+  
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData({
@@ -35,6 +36,17 @@ const LoginPage = ({ setIsLogin }) => {
     return newErrors
   }
 
+  // Function to set cookie
+  const setCookie = (name, value, days) => {
+    let expires = '';
+    if (days) {
+      const date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      expires = '; expires=' + date.toUTCString();
+    }
+    document.cookie = name + '=' + (value || '') + expires + '; path=/';
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     const newErrors = validate()
@@ -42,19 +54,42 @@ const LoginPage = ({ setIsLogin }) => {
     if (Object.keys(newErrors).length === 0) {
       setIsSubmitting(true)
       try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-        alert('Login successful! Redirecting...')
-        setIsLogin(true)
-        router.push("/home")
+        // Make API call to your login endpoint
+        const response = await fetch('http://localhost:5000/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.msg || 'Login failed');
+        }
+
+        // Save JWT token to cookie
+        setCookie('token', data.token, 1); // Expires in 1 day
+
+        // Update login state and redirect
+        setIsLogin(true);
+        router.push("/home");
       } catch (error) {
-        console.error('Login error:', error)
-        setErrors({ submit: 'Failed to login. Please try again.' })
+        console.error('Login error:', error);
+        setErrors({ 
+          submit: error.message === 'Invalid Credentials' 
+            ? 'Invalid email or password' 
+            : 'Failed to login. Please try again.' 
+        });
       } finally {
-        setIsSubmitting(false)
+        setIsSubmitting(false);
       }
     } else {
-      setErrors(newErrors)
+      setErrors(newErrors);
     }
   }
 
@@ -119,13 +154,44 @@ const LoginPage = ({ setIsLogin }) => {
                 )}
               </div>
 
+              {/* Error message */}
+              {errors.submit && (
+                <div className='bg-red-500/20 border border-red-500 rounded-lg p-3 mb-4'>
+                  <p className='text-red-500 text-sm'>{errors.submit}</p>
+                </div>
+              )}
+
               {/* Submit Button */}
               <button
                 type='submit'
                 className='w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-600'
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Logging in...' : 'Login'}
+                {isSubmitting ? (
+                  <span className='flex items-center justify-center'>
+                    <svg
+                      className='animate-spin -ml-1 mr-3 h-5 w-5 text-white'
+                      xmlns='http://www.w3.org/2000/svg'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                    >
+                      <circle
+                        className='opacity-25'
+                        cx='12'
+                        cy='12'
+                        r='10'
+                        stroke='currentColor'
+                        strokeWidth='4'
+                      ></circle>
+                      <path
+                        className='opacity-75'
+                        fill='currentColor'
+                        d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                      ></path>
+                    </svg>
+                    Logging in...
+                  </span>
+                ) : 'Login'}
               </button>
             </form>
           </div>
