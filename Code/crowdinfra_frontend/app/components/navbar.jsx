@@ -6,6 +6,7 @@ import {
   RefreshCcw,
   LogIn,
   UserPlus,
+  Home,
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -24,34 +25,48 @@ export default function Navbar() {
       </div>
 
       {/* Center Section - Navigation Icons */}
-      <div className='flex items-center space-x-10'>
-        <Link href='/raise-request'>
+        <div className='flex items-center space-x-10 group'>
+        <Link href='/home'>
+            <div className="relative flex flex-col items-center">
+          <Home
+            className='w-6 h-6 text-gray-500 hover:text-black transition duration-300 cursor-pointer'
+          />
+          <span className="absolute -bottom-7 opacity-0 group-hover:opacity-100 hover:opacity-100 text-xs bg-gray-800 text-white px-2 py-1 rounded transition-opacity duration-300">Home</span>
+            </div>
+          </Link>
+          <Link href='/raise-request'>
+            <div className="relative flex flex-col items-center">
           <MapPin
             className='w-6 h-6 text-gray-500 hover:text-black transition duration-300 cursor-pointer'
-            title='Raise a Request'
           />
-        </Link>
+          <span className="absolute -bottom-7 opacity-0 group-hover:opacity-100 hover:opacity-100 text-xs bg-gray-800 text-white px-2 py-1 rounded transition-opacity duration-300">Demands</span>
+            </div>
+          </Link>
 
-        <Link href='/search-demands'>
+          <Link href='/search-demands'>
+            <div className="relative flex flex-col items-center">
           <Search
             className='w-6 h-6 text-gray-500 hover:text-black transition duration-300 cursor-pointer'
-            title='Search Demands'
           />
-        </Link>
+          <span className="absolute -bottom-7 opacity-0 group-hover:opacity-100 hover:opacity-100 text-xs bg-gray-800 text-white px-2 py-1 rounded transition-opacity duration-300">Search</span>
+            </div>
+          </Link>
 
-        <Link href='/property'>
+          <Link href='/property'>
+            <div className="relative flex flex-col items-center">
           <Route
             className={`w-6 h-6 cursor-pointer transition duration-300 ${
               overlayOn ? 'text-blue-500' : 'text-gray-500 hover:text-black'
             }`}
-            title='Raise Your Property'
           />
-        </Link>
-      </div>
+          <span className="absolute -bottom-7 opacity-0 group-hover:opacity-100 hover:opacity-100 text-xs bg-gray-800 text-white px-2 py-1 rounded transition-opacity duration-300">Property</span>
+            </div>
+          </Link>
+        </div>
 
-      {/* Right Section - Auth & Logo */}
+        {/* Right Section - Auth & Logo */}
       <div className='flex items-center gap-4 ml-auto'>
-        {isLoggedIn ? (
+ 
           <Link href='/profile'>
             <div
               className='w-8 h-8 rounded-full bg-gray-300 hover:bg-gray-400 transition-all duration-300 cursor-pointer flex items-center justify-center'
@@ -71,10 +86,6 @@ export default function Navbar() {
               </svg>
             </div>
           </Link>
-        ) : (
-         <div>
-          </div>
-        )}
 
         <Link href='/home'>
           <div className='w-10 h-10 relative'>
