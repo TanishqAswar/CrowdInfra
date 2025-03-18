@@ -12,7 +12,7 @@ const path = require('path')
 
 //> Import Routes
 // const userRoutes = require("./routes/userRoutes");
-// const propertyRoutes = require("./routes/propertyRoutes");
+const propertyRoutes = require("./routes/property");
 // const demandRoutes = require("./routes/demandRoutes");
 const authRoutes = require('./routes/auth')
 const userRoutes = require('./routes/user')
@@ -35,7 +35,11 @@ const app = express();
 
     // Routes
     app.use('/api/auth', authRoutes)
+
     app.use('/api/user', userRoutes)
+
+    app.use('/api/property' ,propertyRoutes)
+
 
     // Environment Variables
     console.log('=========================================='.yellow)

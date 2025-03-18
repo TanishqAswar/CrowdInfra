@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Camera, Upload } from 'lucide-react'
 import axios from 'axios'
 
+
 const SignupPage = ({ setIsLogin }) => {
   const fileInputRef = useRef(null)
   const [formData, setFormData] = useState({
@@ -102,15 +103,18 @@ const SignupPage = ({ setIsLogin }) => {
           }
         )
 
+
         alert('Registration successful! Redirecting to login...')
         setIsLogin(true)
       } catch (error) {
         console.error('Registration error:', error)
+
         setErrors({
           submit:
             error.response?.data?.message ||
             'Failed to register. Please try again.',
         })
+
       } finally {
         setIsSubmitting(false)
       }

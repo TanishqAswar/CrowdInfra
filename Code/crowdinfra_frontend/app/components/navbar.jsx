@@ -1,4 +1,5 @@
 'use client'
+
 import { Search, MapPin, Route, RefreshCcw } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -75,14 +76,14 @@ export default function Navbar() {
 
       {/* Right Section - Profile & Logo */}
       <div className='flex items-center gap-4 ml-auto'>
-        <button
-          className='flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium
-             bg-red-500 text-white hover:bg-red-600 active:scale-95 
-             transition-all duration-300 shadow-md'
-          onClick={handleLogout}
-        >
-          <LogOut size={16} /> <span>Logout</span>
-        </button>
+//         <button
+//           className='flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium
+//              bg-red-500 text-white hover:bg-red-600 active:scale-95 
+//              transition-all duration-300 shadow-md'
+//           onClick={handleLogout}
+//         >
+//           <LogOut size={16} /> <span>Logout</span>
+//         </button>
 
         <Link href='/profile'>
           <div
