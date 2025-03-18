@@ -2,10 +2,11 @@
 
 import { useState, useRef } from 'react'
 import Link from 'next/link'
-import Navbar from '../components/navbar'
 import { Camera, Upload } from 'lucide-react'
+import axios from 'axios'
 
-const SignupPage = ({setIsLogin}) => {
+
+const SignupPage = ({ setIsLogin }) => {
   const fileInputRef = useRef(null)
   const [formData, setFormData] = useState({
     name: '',
@@ -75,53 +76,45 @@ const SignupPage = ({setIsLogin}) => {
     if (Object.keys(newErrors).length === 0) {
       setIsSubmitting(true)
       try {
-        // Create request payload matching the backend controller requirements
-        const payload = {
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          phone: formData.phone || null,
-          address: formData.address || null,
-          gender: formData.gender || null,
-          bio: formData.bio || null,
-          profile_image: null // Will be handled separately if needed
-        }
-
-        // Handle profile photo if exists
-        if (profilePhoto) {
-          // Convert the profile photo to base64 string to send to backend
-          // Note: For production, you should use FormData and multipart/form-data
-          // This is a simplified approach
-          const reader = new FileReader()
-          reader.readAsDataURL(profilePhoto)
-          await new Promise((resolve) => {
-            reader.onload = () => {
-              payload.profile_image = reader.result
-              resolve()
-            }
-          })
-        }
-
-        // Make API call to your signup route
-        const response = await fetch('http://localhost:5000/api/auth/signup', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
+        // ✅ Create FormData object
+        const formDataWithPhoto = new FormData()
+        Object.keys(formData).forEach((key) => {
+          formDataWithPhoto.append(key, formData[key])
         })
 
-        const data = await response.json()
-
-        if (!response.ok) {
-          throw new Error(data.msg || 'Registration failed')
+        // ✅ Append profile photo correctly
+        if (profilePhoto) {
+          formDataWithPhoto.append('profilePhoto', profilePhoto)
         }
+
+        // ✅ Log the request before sending
+        for (let pair of formDataWithPhoto.entries()) {
+          console.log(pair[0], pair[1]) // Logs each field and value
+        }
+
+        // ✅ Make API request using Axios
+        const response = await axios.post(
+          'http://localhost:5030/api/auth/signup',
+          formDataWithPhoto,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        )
+
 
         alert('Registration successful! Redirecting to login...')
         setIsLogin(true)
       } catch (error) {
         console.error('Registration error:', error)
-        setErrors({ submit: error.message || 'Failed to register. Please try again.' })
+
+        setErrors({
+          submit:
+            error.response?.data?.message ||
+            'Failed to register. Please try again.',
+        })
+
       } finally {
         setIsSubmitting(false)
       }
@@ -161,7 +154,11 @@ const SignupPage = ({setIsLogin}) => {
                     <Camera className='w-10 h-10 text-gray-400' />
                   </div>
                 )}
-                <div className='absolute bottom-0 right-0 bg-blue-600 rounded-full p-1'>
+                {/* Ensure clicking the upload icon also triggers file input */}
+                <div
+                  className='absolute bottom-0 right-0 bg-blue-600 rounded-full p-1 cursor-pointer'
+                  onClick={triggerFileInput}
+                >
                   <Upload className='w-4 h-4' />
                 </div>
               </div>

@@ -13,6 +13,7 @@ const initializeUserModel = async () => {
       password: { type: String, required: true },
       phone: { type: String, required: true },
       address: { type: String, required: true },
+      // age: { type: Number, required: true },
       role: { type: Number, default: 0 }, // 0 -> Normal user, 1 -> Admin
       gender: { type: String, required: true },
       bio: { type: String, required: false },

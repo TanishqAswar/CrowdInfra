@@ -1,206 +1,465 @@
-"use client";
+/* eslint-disable @next/next/no-img-element */
+'use client'
 
-import { useState, useEffect } from "react";
-import { useLoadScript, GoogleMap, Marker } from "@react-google-maps/api";
-import Navbar from "../components/navbar";
+import { useState, useEffect } from 'react'
+import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api'
+import Navbar from '../components/navbar'
+import axios from 'axios'
+import { Edit, Phone, MapPin, Calendar, Mail, User, Clock } from 'lucide-react'
+import Image from 'next/image'
 
 const containerStyle = {
   width: '100%',
-  height: '200px'
-};
+  height: '250px',
+}
 
 const ProfilePage = () => {
-  const [user, setUser] = useState({
-    name: "Rajesh Kumar",
-    email: "rajesh.kumar@example.com",
-    phone: "+91 9876543210",
-    address: "123, Subhash Nagar, New Delhi - 110001",
-    gender: "Male",
-    age: 32,
-    bio: "I am an enthusiastic real estate investor looking for new properties. I enjoy exploring new areas and finding opportunities.",
-    profilePicture: "https://randomuser.me/api/portraits/men/44.jpg",
-    location: {
-      lat: 28.6139,
-      lng: 77.2090
-    }
-  });
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [activeTab, setActiveTab] = useState('info')
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     libraries: ['places'],
-    id: 'google-maps-script'
-  });
+    id: 'google-maps-script',
+  })
 
-  // // Fetch user data (from backend API)
-  // useEffect(() => {
-  //   // Code to fetch data from backend will go here
-  //   // const fetchUserData = async () => {
-  //   //   try {
-  //   //     const response = await fetch('/api/user/profile');
-  //   //     const data = await response.json();
-  //   //     setUser(data);
-  //   //   } catch (error) {
-  //   //     console.error('Error fetching user data:', error);
-  //   //   }
-  //   // };
-  //   // fetchUserData();
-  // }, []);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      setLoading(true)
+      setError(null)
+
+      const token = localStorage.getItem('token')
+
+      if (!token) {
+        setError('No token found. Please log in.')
+        setLoading(false)
+        return
+      }
+
+      try {
+        const response = await axios.get(
+          'http://localhost:5030/api/user/profile',
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+
+        if (response.status !== 200) {
+          throw new Error('Failed to fetch user data')
+        }
+
+        setUser(response.data)
+      } catch (err) {
+        console.error('Error fetching profile:', err)
+        setError(err.message || 'Failed to load profile data')
+
+        // Fallback to sample data for development
+        setUser({
+          name: 'Rajesh Kumar',
+          email: 'rajesh.kumar@example.com',
+          phone: '+91 9876543210',
+          address: '123, Subhash Nagar, New Delhi - 110001',
+          gender: 'Male',
+          age: 32,
+          bio: 'I am an enthusiastic real estate investor looking for new properties. I enjoy exploring new areas and finding opportunities.',
+          profilePicture: 'https://randomuser.me/api/portraits/men/44.jpg',
+          location: {
+            lat: 28.6139,
+            lng: 77.209,
+          },
+          joinDate: 'January 2023',
+          properties: 3,
+          recentActivity: [
+            {
+              action: 'Viewed property',
+              description: '3 BHK Apartment in Sector 45, Gurgaon',
+              timestamp: '2 days ago',
+            },
+            {
+              action: 'Created request',
+              description: 'Looking for commercial space in South Delhi',
+              timestamp: '1 week ago',
+            },
+            {
+              action: 'Updated profile',
+              description: 'Changed contact information',
+              timestamp: '2 weeks ago',
+            },
+          ],
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchUserData()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center'>
+        <div className='bg-gray-800/50 backdrop-blur-lg rounded-xl p-8 flex flex-col items-center shadow-lg border border-gray-700/50'>
+          <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4'></div>
+          <p className='text-white text-lg'>Loading your profile...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error && !user) {
+    return (
+      <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center'>
+        <div className='bg-gray-800/50 backdrop-blur-lg rounded-xl p-8 flex flex-col items-center shadow-lg border border-gray-700/50 max-w-md'>
+          <div className='bg-red-500/20 p-3 rounded-full mb-4'>
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              className='h-6 w-6 text-red-500'
+              fill='none'
+              viewBox='0 0 24 24'
+              stroke='currentColor'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={2}
+                d='M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+              />
+            </svg>
+          </div>
+          <h2 className='text-white text-xl font-semibold mb-2'>
+            Error Loading Profile
+          </h2>
+          <p className='text-gray-300 text-center mb-4'>{error}</p>
+          <button
+            onClick={() => (window.location.href = '/login')}
+            className='px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) return null
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-5 text-white">
+    <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-5 text-white'>
       <Navbar />
-      
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-gray-800/50 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden border border-gray-700/50">
-            
-            {/* Header Section */}
-            <div className="relative h-48 bg-gradient-to-r from-gray-600 to-gray-300">
-              <div className="absolute -bottom-16 left-8">
-                <div className="h-32 w-32 rounded-full border-4 border-gray-800 overflow-hidden">
-                  <img 
-                    src={user.profilePicture} 
-                    alt={user.name} 
-                    className="h-full w-full object-cover"
+
+      <div className='container mx-auto px-4 py-8'>
+        <div className='max-w-4xl mx-auto'>
+          <div className='bg-gray-800/50 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden border border-gray-700/50'>
+            {/* Header Section with Cover Image */}
+            <div className='relative h-48 bg-gradient-to-r from-blue-900 to-purple-800'>
+              <div className='absolute -bottom-16 left-8'>
+                <div className='h-32 w-32 rounded-full border-4 border-gray-800 overflow-hidden shadow-xl hover:border-blue-500 transition-all duration-300 group'>
+                  {console.log(user.profile_image)}
+                  <Image
+                    src={
+                      user.profile_image
+                        ? `http://localhost:5030${user.profile_image}`
+                        : '/default-avatar.png'
+                    }
+                    alt={user.name || 'User Profile'}
+                    width={150}
+                    height={150}
+                    unoptimized={true}
+                    className='h-full w-full object-cover'
                   />
                 </div>
               </div>
             </div>
-            
+
             {/* Profile Info */}
-            <div className="pt-20 px-8 pb-8">
-              <div className="flex flex-col md:flex-row md:justify-between md:items-center">
+            <div className='pt-20 px-8 pb-8'>
+              <div className='flex flex-col md:flex-row md:justify-between md:items-center'>
                 <div>
-                  <h1 className="text-3xl font-bold text-white">{user.name}</h1>
-                  <p className="text-blue-400 mt-1">{user.email}</p>
+                  <h1 className='text-3xl font-bold text-white mb-1'>
+                    {user.name}
+                  </h1>
+                  <div className='flex items-center text-blue-400'>
+                    <Mail className='h-4 w-4 mr-2' />
+                    <span>{user.email}</span>
+                  </div>
                 </div>
-                <button className="mt-4 md:mt-0 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                  Edit Profile
+                <button className='mt-4 md:mt-0 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 hover:gap-3 transition-all duration-300'>
+                  <Edit className='h-4 w-4' />
+                  <span>Edit Profile</span>
                 </button>
               </div>
-              
-              <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                  <h2 className="text-xl font-semibold mb-4 text-gray-200 border-b border-gray-700 pb-2">
-                    Personal Information
-                  </h2>
-                  
-                  <div className="space-y-4">
-                    <div className="flex items-start">
-                      <div className="text-blue-400 mr-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-gray-400 text-sm">Gender</p>
-                        <p className="text-white">{user.gender}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start">
-                      <div className="text-blue-400 mr-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M6 3a1 1 0 011-1h.01a1 1 0 010 2H7a1 1 0 01-1-1zm2 3a1 1 0 00-2 0v1a2 2 0 00-2 2v1a2 2 0 00-2 2v.683a3.7 3.7 0 011.055.485 1.704 1.704 0 001.89 0 3.704 3.704 0 014.11 0 1.704 1.704 0 001.89 0 3.704 3.704 0 014.11 0 1.704 1.704 0 001.89 0A3.7 3.7 0 0118 12.683V12a2 2 0 00-2-2V9a2 2 0 00-2-2V6a1 1 0 10-2 0v1h-1V6a1 1 0 10-2 0v1H8V6zm10 8.868a3.704 3.704 0 01-4.055-.036 1.704 1.704 0 00-1.89 0 3.704 3.704 0 01-4.11 0 1.704 1.704 0 00-1.89 0A3.704 3.704 0 012 14.868V17a1 1 0 001 1h14a1 1 0 001-1v-2.132zM9 3a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1zm3 0a1 1 0 011-1h.01a1 1 0 110 2H13a1 1 0 01-1-1z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-gray-400 text-sm">Age</p>
-                        <p className="text-white">{user.age} years</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start">
-                      <div className="text-blue-400 mr-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-gray-400 text-sm">Phone Number</p>
-                        <p className="text-white">{user.phone}</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <h2 className="text-xl font-semibold mb-4 mt-8 text-gray-200 border-b border-gray-700 pb-2">
-                    Bio
-                  </h2>
-                  <p className="text-gray-300 leading-relaxed">
-                    {user.bio}
-                  </p>
-                </div>
-                
-                <div>
-                  <h2 className="text-xl font-semibold mb-4 text-gray-200 border-b border-gray-700 pb-2">
-                    Location
-                  </h2>
-                  
-                  <div className="flex items-start mb-4">
-                    <div className="text-blue-400 mr-3">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                      </svg>
-                    </div>
+
+              {/* Tab Navigation */}
+              <div className='flex border-b border-gray-700 mt-8'>
+                <button
+                  className={`px-4 py-2 font-medium ${
+                    activeTab === 'info'
+                      ? 'text-blue-400 border-b-2 border-blue-400'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                  onClick={() => setActiveTab('info')}
+                >
+                  Personal Info
+                </button>
+                <button
+                  className={`px-4 py-2 font-medium ${
+                    activeTab === 'activity'
+                      ? 'text-blue-400 border-b-2 border-blue-400'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                  onClick={() => setActiveTab('activity')}
+                >
+                  Activity
+                </button>
+                <button
+                  className={`px-4 py-2 font-medium ${
+                    activeTab === 'properties'
+                      ? 'text-blue-400 border-b-2 border-blue-400'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                  onClick={() => setActiveTab('properties')}
+                >
+                  Properties
+                </button>
+              </div>
+
+              {/* Content based on active tab */}
+              <div className='mt-6'>
+                {activeTab === 'info' && (
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
                     <div>
-                      <p className="text-gray-400 text-sm">Address</p>
-                      <p className="text-white">{user.address}</p>
+                      <h2 className='text-xl font-semibold mb-4 text-gray-200 border-b border-gray-700 pb-2'>
+                        Personal Information
+                      </h2>
+
+                      <div className='space-y-6'>
+                        <div className='flex items-start'>
+                          <div className='text-blue-400 mr-3'>
+                            <User className='h-5 w-5' />
+                          </div>
+                          <div>
+                            <p className='text-gray-400 text-sm'>Gender</p>
+                            <p className='text-white'>{user.gender}</p>
+                          </div>
+                        </div>
+
+                        <div className='flex items-start'>
+                          <div className='text-blue-400 mr-3'>
+                            <Calendar className='h-5 w-5' />
+                          </div>
+                          <div>
+                            <p className='text-gray-400 text-sm'>Age</p>
+                            <p className='text-white'>{user.age} years</p>
+                          </div>
+                        </div>
+
+                        <div className='flex items-start'>
+                          <div className='text-blue-400 mr-3'>
+                            <Phone className='h-5 w-5' />
+                          </div>
+                          <div>
+                            <p className='text-gray-400 text-sm'>
+                              Phone Number
+                            </p>
+                            <p className='text-white'>{user.phone}</p>
+                          </div>
+                        </div>
+
+                        <div className='flex items-start'>
+                          <div className='text-blue-400 mr-3'>
+                            <Clock className='h-5 w-5' />
+                          </div>
+                          <div>
+                            <p className='text-gray-400 text-sm'>
+                              Member Since
+                            </p>
+                            <p className='text-white'>
+                              {user.joinDate || 'January 2023'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <h2 className='text-xl font-semibold mb-4 mt-8 text-gray-200 border-b border-gray-700 pb-2'>
+                        Bio
+                      </h2>
+                      <p className='text-gray-300 leading-relaxed'>
+                        {user.bio}
+                      </p>
+                    </div>
+
+                    <div>
+                      <h2 className='text-xl font-semibold mb-4 text-gray-200 border-b border-gray-700 pb-2'>
+                        Location
+                      </h2>
+
+                      <div className='flex items-start mb-4'>
+                        <div className='text-blue-400 mr-3'>
+                          <MapPin className='h-5 w-5' />
+                        </div>
+                        <div>
+                          <p className='text-gray-400 text-sm'>Address</p>
+                          <p className='text-white'>{user.address}</p>
+                        </div>
+                      </div>
+
+                      <div className='rounded-xl overflow-hidden shadow-lg border border-gray-700 hover:border-blue-500/50 transition-colors duration-300'>
+                        {isLoaded ? (
+                          <GoogleMap
+                            mapContainerStyle={containerStyle}
+                            center={user.location}
+                            zoom={14}
+                            options={{
+                              mapTypeControl: false,
+                              streetViewControl: false,
+                              fullscreenControl: false,
+                              zoomControl: true,
+                              styles: [
+                                {
+                                  featureType: 'all',
+                                  elementType: 'all',
+                                  stylers: [{ saturation: -70 }],
+                                },
+                              ],
+                            }}
+                          >
+                            <Marker position={user.location} />
+                          </GoogleMap>
+                        ) : (
+                          <div className='h-64 w-full flex items-center justify-center bg-gray-800'>
+                            <div className='animate-pulse flex flex-col items-center'>
+                              <div className='rounded-full bg-gray-700 h-10 w-10 mb-2'></div>
+                              <div className='h-2 bg-gray-700 rounded w-24'></div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  
-                  <div className="rounded-xl overflow-hidden shadow-lg border border-gray-700">
-                    {isLoaded ? (
-                      <GoogleMap
-                        mapContainerStyle={containerStyle}
-                        center={user.location}
-                        zoom={14}
-                        options={{
-                          mapTypeControl: false,
-                          streetViewControl: false,
-                          fullscreenControl: false,
-                          zoomControl: true,
-                          styles: [
-                            {
-                              featureType: "all",
-                              elementType: "all",
-                              stylers: [{ saturation: -100 }]
-                            }
-                          ]
-                        }}
-                      >
-                        <Marker position={user.location} />
-                      </GoogleMap>
-                    ) : (
-                      <div className="h-full w-full flex items-center justify-center bg-gray-800">
-                        <p className="text-gray-400">Loading map...</p>
+                )}
+
+                {activeTab === 'activity' && (
+                  <div>
+                    <h2 className='text-xl font-semibold mb-4 text-gray-200 border-b border-gray-700 pb-2'>
+                      Recent Activity
+                    </h2>
+                    <div className='space-y-4'>
+                      {(
+                        user.recentActivity || [
+                          {
+                            action: 'Viewed property',
+                            description: '3 BHK Apartment in Sector 45',
+                            timestamp: '2 days ago',
+                          },
+                          {
+                            action: 'Created request',
+                            description: 'Looking for commercial space',
+                            timestamp: '1 week ago',
+                          },
+                          {
+                            action: 'Updated profile',
+                            description: 'Changed contact information',
+                            timestamp: '2 weeks ago',
+                          },
+                        ]
+                      ).map((activity, index) => (
+                        <div
+                          key={index}
+                          className='bg-gray-700/30 p-4 rounded-lg border-l-4 border-blue-500 hover:bg-gray-700/50 transition-colors'
+                        >
+                          <div className='flex justify-between'>
+                            <p className='font-medium text-blue-400'>
+                              {activity.action}
+                            </p>
+                            <p className='text-gray-400 text-sm'>
+                              {activity.timestamp}
+                            </p>
+                          </div>
+                          <p className='text-gray-300 mt-1'>
+                            {activity.description}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'properties' && (
+                  <div>
+                    <div className='flex justify-between items-center mb-4'>
+                      <h2 className='text-xl font-semibold text-gray-200'>
+                        Your Properties
+                      </h2>
+                      <button className='px-4 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm'>
+                        Add New
+                      </button>
+                    </div>
+
+                    {user.properties > 0 ? (
+                      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                        {[
+                          {
+                            title: 'Luxury Villa',
+                            location: 'Beverly Hills, CA',
+                            price: '$2,500,000',
+                            image:
+                              'https://source.unsplash.com/400x300/?luxury,villa',
+                          },
+                          {
+                            title: 'Modern Apartment',
+                            location: 'New York City, NY',
+                            price: '$1,200,000',
+                            image:
+                              'https://source.unsplash.com/400x300/?apartment,modern',
+                          },
+                          {
+                            title: 'Beachfront Condo',
+                            location: 'Miami, FL',
+                            price: '$900,000',
+                            image:
+                              'https://source.unsplash.com/400x300/?beach,condo',
+                          },
+                        ].map((property, index) => (
+                          <div
+                            key={index}
+                            className='bg-gray-800/50 border border-gray-700 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300'
+                          >
+                            <img
+                              src={property.image}
+                              alt={property.title}
+                              className='w-full h-48 object-cover'
+                            />
+                            <div className='p-4'>
+                              <h3 className='text-lg font-semibold text-white'>
+                                {property.title}
+                              </h3>
+                              <p className='text-gray-400'>
+                                {property.location}
+                              </p>
+                              <p className='text-blue-400 font-medium mt-2'>
+                                {property.price}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
                       </div>
+                    ) : (
+                      <p className='text-gray-400'>No properties listed yet.</p>
                     )}
                   </div>
-                  
-                  <div className="mt-8">
-                    <h2 className="text-xl font-semibold mb-4 text-gray-200 border-b border-gray-700 pb-2">
-                      Activity
-                    </h2>
-                    <div className="space-y-4">
-                      <div className="bg-gray-700/30 p-4 rounded-lg">
-                        <p className="text-gray-300">You recently viewed 3 properties</p>
-                        <p className="text-gray-400 text-sm mt-1">2 days ago</p>
-                      </div>
-                      <div className="bg-gray-700/30 p-4 rounded-lg">
-                        <p className="text-gray-300">You created a new property request</p>
-                        <p className="text-gray-400 text-sm mt-1">1 week ago</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ProfilePage;
-
+export default ProfilePage
