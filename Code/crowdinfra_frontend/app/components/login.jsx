@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Navbar from '../components/navbar'
 import { useRouter } from 'next/navigation'; // For redirection
+import axios from 'axios';
 
 const LoginPage = ({ setIsLogin }) => {
   const [formData, setFormData] = useState({
@@ -35,28 +36,43 @@ const LoginPage = ({ setIsLogin }) => {
     return newErrors
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    const newErrors = validate()
+const handleSubmit = async (e) => {
+  e.preventDefault()
+  const newErrors = validate()
 
-    if (Object.keys(newErrors).length === 0) {
-      setIsSubmitting(true)
-      try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+  console.log(JSON.stringify(formData, null, 2))
+
+  if (Object.keys(newErrors).length === 0) {
+    setIsSubmitting(true)
+    try {
+      const response = await axios.post(
+        'http://localhost:5030/api/auth/login',
+        formData
+      )
+
+      console.log('Login response:', response.data)
+
+      if (response.data.token) {
+        // Store the token securely
+        localStorage.setItem('token', response.data.token) // Or sessionStorage
+
         alert('Login successful! Redirecting...')
         setIsLogin(true)
-        router.push("/home")
-      } catch (error) {
-        console.error('Login error:', error)
-        setErrors({ submit: 'Failed to login. Please try again.' })
-      } finally {
-        setIsSubmitting(false)
+        router.push('/home')
+      } else {
+        throw new Error('Token not received')
       }
-    } else {
-      setErrors(newErrors)
+    } catch (error) {
+      console.error('Login error:', error)
+      setErrors({ submit: 'Failed to login. Please try again.' })
+    } finally {
+      setIsSubmitting(false)
     }
+  } else {
+    setErrors(newErrors)
   }
+}
+
 
   return (
     <div className='min-h-screen w-full bg-black py-5 text-white'>

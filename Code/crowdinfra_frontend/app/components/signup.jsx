@@ -93,7 +93,7 @@ const SignupPage = ({ setIsLogin }) => {
 
         // ✅ Make API request using Axios
         const response = await axios.post(
-          'http://localhost:5050/api/auth/signup',
+          'http://localhost:5030/api/auth/signup',
           formDataWithPhoto,
           {
             headers: {
