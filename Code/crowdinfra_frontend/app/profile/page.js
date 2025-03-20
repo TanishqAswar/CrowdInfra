@@ -7,24 +7,31 @@ import Navbar from '../components/navbar'
 import axios from 'axios'
 import { Edit, Phone, MapPin, Calendar, Mail, User, Clock } from 'lucide-react'
 import Image from 'next/image'
+import { LogOut } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 const containerStyle = {
   width: '100%',
   height: '250px',
 }
 
+
 const ProfilePage = () => {
   const [user, setUser] = useState(null)
+  const [mapCenter, setMapCenter] = useState(null);
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [activeTab, setActiveTab] = useState('info')
-
+  const router = useRouter();
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     libraries: ['places'],
     id: 'google-maps-script',
   })
-
+  const handleLogout = async() => {
+    localStorage.removeItem('token')
+    await router.push('/auth')
+  }
   useEffect(() => {
     const fetchUserData = async () => {
       setLoading(true)
@@ -54,6 +61,22 @@ const ProfilePage = () => {
         }
 
         setUser(response.data)
+        
+          if (user?.address && isLoaded) {
+            const geocoder = new window.google.maps.Geocoder();
+            geocoder.geocode({ address: user.address }, (results, status) => {
+              if (status === 'OK' && results[0]) {
+                const { lat, lng } = results[0].geometry.location;
+                setMapCenter({ lat: lat(), lng: lng() });
+              } else {
+                // Fallback to default location if geocoding fails
+                setMapCenter(user.location || { lat: 28.6139, lng: 77.209 });
+              }
+            });
+          } else if (user?.location) {
+            setMapCenter(user.location);
+          }
+       
       } catch (err) {
         console.error('Error fetching profile:', err)
         setError(err.message || 'Failed to load profile data')
@@ -136,7 +159,7 @@ const ProfilePage = () => {
           </h2>
           <p className='text-gray-300 text-center mb-4'>{error}</p>
           <button
-            onClick={() => (window.location.href = '/login')}
+            onClick={() => (window.location.href = '/auth')}
             className='px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
           >
             Go to Login
@@ -147,7 +170,7 @@ const ProfilePage = () => {
   }
 
   if (!user) return null
-
+ 
   return (
     <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-5 text-white'>
       <Navbar />
@@ -156,7 +179,7 @@ const ProfilePage = () => {
         <div className='max-w-4xl mx-auto'>
           <div className='bg-gray-800/50 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden border border-gray-700/50'>
             {/* Header Section with Cover Image */}
-            <div className='relative h-48 bg-gradient-to-r from-blue-900 to-purple-800'>
+            <div className='relative h-48 bg-gradient-to-r from-gray-900 to-black'>
               <div className='absolute -bottom-16 left-8'>
                 <div className='h-32 w-32 rounded-full border-4 border-gray-800 overflow-hidden shadow-xl hover:border-blue-500 transition-all duration-300 group'>
                   {console.log(user.profile_image)}
@@ -188,10 +211,14 @@ const ProfilePage = () => {
                     <span>{user.email}</span>
                   </div>
                 </div>
-                <button className='mt-4 md:mt-0 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 hover:gap-3 transition-all duration-300'>
-                  <Edit className='h-4 w-4' />
-                  <span>Edit Profile</span>
-                </button>
+                <button
+          className='flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium
+             bg-red-500 text-white hover:bg-red-600 active:scale-95 
+             transition-all duration-300 shadow-md'
+          onClick={handleLogout}
+        >
+          <LogOut size={16} /> <span>Logout</span>
+        </button>
               </div>
 
               {/* Tab Navigation */}
@@ -312,7 +339,7 @@ const ProfilePage = () => {
                         {isLoaded ? (
                           <GoogleMap
                             mapContainerStyle={containerStyle}
-                            center={user.location}
+                            center={user.address}
                             zoom={14}
                             options={{
                               mapTypeControl: false,

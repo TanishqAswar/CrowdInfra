@@ -26,8 +26,10 @@ const PropertyPage = () => {
     price: '',
     type: 'sell',
     area: '',
-    contact: ''
+    contactNumber: '',
+    status: 'available'
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { selectedPlace } = useUserContext() || {}; // Provide default empty object
 
@@ -63,13 +65,62 @@ const PropertyPage = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (selectedLocation && selectedLocation.lat && selectedLocation.lng) {
-      console.log({
+    
+    if (!selectedLocation || !selectedLocation.lat || !selectedLocation.lng) {
+      alert("Please select a location on the map");
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Format the data according to the backend controller expectations
+      const propertyData = {
         ...formData,
-        location: selectedLocation
+        location: {
+          type: 'Point',
+          coordinates: [selectedLocation.lng, selectedLocation.lat] // Note: longitude first, then latitude
+        }
+      };
+      
+      console.log("Submitting property data:", propertyData);
+      
+      // Replace with your actual API endpoint
+      const response = await fetch('http://localhost:5030/api/property/property', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(propertyData),
       });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        alert("Property submitted successfully!");
+        // Reset form and selected location
+        setFormData({
+          title: '',
+          description: '',
+          category: 'residential', 
+          price: '',
+          type: 'sell',
+          area: '',
+          contactNumber: '',
+          status: 'available'
+        });
+        setSelectedLocation(null);
+        setShowForm(false);
+      } else {
+        alert(`Error: ${data.error || 'Failed to submit property'}`);
+      }
+    } catch (error) {
+      console.error("Error submitting property:", error);
+      alert("Failed to submit property. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -142,6 +193,9 @@ const PropertyPage = () => {
             >
               Raise Property Here
             </button>
+            <div className="mt-4 text-gray-300">
+              Selected Location: {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}
+            </div>
           </div>
         )}
 
@@ -224,10 +278,20 @@ const PropertyPage = () => {
                 <input
                   type="tel"
                   className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all duration-300"
-                  value={formData.contact}
-                  onChange={(e) => setFormData({...formData, contact: e.target.value})}
+                  value={formData.contactNumber}
+                  onChange={(e) => setFormData({...formData, contactNumber: e.target.value})}
                   required
                 />
+              </div>
+
+              <div className="md:col-span-2 mt-4 p-3 bg-blue-900/30 rounded-lg border border-blue-800/50">
+                <div className="flex items-center">
+                  <svg className="w-6 h-6 text-blue-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                  <span className="text-blue-200">Selected Location: {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}</span>
+                </div>
               </div>
 
               <div className="md:col-span-2 flex justify-end space-x-4 mt-6">
@@ -235,14 +299,23 @@ const PropertyPage = () => {
                   type="button"
                   onClick={() => setShowForm(false)}
                   className="px-8 py-3 rounded-full bg-gray-700 text-white hover:bg-gray-600 transform hover:scale-105 transition-all duration-300"
+                  disabled={isSubmitting}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-8 py-3 rounded-full bg-blue-500 text-white font-semibold hover:bg-blue-600 transform hover:scale-105 transition-all duration-300"
+                  className="px-8 py-3 rounded-full bg-blue-500 text-white font-semibold hover:bg-blue-600 transform hover:scale-105 transition-all duration-300 flex items-center"
+                  disabled={isSubmitting}
                 >
-                  Submit Property
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2"></div>
+                      Submitting...
+                    </>
+                  ) : (
+                    'Submit Property'
+                  )}
                 </button>
               </div>
             </div>
