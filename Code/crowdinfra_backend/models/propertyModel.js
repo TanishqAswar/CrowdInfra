@@ -21,12 +21,12 @@ const initializePropertyModel = async () => {
       },
       category: {
         type: String,
-        enum: ['Residential', 'Commercial', 'Industrial', 'Land'],
+        enum: ['residential', 'commercial', 'industrial', 'land'],
         required: true,
       },
       type: {
         type: String,
-        enum: ['Sell', 'Rent', 'Lease'],
+        enum: ['sell', 'rent', 'lease'],
         required: true,
       },
       price: {
