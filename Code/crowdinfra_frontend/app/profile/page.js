@@ -47,7 +47,7 @@ const ProfilePage = () => {
 
       try {
         const response = await axios.get(
-          'http://localhost:5030/api/user/profile',
+          'http://localhost:5000/api/user/profile',
           {
             headers: {
               'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ const ProfilePage = () => {
           address: '123, Subhash Nagar, New Delhi - 110001',
           gender: 'Male',
           age: 32,
-          bio: 'I am an enthusiastic real estate investor looking for new properties. I enjoy exploring new areas and finding opportunities.',
+          // bio: 'I am an enthusiastic real estate investor looking for new properties. I enjoy exploring new areas and finding opportunities.',
           profilePicture: 'https://randomuser.me/api/portraits/men/44.jpg',
           location: {
             lat: 28.6139,
@@ -186,7 +186,7 @@ const ProfilePage = () => {
                   <Image
                     src={
                       user.profile_image
-                        ? `http://localhost:5030${user.profile_image}`
+                        ? `http://localhost:5000${user.profile_image}`
                         : '/default-avatar.png'
                     }
                     alt={user.name || 'User Profile'}
