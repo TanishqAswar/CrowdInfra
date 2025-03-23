@@ -341,7 +341,7 @@ const HeroSection = () => {
           <br />
           <DecryptedText
             text="Mapping Community Infrastructure Together"
-            className="text-zinc-500 text-2xl mt-4"
+            className="text-white text-2xl mt-4"
             animateOn="view"
             speed={120}
             revealDirection="center"
@@ -394,7 +394,7 @@ export default function Home() {
           <br />
           <DecryptedText
             text='Voice Your Needs, Shape Your Community'
-            className='text-zinc-600 text-2xl'
+            className='text-zinc-400 text-2xl'
             animateOn='view'
             speed={150}
             revealDirection='center'

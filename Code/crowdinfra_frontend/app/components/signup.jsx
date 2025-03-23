@@ -984,7 +984,7 @@ const SignupPage = ({ setIsLogin, profilePhoto }) => {
               name='name'
               value={formData.name}
               onChange={handleChange}
-              className={`w-full px-3 py-2 bg-white dark:bg-gray-800 rounded-lg border ${
+              className={`w-full px-3 py-2 bg-white text-white dark:bg-gray-800 rounded-lg border ${
                 errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
               } focus:outline-none focus:ring-2 focus:ring-blue-500`}
               placeholder='John Doe'
@@ -1008,7 +1008,7 @@ const SignupPage = ({ setIsLogin, profilePhoto }) => {
               name='email'
               value={formData.email}
               onChange={handleChange}
-              className={`w-full px-3 py-2 bg-white dark:bg-gray-800 rounded-lg border ${
+              className={`w-full px-3 py-2 text-white dark:bg-gray-800 rounded-lg border ${
                 errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
               } focus:outline-none focus:ring-2 focus:ring-blue-500`}
               placeholder='your.email@example.com'
@@ -1032,8 +1032,8 @@ const SignupPage = ({ setIsLogin, profilePhoto }) => {
               name='phone'
               value={formData.phone}
               onChange={handleChange}
-              className='w-full px-3 py-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
-              placeholder='+91 9876543210'
+              className='w-full px-3 py-2 bg-white text-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
+              placeholder='+91 Mobile Number'
             />
           </div>
 
@@ -1050,7 +1050,7 @@ const SignupPage = ({ setIsLogin, profilePhoto }) => {
               name='gender'
               value={formData.gender}
               onChange={handleChange}
-              className='w-full px-3 py-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
+              className='w-full px-3 py-2 bg-white text-white  dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
             >
               <option value='' disabled className='text-gray-700 dark:text-gray-300 mb-1 text-sm ' >
                 Select gender
@@ -1078,8 +1078,8 @@ const SignupPage = ({ setIsLogin, profilePhoto }) => {
               onChange={handleChange}
               min='18'
               max='120'
-              className='w-full px-3 py-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
-              placeholder='30'
+              className='w-full px-3 py-2 text-white bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
+              placeholder='Age'
             />
           </div>
 
@@ -1097,7 +1097,7 @@ const SignupPage = ({ setIsLogin, profilePhoto }) => {
               name='address'
               value={formData.address}
               onChange={handleChange}
-              className='w-full px-3 py-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
+              className='w-full px-3 py-2 bg-white text-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
               placeholder='123, Main Street, City'
             />
           </div>
@@ -1116,7 +1116,7 @@ const SignupPage = ({ setIsLogin, profilePhoto }) => {
               name='password'
               value={formData.password}
               onChange={handleChange}
-              className={`w-full px-3 py-2 bg-white dark:bg-gray-800 rounded-lg border ${
+              className={`w-full px-3 py-2 bg-white text-white dark:bg-gray-800 rounded-lg border ${
                 errors.password ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
               } focus:outline-none focus:ring-2 focus:ring-blue-500`}
               placeholder='••••••••'
@@ -1142,7 +1142,7 @@ const SignupPage = ({ setIsLogin, profilePhoto }) => {
               name='confirmPassword'
               value={formData.confirmPassword}
               onChange={handleChange}
-              className={`w-full px-3 py-2 bg-white dark:bg-gray-800 rounded-lg border ${
+              className={`w-full px-3 py-2 bg-white text-white dark:bg-gray-800 rounded-lg border ${
                 errors.confirmPassword
                   ? 'border-red-500'
                   : 'border-gray-300 dark:border-gray-600'
@@ -1199,7 +1199,7 @@ const SignupPage = ({ setIsLogin, profilePhoto }) => {
             <button
               type='submit'
               disabled={isSubmitting}
-              className='w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed'
+              className='w-full mb-5 mt-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 hover:scale-105 text-white font-medium py-2.5 px-4 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed'
             >
               {isSubmitting ? (
                 <span className='flex items-center justify-center'>

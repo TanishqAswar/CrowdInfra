@@ -495,13 +495,10 @@ const LoginPage = ({ setIsLogin }) => {
     <div className='min-h-screen w-full bg-transparent py-5 text-white'>
       <div className='container mx-auto px-4 py-8'>
         <div className='max-w-full mx-auto'>
-          <div className='bg-transparent backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden p-8 border border-gray-800'>
+          <div className='bg-transparent backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden p-8 border-none'>
             <div className='text-center mb-8'>
               <h1 className='text-4xl font-bold text-white mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500'>Login</h1>
-              {/* <p className='text-blue-400 mt-2 mb-6'>
-                Welcome back! Please login to continue
-              </p> */}
-              <div className="text-gray-400 text-sm mb-6" onClick={()=>setIsLogin(false)}>
+              <div className="text-gray-400 text-sm mt-2 mb-6" onClick={()=>setIsLogin(false)}>
                 Don't have an account? <Link href="/auth" className="text-blue-400 hover:text-blue-300 underline-none transition-colors duration-300">Create account</Link>
               </div>
             </div>

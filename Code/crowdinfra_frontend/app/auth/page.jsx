@@ -510,7 +510,7 @@ export default function Auth() {
           </div>
 
           <div className="relative z-10 text-center px-8 max-w-md">
-            <p className="text-xl text-gray-200 drop-shadow-md">
+            <p className="text-2xl text-gray-200 drop-shadow-md">
               {isLogin ? "Your journey continues here" : (
                 <div className="mb-8 flex flex-col items-center">
                   <div
