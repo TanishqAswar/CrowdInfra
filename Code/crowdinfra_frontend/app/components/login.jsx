@@ -1,10 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
-import Navbar from '../components/navbar'
 import { useRouter } from 'next/navigation'; // For redirection
 import axios from 'axios';
+import { toast } from 'react-toastify'; // For toast messages
 
 const LoginPage = ({ setIsLogin }) => {
   const [formData, setFormData] = useState({
@@ -47,28 +46,25 @@ const handleSubmit = async (e) => {
     setIsSubmitting(true)
     try {
       const response = await axios.post(
-        'http://localhost:5030/api/auth/login',
-        formData
+        `http://localhost:5030/api/auth/login`,
+        formData,
+        { withCredentials: true } // Allow cookies to be sent
       )
 
       console.log('Login response:', response.data)
 
-      if (response.data.token) {
-        // Store the token securely
-        localStorage.setItem('token', response.data.token) // Or sessionStorage
-
-        alert('Login successful! Redirecting...')
+      if (response.data && response.data.success) {
+        toast.success('Login successful! Redirecting to home...')
         setIsLogin(true)
         router.push('/home')
       } else {
-        throw new Error('Token not received')
+        throw new Error('Login failed')
       }
     } catch (error) {
       console.error('Login error:', error)
       setErrors({ submit: 'Failed to login. Please try again.' })
     } finally {
       setIsSubmitting(false)
-      
     }
   } else {
     setErrors(newErrors)

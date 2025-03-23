@@ -4,6 +4,8 @@ import { useState, useRef } from 'react'
 import Link from 'next/link'
 import { Camera, Upload } from 'lucide-react'
 import axios from 'axios'
+import { toast } from 'react-toastify'
+
 
 
 const SignupPage = ({ setIsLogin }) => {
@@ -103,8 +105,7 @@ const SignupPage = ({ setIsLogin }) => {
           }
         )
 
-
-        alert('Registration successful! Redirecting to login...')
+        toast.success('Registration successful! Redirecting to login...')
         setIsLogin(true)
       } catch (error) {
         console.error('Registration error:', error)
@@ -114,7 +115,6 @@ const SignupPage = ({ setIsLogin }) => {
             error.response?.data?.message ||
             'Failed to register. Please try again.',
         })
-
       } finally {
         setIsSubmitting(false)
       }

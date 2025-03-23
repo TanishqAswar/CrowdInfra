@@ -4,43 +4,45 @@ const getUserModel = require("../models/User"); // Import the function
 
 const router = express.Router();
 
-// Middleware to verify token
+// ✅ Middleware to verify token from cookies
 const verifyToken = (req, res, next) => {
-  const token = req.header("Authorization");
+  const token = req.cookies.crowdInfra_token; // Get token from cookies
 
-  if (!token) return res.status(401).json({ error: "Access Denied" });
+  if (!token) {
+    return res.status(401).json({ error: "Access Denied. No token provided." });
+  }
 
   try {
-    const verified = jwt.verify(token.replace("Bearer ", ""), process.env.JWT_SECRET);
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
     req.decodedData = verified;
 
-    console.log("The token is valid");
+    console.log("✅ Valid Token:", verified);
     next();
   } catch (err) {
-    console.log(err)
+    console.log("❌ Invalid Token:", err.message);
     res.status(400).json({ error: "Invalid Token" });
   }
 };
 
-// Get User Profile
+// ✅ Get User Profile (Protected Route)
 router.get("/profile", verifyToken, async (req, res) => {
   try {
-    const User = await getUserModel(); // Get the User model
-    // const user = await User.findById(req.user.userId)
-    console.log(JSON.stringify(req.decodedData, null, 2))
-    
-    const user = await User.findById(req.decodedData.user.id).select(
-      '-password'
-    )  
+    const User = await getUserModel();
 
-    console.log(JSON.stringify(user, null, 2));
-    
-    if (!user) return res.status(404).json({ error: "User not found" });
-    
+    console.log("🔹 Decoded JWT Data:", JSON.stringify(req.decodedData, null, 2));
+
+    const user = await User.findById(req.decodedData.user.id).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    console.log("🔹 User Data:", JSON.stringify(user, null, 2));
+
     res.status(200).json(user);
   } catch (err) {
-    console.log(err.message)
-    res.status(500).json({ error: err.message });
+    console.error("❌ Server Error:", err.message);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

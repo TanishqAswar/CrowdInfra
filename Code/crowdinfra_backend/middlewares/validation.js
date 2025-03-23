@@ -11,9 +11,10 @@ const validateSignup = [
   body('gender')
     .isIn(['Male', 'Female', 'Other'])
     .withMessage('Gender must be Male, Female, or Other'),
-  body('bio').not().isEmpty().withMessage('Bio is required'),
+  // body('bio').not().isEmpty().withMessage('Bio is required'),
   (req, res, next) => {
     const errors = validationResult(req)
+    console.log(errors)
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() })
     }
