@@ -1,6 +1,6 @@
 'use client'
 
-import { Search, MapPin, Route, RefreshCcw } from 'lucide-react'
+import { Search, MapPin, Route, RefreshCcw , Home} from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import PlaceAutocomplete from './autocomplete'
@@ -33,6 +33,17 @@ export default function Navbar() {
 
       {/* Center Section - Navigation Icons */}
       <div className='flex items-center space-x-10'>
+        <Link href='/home'>
+          <div className='group relative cursor-pointer'>
+            <Home
+              className='w-6 h-6 text-gray-500 group-hover:text-black group-hover:scale-110 transition duration-300'
+              title='Go Home'
+            />
+            <span className='absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs bg-black/70 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap'>
+              Go Home
+            </span>
+          </div>
+        </Link>
         <Link href='/raise-request'>
           <div className='group relative cursor-pointer'>
             <MapPin
