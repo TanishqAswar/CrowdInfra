@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 .Toastify__toast--success {
   background: linear-gradient(135deg, #000000, #1E90FF) !important; /* Black to Blue Gradient */
   color: #ffffff !important;
@@ -15,3 +16,14 @@
 .Toastify__progress-bar {
   background: #1E90FF !important; /* Blue progress bar */
 }
+
+/* Add to k.css */
+.scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
+

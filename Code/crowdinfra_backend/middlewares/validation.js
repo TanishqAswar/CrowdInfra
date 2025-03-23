@@ -16,6 +16,7 @@ const validateSignup = [
     const errors = validationResult(req)
     console.log(errors)
     if (!errors.isEmpty()) {
+      console.log(JSON.stringify(errors, null, 2))
       return res.status(400).json({ errors: errors.array() })
     }
     next()

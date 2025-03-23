@@ -24,13 +24,12 @@ const saveProfilePhoto = (userId, file) => {
 
 //> Signup Controller
 const signupUser = async (req, res) => {
+  
   const User = await getUserModel()
 
-  console.log('Signup User:', req.body)
-
-  const { name, email, password, phone, address, gender, bio } = req.body
+  const { name, email, password, phone, address, gender } = req.body
   const profilePhoto = req.file // Uploaded file
-
+  
   console.log(JSON.stringify(req.body, null, 2))
 
   try {
@@ -51,7 +50,6 @@ const signupUser = async (req, res) => {
       phone,
       address,
       gender,
-      bio,
       profile_image: "", // Initially empty
     })
     
@@ -77,7 +75,6 @@ const signupUser = async (req, res) => {
         phone: user.phone,
         address: user.address,
         gender: user.gender,
-        bio: user.bio,
         profile_image: profileImagePath,
         role: user.role,
         createdAt: user.createdAt,
