@@ -1,6 +1,7 @@
 'use client'
 
-import { Search, MapPin, Route, RefreshCcw , Home} from 'lucide-react'
+
+import { Search, MapPin, Route, RefreshCcw, Home } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import PlaceAutocomplete from './autocomplete'

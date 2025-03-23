@@ -868,6 +868,8 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import axios from 'axios'
+import { toast } from 'react-toastify'
+
 
 const SignupPage = ({ setIsLogin, profilePhoto }) => {
   const [formData, setFormData] = useState({
@@ -947,7 +949,9 @@ const SignupPage = ({ setIsLogin, profilePhoto }) => {
           }
         )
 
-        alert('Registration successful! Redirecting to login...')
+
+        toast.success('Registration successful! Redirecting to login...')
+
         setIsLogin(true)
       } catch (error) {
         console.error('Registration error:', error)
@@ -957,7 +961,6 @@ const SignupPage = ({ setIsLogin, profilePhoto }) => {
             error.response?.data?.message ||
             'Failed to register. Please try again.',
         })
-
       } finally {
         setIsSubmitting(false)
       }

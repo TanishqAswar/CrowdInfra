@@ -119,6 +119,12 @@
 'use client'
 import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+
+// import axios from 'axios'
+// import Cookies from 'js-cookie'
+// import { useEffect } from 'react'
+// import HeroSection from './components/hero_section'
+
 import DecryptedText from '@/app/ui_comp/de_para'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
@@ -364,6 +370,27 @@ export default function Home() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  useEffect(() => {
+    const verifyToken = async () => {
+      try {
+        const response = await axios.get(
+          'http://localhost:5030/api/auth/verify',
+          { withCredentials: true } // ✅ Send cookies automatically
+        )
+
+        if (response.data.valid) {
+          router.push('/home') // ✅ Redirect only if verification is successful
+          return // ✅ Prevent further execution
+        }
+      } catch (error) {
+        console.error('Token verification failed:', error)
+        Cookies.remove('crowdInfra_token') // ✅ Remove invalid token
+      }
+    }
+
+    verifyToken()
+  }, []) // ✅ Dependency array prevents infinite loop
 
   return (
     <main className='min-h-screen bg-black overflow-x-hidden scrollbar-hide'>

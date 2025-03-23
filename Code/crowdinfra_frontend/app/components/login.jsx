@@ -419,9 +419,13 @@
 'use client'
 
 import { useState } from 'react'
+
+import { useRouter } from 'next/navigation'; // For redirection
+import { toast } from 'react-toastify'; // For toast messages
+
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import axios from 'axios'
+
 
 const LoginPage = ({ setIsLogin }) => {
   const [formData, setFormData] = useState({
@@ -460,34 +464,32 @@ const LoginPage = ({ setIsLogin }) => {
 
     console.log(JSON.stringify(formData, null, 2))
 
-    if (Object.keys(newErrors).length === 0) {
-      setIsSubmitting(true)
-      try {
-        const response = await axios.post(
-          'http://localhost:5000/api/auth/login',
-          formData
-        )
+
+  if (Object.keys(newErrors).length === 0) {
+    setIsSubmitting(true)
+    try {
+      const response = await axios.post(
+        `http://localhost:5030/api/auth/login`,
+        formData,
+        { withCredentials: true } // Allow cookies to be sent
+      )
+  
 
         console.log('Login response:', response.data)
 
-        if (response.data.token) {
-          // Store the token securely
-          localStorage.setItem('token', response.data.token) // Or sessionStorage
-
-          alert('Login successful! Redirecting...')
-          setIsLogin(true)
-          router.push('/home')
-        } else {
-          throw new Error('Token not received')
-        }
-      } catch (error) {
-        console.error('Login error:', error)
-        setErrors({ submit: 'Failed to login. Please try again.' })
-      } finally {
-        setIsSubmitting(false)
+      if (response.data && response.data.success) {
+        toast.success('Login successful! Redirecting to home...')
+        setIsLogin(true)
+        router.push('/home')
+      } else {
+        throw new Error('Login failed')
       }
-    } else {
-      setErrors(newErrors)
+    } catch (error) {
+      console.error('Login error:', error)
+      setErrors({ submit: 'Failed to login. Please try again.' })
+    } finally {
+      setIsSubmitting(false)
+
     }
   }
 
