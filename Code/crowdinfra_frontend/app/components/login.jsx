@@ -465,35 +465,38 @@ const LoginPage = ({ setIsLogin }) => {
     console.log(JSON.stringify(formData, null, 2))
 
 
-  if (Object.keys(newErrors).length === 0) {
-    setIsSubmitting(true)
-    try {
-      const response = await axios.post(
-        `http://localhost:5030/api/auth/login`,
-        formData,
-        { withCredentials: true } // Allow cookies to be sent
-      )
+    if (Object.keys(newErrors).length === 0) {
+      setIsSubmitting(true)
+      try {
+        const response = await axios.post(
+          `http://localhost:5030/api/auth/login`,
+          formData,
+          { withCredentials: true } // Allow cookies to be sent
+        )
+    
   
-
-        console.log('Login response:', response.data)
-
-      if (response.data && response.data.success) {
-        toast.success('Login successful! Redirecting to home...')
-        setIsLogin(true)
-        router.push('/home')
-      } else {
-        throw new Error('Login failed')
+          console.log('Login response:', response.data)
+  
+        if (response.data && response.data.success) {
+          toast.success('Login successful! Redirecting to home...')
+          setIsLogin(true)
+          router.push('/home')
+        } else {
+          throw new Error('Login failed')
+        }
+      } catch (error) {
+        console.error('Login error:', error)
+        setErrors({ submit: 'Failed to login. Please try again.' })
+      } finally {
+        setIsSubmitting(false)
+  
       }
-    } catch (error) {
-      console.error('Login error:', error)
-      setErrors({ submit: 'Failed to login. Please try again.' })
-    } finally {
-      setIsSubmitting(false)
-
+    } else {
+      setErrors(newErrors)
     }
   }
-
-  return (
+  
+    return (
     <div className='min-h-screen w-full bg-transparent py-5 text-white'>
       <div className='container mx-auto px-4 py-8'>
         <div className='max-w-full mx-auto'>
