@@ -5,6 +5,7 @@ import { useLoadScript, GoogleMap, Marker } from "@react-google-maps/api";
 import Navbar from "../components/navbar";
 import { useUserContext } from "../components/user_context";
 import PlaceAutocomplete from "../components/autocomplete";
+import Footer from "../components/footer";
 
 const containerStyle = {
   width: '100%',
@@ -132,6 +133,7 @@ const PropertyPage = () => {
   );
 
   return (
+    <>
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-10 text-gray-100">
       <Navbar />
       
@@ -323,6 +325,8 @@ const PropertyPage = () => {
         )}
       </div>
     </div>
+    <Footer />
+    </>
   );
 };
 

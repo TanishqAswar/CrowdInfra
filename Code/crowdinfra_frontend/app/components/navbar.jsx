@@ -34,7 +34,7 @@ export default function Navbar() {
 
       {/* Center Section - Navigation Icons */}
       <div className='flex items-center space-x-10'>
-        <Link href='/home'>
+        <Link href='/'>
           <div className='group relative cursor-pointer'>
             <Home
               className='w-6 h-6 text-gray-500 group-hover:text-black group-hover:scale-110 transition duration-300'
@@ -112,7 +112,7 @@ export default function Navbar() {
           </div>
         </Link>
 
-        <Link href='/home'>
+        <Link href='/'>
           <div className='w-10 h-10 relative transform hover:scale-110 transition-all duration-300'>
             <Image
               className='object-contain cursor-pointer hover:opacity-90 hover:brightness-110 transition-all duration-300'

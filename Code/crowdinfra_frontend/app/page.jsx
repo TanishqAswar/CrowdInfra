@@ -8,6 +8,7 @@ import Maps from "./maps/page";
 import Navbar from "./components/navbar";
 import { useUserContext } from "./components/user_context";
 import Link from "next/link";
+import Footer from "./components/footer";
 
 export default function GlobePage() {
   const globeRef = useRef();
@@ -300,6 +301,7 @@ export default function GlobePage() {
         </div>
 
         {showMap && <Maps />}
+        <Footer />
     </>
   );
 }
