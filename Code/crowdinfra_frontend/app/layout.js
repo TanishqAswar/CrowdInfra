@@ -25,20 +25,20 @@ export default function RootLayout({ children }) {
 
 
   return (
-    <html lang="en" style={{maxWidth: "100vw", overflowX: "hidden"}}>
+    <html lang='en' style={{ maxWidth: '100vw', overflowX: 'hidden' }}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <UserProvider>
-        <ToastContainer />
+          <ToastContainer position='top-right' autoClose={3000} />
           <APIProvider
-            apiKey={"AIzaSyCBUWqISO_DOQUKhwb7q09wQteK87WOEec"}
-            libraries={["places"]}
+            apiKey={'AIzaSyCBUWqISO_DOQUKhwb7q09wQteK87WOEec'}
+            libraries={['places']}
           >
             {children}
           </APIProvider>
         </UserProvider>
       </body>
     </html>
-  );
+  )
 }

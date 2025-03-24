@@ -18,41 +18,41 @@ const containerStyle = {
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null)
-  const [mapCenter, setMapCenter] = useState(null);
+  const [mapCenter, setMapCenter] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [activeTab, setActiveTab] = useState('info')
-  const router = useRouter();
+  const router = useRouter()
+
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     libraries: ['places'],
     id: 'google-maps-script',
   })
-  const handleLogout = async() => {
-    localStorage.removeItem('token')
-    await router.push('/auth')
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        'http://localhost:5030/api/auth/logout',
+        {},
+        { withCredentials: true }
+      ) // ✅ Sends request to clear cookie
+      router.push('/auth') // ✅ Redirect to login page
+    } catch (err) {
+      console.error('Logout failed:', err)
+    }
   }
+
   useEffect(() => {
     const fetchUserData = async () => {
       setLoading(true)
       setError(null)
 
-      const token = localStorage.getItem('token')
-
-      if (!token) {
-        setError('No token found. Please log in.')
-        setLoading(false)
-        return
-      }
-
       try {
         const response = await axios.get(
           'http://localhost:5030/api/user/profile',
           {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
+            withCredentials: true, // ✅ Send cookies with request
           }
         )
 
@@ -61,67 +61,35 @@ const ProfilePage = () => {
         }
 
         setUser(response.data)
-        
-          if (user?.address && isLoaded) {
-            const geocoder = new window.google.maps.Geocoder();
-            geocoder.geocode({ address: user.address }, (results, status) => {
+
+        if (response.data?.address && isLoaded) {
+          const geocoder = new window.google.maps.Geocoder()
+          geocoder.geocode(
+            { address: response.data.address },
+            (results, status) => {
               if (status === 'OK' && results[0]) {
-                const { lat, lng } = results[0].geometry.location;
-                setMapCenter({ lat: lat(), lng: lng() });
+                const { lat, lng } = results[0].geometry.location
+                setMapCenter({ lat: lat(), lng: lng() })
               } else {
-                // Fallback to default location if geocoding fails
-                setMapCenter(user.location || { lat: 28.6139, lng: 77.209 });
+                setMapCenter(
+                  response.data.location || { lat: 28.6139, lng: 77.209 }
+                )
               }
-            });
-          } else if (user?.location) {
-            setMapCenter(user.location);
-          }
-       
+            }
+          )
+        } else if (response.data?.location) {
+          setMapCenter(response.data.location)
+        }
       } catch (err) {
         console.error('Error fetching profile:', err)
         setError(err.message || 'Failed to load profile data')
-
-        // Fallback to sample data for development
-        setUser({
-          name: 'Rajesh Kumar',
-          email: 'rajesh.kumar@example.com',
-          phone: '+91 9876543210',
-          address: '123, Subhash Nagar, New Delhi - 110001',
-          gender: 'Male',
-          age: 32,
-          // bio: 'I am an enthusiastic real estate investor looking for new properties. I enjoy exploring new areas and finding opportunities.',
-          profilePicture: 'https://randomuser.me/api/portraits/men/44.jpg',
-          location: {
-            lat: 28.6139,
-            lng: 77.209,
-          },
-          joinDate: 'January 2023',
-          properties: 3,
-          recentActivity: [
-            {
-              action: 'Viewed property',
-              description: '3 BHK Apartment in Sector 45, Gurgaon',
-              timestamp: '2 days ago',
-            },
-            {
-              action: 'Created request',
-              description: 'Looking for commercial space in South Delhi',
-              timestamp: '1 week ago',
-            },
-            {
-              action: 'Updated profile',
-              description: 'Changed contact information',
-              timestamp: '2 weeks ago',
-            },
-          ],
-        })
       } finally {
         setLoading(false)
       }
     }
 
     fetchUserData()
-  }, [])
+  }, [isLoaded]) // ✅ Re-run when Google Maps is loaded
 
   if (loading) {
     return (
@@ -170,7 +138,7 @@ const ProfilePage = () => {
   }
 
   if (!user) return null
- 
+
   return (
     <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-5 text-white'>
       <Navbar />
@@ -212,13 +180,13 @@ const ProfilePage = () => {
                   </div>
                 </div>
                 <button
-          className='flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium
+                  className='flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium
              bg-red-500 text-white hover:bg-red-600 active:scale-95 
              transition-all duration-300 shadow-md'
-          onClick={handleLogout}
-        >
-          <LogOut size={16} /> <span>Logout</span>
-        </button>
+                  onClick={handleLogout}
+                >
+                  <LogOut size={16} /> <span>Logout</span>
+                </button>
               </div>
 
               {/* Tab Navigation */}

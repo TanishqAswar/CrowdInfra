@@ -24,11 +24,13 @@ const saveProfilePhoto = (userId, file) => {
 
 //> Signup Controller
 const signupUser = async (req, res) => {
-  console.log("Namaste")
+  
   const User = await getUserModel()
 
   const { name, email, password, phone, address, gender } = req.body
   const profilePhoto = req.file // Uploaded file
+  
+  console.log(JSON.stringify(req.body, null, 2))
 
   try {
     // Check if user already exists
@@ -48,7 +50,6 @@ const signupUser = async (req, res) => {
       phone,
       address,
       gender,
-      // bio,
       profile_image: "", // Initially empty
     })
     
@@ -74,7 +75,6 @@ const signupUser = async (req, res) => {
         phone: user.phone,
         address: user.address,
         gender: user.gender,
-        // bio: user.bio,
         profile_image: profileImagePath,
         role: user.role,
         createdAt: user.createdAt,
@@ -90,7 +90,6 @@ const signupUser = async (req, res) => {
 // > Login Controller
 const loginUser = async (req, res) => {
   const User = await getUserModel()
-
   const { email, password } = req.body
 
   console.log(JSON.stringify(req.body, null, 2))
@@ -110,13 +109,26 @@ const loginUser = async (req, res) => {
 
     // Generate JWT token
     const payload = { user: { id: user.id, role: user.role } }
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' })
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '9h' })
 
-    res.status(200).json({ msg: 'Login successful', token })
+    // console.log('Token:', token)
+
+    // Store token in HTTP-Only Cookie
+    res.cookie('crowdInfra_token', token, {
+      httpOnly: true, // Prevents JavaScript access
+      secure: process.env.NODE_ENV === 'production', // ✅ Only secure on production
+      sameSite: 'Strict', // Prevents CSRF attacks
+      maxAge: 60 * 60 * 9000, // Token expiration (9 hour)
+    })
+
+    console.log('Set-Cookie Header:', res.getHeaders()['set-cookie'])
+
+    res.status(200).json({ msg: 'Login successful', success: true })
   } catch (err) {
     console.error(err.message)
     res.status(500).send('Server error')
   }
 }
+
 
 module.exports = { signupUser, loginUser }
