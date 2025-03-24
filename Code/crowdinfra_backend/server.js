@@ -16,6 +16,7 @@ const propertyRoutes = require("./routes/property");
 // const demandRoutes = require("./routes/demandRoutes");
 const authRoutes = require('./routes/auth')
 const userRoutes = require('./routes/user')
+const demandRoutes = require('./routes/demand')
 
 const app = express();
 
@@ -39,6 +40,8 @@ const app = express();
     app.use('/api/user', userRoutes)
 
     app.use('/api/property' ,propertyRoutes)
+
+    app.use('/api/demand', demandRoutes)
 
 
     // Environment Variables
