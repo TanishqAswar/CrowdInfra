@@ -54,6 +54,7 @@ const LoginPage = ({ setIsLogin }) => {
           `http://localhost:5030/api/auth/login`,
           formData,
           { withCredentials: true } // Allow cookies to be sent
+
         )
     
   
