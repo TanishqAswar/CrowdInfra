@@ -47,7 +47,7 @@ const ProfilePage = () => {
 
       try {
         const response = await axios.get(
-          'http://localhost:5000/api/user/profile',
+          'http://localhost:5030/api/user/profile',
           {
             headers: {
               'Content-Type': 'application/json',
