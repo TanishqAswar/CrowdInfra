@@ -27,7 +27,10 @@ export default function ViewRequest() {
                     throw new Error('Request ID not found in URL');
                 }
 
-                const response = await fetch(`http://localhost:5030/api/demand/getDemandById/${requestId}`);
+                const response = await fetch(
+                  `http://localhost:5030/api/demand/getDemandById/${requestId}`,
+                  { cache: 'no-store' } // ✅ Prevents caching
+                )
                 
                 if (!response.ok) {
                     throw new Error('Failed to fetch request details');
@@ -188,7 +191,7 @@ export default function ViewRequest() {
             return !inline && match ? (
                 <SyntaxHighlighter
                     style={materialDark}
-                    language={match[1]}
+                    language={match[1]} 
                     PreTag="div"
                     className="rounded-lg overflow-x-auto"
                     {...props}

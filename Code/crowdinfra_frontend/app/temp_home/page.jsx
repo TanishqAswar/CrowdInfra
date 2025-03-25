@@ -1,12 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import {
   GoogleMap,
   Marker,
   InfoWindow,
   useLoadScript,
 } from '@react-google-maps/api'
+import axios from 'axios'
 
 const containerStyle = {
   width: '100%',
@@ -19,14 +21,14 @@ export default function NearbyDemandsMap() {
   const [location, setLocation] = useState(null)
   const [error, setError] = useState(null)
   const [demands, setDemands] = useState([])
-  const [selectedDemand, setSelectedDemand] = useState(null) // For showing demand details on hover
+  const [selectedDemand, setSelectedDemand] = useState(null)
+  const [hoveringInfoWindow, setHoveringInfoWindow] = useState(false)
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
-    libraries: ['places'],
+    libraries: ['marker'],
   })
 
-  // Get user location
   useEffect(() => {
     if (!navigator.geolocation) {
       setError('Geolocation is not supported by your browser.')
@@ -41,7 +43,6 @@ export default function NearbyDemandsMap() {
         }
         setLocation(userLocation)
         fetchNearbyDemands(userLocation)
-        setError(null)
       },
       (err) => {
         setError(`Location access denied: ${err.message}`)
@@ -49,15 +50,13 @@ export default function NearbyDemandsMap() {
     )
   }, [])
 
-  // Fetch nearby demands from backend
   const fetchNearbyDemands = async (userLocation) => {
     try {
-      const response = await fetch(
+      console.log('Fetching nearby demands...', userLocation)
+      const response = await axios.get(
         `http://localhost:5030/api/demand/nearby?latitude=${userLocation.lat}&longitude=${userLocation.lng}&radius=5000`
       )
-      if (!response.ok) throw new Error('Failed to fetch demands')
-      const data = await response.json()
-      setDemands(data)
+      setDemands(response.data)
     } catch (error) {
       console.error('Error fetching demands:', error)
       setError('Failed to load nearby demands.')
@@ -97,7 +96,12 @@ export default function NearbyDemandsMap() {
                 lng: demand.location.coordinates[0],
               }}
               onMouseOver={() => setSelectedDemand(demand)}
-              onMouseOut={() => setSelectedDemand(null)}
+              onMouseOut={() => {
+                if (!hoveringInfoWindow) {
+                  setSelectedDemand(null)
+                }
+              }}
+              icon={'http://maps.google.com/mapfiles/ms/icons/red-dot.png'}
             />
           ))}
 
@@ -107,10 +111,25 @@ export default function NearbyDemandsMap() {
                 lat: selectedDemand.location.coordinates[1],
                 lng: selectedDemand.location.coordinates[0],
               }}
-              onCloseClick={() => setSelectedDemand(null)}
+              onCloseClick={() => {
+                setSelectedDemand(null)
+                setHoveringInfoWindow(false)
+              }}
             >
-              <div className='bg-white p-3 rounded shadow-lg'>
-                <h3 className='text-lg font-bold'>{selectedDemand.title}</h3>
+              <div
+                className='bg-white p-3 rounded shadow-lg'
+                onMouseEnter={() => setHoveringInfoWindow(true)}
+                onMouseLeave={() => {
+                  setHoveringInfoWindow(false)
+                  setSelectedDemand(null)
+                }}
+              >
+                <Link
+                  href={`/viewrequest?id=${selectedDemand._id}`}
+                  className='text-blue-600 hover:underline text-xs mt-2 block'
+                >
+                  <h3 className='text-lg font-bold'>{selectedDemand.title}</h3>
+                </Link>
                 <p className='text-sm text-gray-700'>
                   {selectedDemand.description}
                 </p>
@@ -120,6 +139,9 @@ export default function NearbyDemandsMap() {
                 <p className='text-xs text-gray-500'>
                   <strong>Upvotes:</strong> {selectedDemand.up_votes} |{' '}
                   <strong>Downvotes:</strong> {selectedDemand.down_votes}
+                </p>
+                <p className='text-xs text-gray-500 mt-2'>
+                  Click on the title to view details
                 </p>
               </div>
             </InfoWindow>

@@ -6,9 +6,9 @@ import { APIProvider } from "@vis.gl/react-google-maps";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { useState } from 'react'
-import { useLoadScript } from "@react-google-maps/api"
+// import { useLoadScript } from "@react-google-maps/api"
 
-const libraries = ["places"] // Declare globally
+// const libraries = ["places"] // Declare globally
 
 
 

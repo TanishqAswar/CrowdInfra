@@ -17,6 +17,8 @@ router.get("/getDemandById/:id", getDemandById);
  * Query Params: latitude, longitude, radius (optional, default 5km)
  */
 // Route: GET /api/demands/nearby
-router.get("/nearby", getNearbyDemands)
+router.get("/nearby", getNearbyDemands, ()=>{
+  console.log("getNearbyDemands Completed");
+})
 
 module.exports = router;

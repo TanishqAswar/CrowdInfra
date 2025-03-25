@@ -34,7 +34,7 @@ const initializeDemandModel = async () => {
         },
         coordinates: {
           type: [Number], // [longitude, latitude]
-          required: true, // ✅ Fixed typo
+          required: true,
           validate: {
             validator: function (coords) {
               return coords.length === 2 // Ensure exactly 2 values

@@ -1,4 +1,5 @@
 const getDemandModel = require("../models/demandModel.js");
+const colors = require('colors')
 
 // **Create a new demand**
 exports.demand = async (req, res) => {
@@ -80,33 +81,34 @@ exports.getDemandById = async (req, res) => {
 
 // **Get nearby demands**
 exports.getNearbyDemands = async (req, res) => {
-  console.log('Fetching nearby demands...')
+  console.log("Fetching nearby demands...".blue.bgYellow);
   try {
-    const { latitude, longitude, radius = 5000 } = req.query // Default 5km radius
+    const { latitude, longitude, radius = 5000 } = req.query; // Default 5km radius
 
     if (!latitude || !longitude) {
-      return res
-        .status(400)
-        .json({ error: 'Latitude and longitude are required.' })
+      return res.status(400).json({ error: "Latitude and longitude are required." });
     }
 
-    const Demand = await getDemandModel() // Ensure model is initialized
+    const Demand = await getDemandModel(); // Ensure model is initialized
 
     const demands = await Demand.find({
       location: {
         $near: {
           $geometry: {
-            type: 'Point',
+            type: "Point",
             coordinates: [parseFloat(longitude), parseFloat(latitude)], // MongoDB expects [lng, lat]
           },
           $maxDistance: parseInt(radius),
         },
       },
-    })
+    });
 
-    res.json(demands)
+    console.log("Nearby demands fetched successfully!".green);
+    console.log(demands);
+
+    res.json(demands);
   } catch (error) {
-    console.error('Error fetching nearby demands:', error)
-    res.status(500).json({ error: 'Internal server error' })
+    console.error("Error fetching nearby demands:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
-}
+};
