@@ -77,3 +77,36 @@ exports.getDemandById = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+// **Get nearby demands**
+exports.getNearbyDemands = async (req, res) => {
+  console.log('Fetching nearby demands...')
+  try {
+    const { latitude, longitude, radius = 5000 } = req.query // Default 5km radius
+
+    if (!latitude || !longitude) {
+      return res
+        .status(400)
+        .json({ error: 'Latitude and longitude are required.' })
+    }
+
+    const Demand = await getDemandModel() // Ensure model is initialized
+
+    const demands = await Demand.find({
+      location: {
+        $near: {
+          $geometry: {
+            type: 'Point',
+            coordinates: [parseFloat(longitude), parseFloat(latitude)], // MongoDB expects [lng, lat]
+          },
+          $maxDistance: parseInt(radius),
+        },
+      },
+    })
+
+    res.json(demands)
+  } catch (error) {
+    console.error('Error fetching nearby demands:', error)
+    res.status(500).json({ error: 'Internal server error' })
+  }
+}

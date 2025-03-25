@@ -200,8 +200,6 @@ export default function GlobePage() {
   return (
     <>
         <Script src="//unpkg.com/globe.gl" onLoad={initGlobe} />
-        {/* <script src="https://cdn.jsdelivr.net/npm/globe.gl" onLoad={initGlobe}/> */}
-
         <div id="navC" className="bg-black pt-4 md:pt-8 pb-2 md:pb-4 sticky top-0 z-[999]">
           <Navbar />
         </div>
@@ -218,12 +216,12 @@ export default function GlobePage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mb-8 md:mb-16">
               <div className="bg-gray-800/50 backdrop-blur-lg p-6 md:p-8 rounded-2xl border border-gray-700/50 shadow-xl hover:transform hover:scale-105 transition-all duration-300">
-                <div className="bg-blue-600/20 p-4 rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center mb-4 md:mb-6">
+                {/* <div className="bg-blue-600/20 p-4 rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center mb-4 md:mb-6">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                </div>
+                </div> */}
                 <h3 className="text-xl md:text-2xl font-bold mb-2 md:mb-3 text-blue-400">Find Properties</h3>
                 <p className="text-gray-300 mb-4 md:mb-6">Discover available properties in your area and get detailed information about them.</p>
                 <Link href="/property" className="inline-block px-4 py-2 md:px-6 md:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm md:text-base">
