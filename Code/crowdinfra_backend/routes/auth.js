@@ -43,7 +43,7 @@ router.get('/verify', (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    console.log(decoded)
+    console.log(`${decoded}`.red)
     console.log(decoded.user)
     return res.json({ valid: true, user: decoded.user })
   } catch (err) {

@@ -1,13 +1,10 @@
 'use client'
 import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Footer from '@/app/components/footer'
+import Footer from '../components/footer'
 import axios from 'axios'
 import Cookies from 'js-cookie'
-// import { useEffect } from 'react'
-// import HeroSection from './components/hero_section'
-
-import DecryptedText from '@/app/ui_comp/de_para'
+import DecryptedText from '../ui_comp/de_para'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
