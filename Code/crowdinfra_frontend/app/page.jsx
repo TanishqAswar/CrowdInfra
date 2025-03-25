@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from 'next/navigation'
 import Script from "next/script";
 import * as THREE from "three";
 import Maps from "./maps/page";
@@ -9,12 +10,51 @@ import Navbar from "./components/navbar";
 import { useUserContext } from "./components/user_context";
 import Link from "next/link";
 import Footer from "./components/footer";
+import NearbyDemandsMap from "./components/NearbyDemandsMap";
+import Loading from "./components/loading";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 export default function GlobePage() {
   const globeRef = useRef();
   const [isMapExpanded, setIsMapExpanded] = useState(false);
   const [showMap, setShowMap] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const router = useRouter()
 
+   useEffect(() => {
+     const verifyUser = async () => {
+       try {
+         const response = await axios.get(
+           'http://localhost:5030/api/auth/verify',
+           {
+             withCredentials: true, // Send cookies with the request
+           }
+         )
+
+         if (response.data.valid) {
+           console.log('User is authenticated:', response.data.user)
+           setIsAuthenticated(true)
+         } else {
+           console.log('Invalid token. Redirecting...')
+           toast.error('Please login to continue')
+           router.push('/landing')
+         }
+       } catch (error) {
+         console.error('Error verifying user:', error)
+         router.push('/landing')
+       }
+     }
+
+     verifyUser()
+   }, [])
+
+   // Prevent rendering until authentication check is complete
+   if (isAuthenticated === null) {
+     return <Loading text='Verifying user...' />
+   }
+
+  
   const initGlobe = () => {
     const world = (globeRef.current.__world = new Globe(globeRef.current, {
       animateIn: false,
@@ -24,18 +64,18 @@ export default function GlobePage() {
       )
       .bumpImageUrl("//unpkg.com/three-globe/example/img/earth-topology.png"));
 
-    // Auto-rotate
-    world.controls().autoRotate = true;
-    world.controls().autoRotateSpeed = 0.35;
-
-    // Add clouds sphere
-    const CLOUDS_IMG_URL = "./clouds.png";
-    const CLOUDS_ALT = 0.004;
-    const CLOUDS_ROTATION_SPEED = -0.006; // deg/frame
-
-    new THREE.TextureLoader().load(CLOUDS_IMG_URL, (cloudsTexture) => {
-      const clouds = new THREE.Mesh(
-        new THREE.SphereGeometry(
+      // Auto-rotate
+      world.controls().autoRotate = true;
+      world.controls().autoRotateSpeed = 0.35;
+      
+      // Add clouds sphere
+      const CLOUDS_IMG_URL = "./clouds.png";
+      const CLOUDS_ALT = 0.004;
+      const CLOUDS_ROTATION_SPEED = -0.006; // deg/frame
+      
+      new THREE.TextureLoader().load(CLOUDS_IMG_URL, (cloudsTexture) => {
+        const clouds = new THREE.Mesh(
+          new THREE.SphereGeometry(
           world.getGlobeRadius() * (1 + CLOUDS_ALT),
           75,
           75
@@ -48,7 +88,7 @@ export default function GlobePage() {
         requestAnimationFrame(rotateClouds);
       })();
     });
-
+    
     // Add double-click event listener to toggle map expansion
     globeRef.current.addEventListener('dblclick', handleMapToggle);
     
@@ -68,7 +108,7 @@ export default function GlobePage() {
       globeRef.current?.removeEventListener('dblclick', handleMapToggle);
     };
   };
-
+  
   const handleMapToggle = () => {
     if (!showMap) return; // Don't toggle if map shouldn't be shown
     
@@ -116,86 +156,87 @@ export default function GlobePage() {
       }
     }
   };
-
-  // When the selectedPlace is not null or changed we need to rotate the map at high speed and zoom and scroll to the bottom of the screen.
-  const { selectedPlace } = useUserContext();
   
-  useEffect(() => {
-    // Only show map when a place is selected
-    setShowMap(!!selectedPlace);
+  // When the selectedPlace is not null or changed we need to rotate the map at high speed and zoom and scroll to the bottom of the screen.
+  // const { selectedPlace } = useUserContext();
+  
+  // useEffect(() => {
+  //   // Only show map when a place is selected
+  //   setShowMap(!selectedPlace);
     
-    if (selectedPlace) {
-      const world = globeRef.current.__world;
-      if (world) {
-        // Increase rotation speed and zoom in with transition
-        const targetRotationSpeed = 5;
-        const targetZoom = 20; // Double the zoom value
-        const transitionDuration = 2000; // Transition duration in milliseconds
+    
+  //   if (selectedPlace) {
+  //     const world = globeRef.current.__world;
+  //     if (world) {
+  //       // Increase rotation speed and zoom in with transition
+  //       const targetRotationSpeed = 5;
+  //       const targetZoom = 20; // Double the zoom value
+  //       const transitionDuration = 2000; // Transition duration in milliseconds
 
-        const initialRotationSpeed = world.controls().autoRotateSpeed;
-        const initialZoom = world.camera().position.z;
+  //       const initialRotationSpeed = world.controls().autoRotateSpeed;
+  //       const initialZoom = world.camera().position.z;
 
-        const startTime = performance.now();
+  //       const startTime = performance.now();
 
-        const animateTransition = (currentTime) => {
-          const elapsedTime = currentTime - startTime;
-          const progress = Math.min(elapsedTime / transitionDuration, 1);
+  //       const animateTransition = (currentTime) => {
+  //         const elapsedTime = currentTime - startTime;
+  //         const progress = Math.min(elapsedTime / transitionDuration, 1);
 
-          world.controls().autoRotateSpeed =
-            initialRotationSpeed +
-            (targetRotationSpeed - initialRotationSpeed) * progress;
-          world.camera().position.z =
-            initialZoom + (targetZoom - initialZoom) * progress;
+  //         world.controls().autoRotateSpeed =
+  //           initialRotationSpeed +
+  //           (targetRotationSpeed - initialRotationSpeed) * progress;
+  //         world.camera().position.z =
+  //           initialZoom + (targetZoom - initialZoom) * progress;
 
-          if (progress < 1) {
-            requestAnimationFrame(animateTransition);
-          } else {
-            setIsMapExpanded(true);
+  //         if (progress < 1) {
+  //           requestAnimationFrame(animateTransition);
+  //         } else {
+  //           setIsMapExpanded(true);
             
-            // Scroll to the map element if it exists
-            const mapElement = document.getElementById("map");
-            if (mapElement) {
-              mapElement.scrollIntoView({ behavior: 'smooth' });
-              mapElement.style.transition = `opacity ${transitionDuration}ms`;
-              mapElement.style.opacity = "1";
-            } else {
-              // Fallback to scrolling to bottom
-              window.scrollTo({
-                top: document.body.scrollHeight,
-                behavior: 'smooth'
-              });
-            }
+  //           // Scroll to the map element if it exists
+  //           const mapElement = document.getElementById("map");
+  //           if (mapElement) {
+  //             mapElement.scrollIntoView({ behavior: 'smooth' });
+  //             mapElement.style.transition = `opacity ${transitionDuration}ms`;
+  //             mapElement.style.opacity = "1";
+  //           } else {
+  //             // Fallback to scrolling to bottom
+  //             window.scrollTo({
+  //               top: document.body.scrollHeight,
+  //               behavior: 'smooth'
+  //             });
+  //           }
             
-            const navC = document.getElementById("navC");
-            if (navC) {
-              navC.style.background="transparent";
-            }
-          }
-        };
+  //           const navC = document.getElementById("navC");
+  //           if (navC) {
+  //             navC.style.background="transparent";
+  //           }
+  //         }
+  //       };
 
-        requestAnimationFrame(animateTransition);
-      }
-    }
-  }, [selectedPlace]);
+  //       requestAnimationFrame(animateTransition);
+  //     }
+  //   }
+  // }, [selectedPlace]);
 
-  useEffect(() => {
-    // Add instruction tooltip for users
-    const tooltip = document.createElement('div');
-    tooltip.className = 'fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800/80 text-white px-4 py-2 rounded-full shadow-lg z-50 text-sm md:text-base';
-    tooltip.innerHTML = 'Double-click to toggle map, scroll normally to navigate page';
-    document.body.appendChild(tooltip);
+  // useEffect(() => {
+  //   // Add instruction tooltip for users
+  //   const tooltip = document.createElement('div');
+  //   tooltip.className = 'fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800/80 text-white px-4 py-2 rounded-full shadow-lg z-50 text-sm md:text-base';
+  //   tooltip.innerHTML = 'Double-click to toggle map, scroll normally to navigate page';
+  //   document.body.appendChild(tooltip);
 
-    // Remove tooltip after 5 seconds
-    setTimeout(() => {
-      tooltip.style.opacity = '0';
-      tooltip.style.transition = 'opacity 1s';
-      setTimeout(() => tooltip.remove(), 1000);
-    }, 5000);
+  //   // Remove tooltip after 5 seconds
+  //   setTimeout(() => {
+  //     tooltip.style.opacity = '0';
+  //     tooltip.style.transition = 'opacity 1s';
+  //     setTimeout(() => tooltip.remove(), 1000);
+  //   }, 5000);
 
-    return () => {
-      tooltip.remove();
-    };
-  }, []);
+  //   return () => {
+  //     tooltip.remove();
+  //   };
+  // }, []);
 
   return (
     <>
@@ -203,7 +244,7 @@ export default function GlobePage() {
         <div id="navC" className="bg-black pt-4 md:pt-8 pb-2 md:pb-4 sticky top-0 z-[999]">
           <Navbar />
         </div>
-        <div style={{ margin: "0px", padding:"0px" }} className="z-10 h-[50vh] md:h-[70vh] lg:h-[80vh]">
+        <div style={{ marginTop: "0px", padding:"0px" }} className="z-10 h-[50vh] md:h-[70vh] lg:h-[80vh]">
           <div ref={globeRef} id="globeViz" className="z-1000 cursor-pointer w-full h-full" />
         </div>
 
@@ -297,6 +338,8 @@ export default function GlobePage() {
             </div>
           </div>
         </div>
+
+        <NearbyDemandsMap />
 
         {showMap && <Maps />}
         <Footer />

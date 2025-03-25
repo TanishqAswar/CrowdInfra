@@ -17,7 +17,7 @@ const containerStyle = {
 
 const defaultCenter = { lat: 20.5937, lng: 78.9629 } // Default: India center
 
-export default function NearbyDemandsMap() {
+export default function NearbyDemandsMap({ onDemandSelect }) {
   const [location, setLocation] = useState(null)
   const [error, setError] = useState(null)
   const [demands, setDemands] = useState([])
@@ -26,7 +26,7 @@ export default function NearbyDemandsMap() {
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
-    libraries: ['marker'],
+    libraries: ['marker', 'places'],
   })
 
   useEffect(() => {
@@ -63,6 +63,11 @@ export default function NearbyDemandsMap() {
     }
   }
 
+  const handleDemandSelect = (demand) => {
+    setSelectedDemand(demand)
+    onDemandSelect && onDemandSelect(demand)
+  }
+
   if (loadError)
     return (
       <p className='text-red-500'>
@@ -71,8 +76,7 @@ export default function NearbyDemandsMap() {
     )
 
   return (
-    <div className='p-4'>
-      <h2 className='text-xl font-bold mb-4'>Nearby Demands</h2>
+    <div className='relative'>
       {error && <p className='text-red-500'>{error}</p>}
 
       {isLoaded ? (
@@ -84,7 +88,7 @@ export default function NearbyDemandsMap() {
           {location && (
             <Marker
               position={location}
-              icon={'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'}
+              icon={'http://maps.google.com/mapfiles/ms/icons/green-dot.png'}
             />
           )}
 
@@ -95,10 +99,10 @@ export default function NearbyDemandsMap() {
                 lat: demand.location.coordinates[1],
                 lng: demand.location.coordinates[0],
               }}
-              onMouseOver={() => setSelectedDemand(demand)}
+              onMouseOver={() => handleDemandSelect(demand)}
               onMouseOut={() => {
                 if (!hoveringInfoWindow) {
-                  setSelectedDemand(null)
+                  handleDemandSelect(null)
                 }
               }}
               icon={'http://maps.google.com/mapfiles/ms/icons/red-dot.png'}
@@ -112,7 +116,7 @@ export default function NearbyDemandsMap() {
                 lng: selectedDemand.location.coordinates[0],
               }}
               onCloseClick={() => {
-                setSelectedDemand(null)
+                handleDemandSelect(null)
                 setHoveringInfoWindow(false)
               }}
             >
@@ -121,7 +125,7 @@ export default function NearbyDemandsMap() {
                 onMouseEnter={() => setHoveringInfoWindow(true)}
                 onMouseLeave={() => {
                   setHoveringInfoWindow(false)
-                  setSelectedDemand(null)
+                  handleDemandSelect(null)
                 }}
               >
                 <Link
@@ -130,7 +134,7 @@ export default function NearbyDemandsMap() {
                 >
                   <h3 className='text-lg font-bold'>{selectedDemand.title}</h3>
                 </Link>
-                <p className='text-sm text-gray-700'>
+                <p className='text-sm text-gray-700 mb-2 leading-relaxed'>
                   {selectedDemand.description}
                 </p>
                 <p className='text-xs text-gray-500 mt-2'>

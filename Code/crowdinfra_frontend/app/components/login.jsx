@@ -63,7 +63,7 @@ const LoginPage = ({ setIsLogin }) => {
         if (response.data && response.data.success) {
           toast.success('Login successful! Redirecting to home...')
           setIsLogin(true)
-          router.push('/home')
+          router.push('/')
         } else {
           throw new Error('Login failed')
         }

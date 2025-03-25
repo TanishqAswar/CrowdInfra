@@ -154,7 +154,7 @@ const ProfilePage = () => {
                   <Image
                     src={
                       user.profile_image
-                        ? `http://localhost:5000${user.profile_image}`
+                        ? `http://localhost:5030${user.profile_image}`
                         : '/default-avatar.png'
                     }
                     alt={user.name || 'User Profile'}

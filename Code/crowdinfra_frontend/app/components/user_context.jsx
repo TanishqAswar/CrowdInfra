@@ -1,91 +1,61 @@
-"use client";
-import React, { createContext, useState, useContext } from "react";
+'use client'
+import React, { createContext, useState, useContext, useEffect } from 'react'
+import axios from 'axios'
+import { useRouter } from 'next/navigation'
+import Cookies from 'js-cookie'
 
-const UserContext = createContext();
+const UserContext = createContext()
 
 export const UserProvider = ({ children }) => {
-  const [selectedPlace, setSelectedPlace] = useState(null); // Stores selected location (from search or map click)
-  const [demandLocations, setDemandLocations] = useState([]); // Stores all raised demands as markers on map
-  const [overlayOn, setOverlayOn] = useState(false);
-  const [imageBlob, setImageBlob] = useState(null);
-  const [scaleVal, setScaleVal] = useState(null);
-  const [searchResults, setSearchResults] = useState([]); // Store search results
-  const [activeDemand, setActiveDemand] = useState(null); // Track active/highlighted demand
+  const [selectedPlace, setSelectedPlace] = useState(null)
+  const [demandLocations, setDemandLocations] = useState([])
+  const [overlayOn, setOverlayOn] = useState(false)
+  const [imageBlob, setImageBlob] = useState(null)
+  const [scaleVal, setScaleVal] = useState(null)
+  const [searchResults, setSearchResults] = useState([])
+  const [activeDemand, setActiveDemand] = useState(null)
+  const [user, setUser] = useState(null) // Track logged-in user
+  const router = useRouter()
 
-  /**
-   * Handles location selection from search input.
-   * @param {Object} place - The selected place from Google Places API.
-   */
-  const handlePlaceSelect = (place) => {
-    if (place?.geometry?.location) {
-      const newPlace = {
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng(),
-        name: place.formatted_address || "",
-        placeId: place.place_id
-      };
-      setSelectedPlace(newPlace);
-      setActiveDemand(null); // Reset active demand when new place selected
+  // Verify user authentication
+  useEffect(() => {
+    const verifyUser = async () => {
+      const token = Cookies.get('crowdInfra_token') // Get token from cookies
+      if (!token) {
+        // router.push('/landing') // Redirect if token is missing
+        return
+      }
+
+      try {
+        const response = await axios.get('http://localhost:5030/api/verify', {
+          withCredentials: true, // Ensure cookies are sent
+        })
+
+        if (response.data.valid) {
+          setUser(response.data.user) // Store user data
+        } else {
+          // router.push('/landing') // Redirect if invalid token
+        }
+      } catch (error) {
+        // router.push('/landing') // Redirect on error
+      }
     }
-  };
 
-  /**
-   * Handles map click to set selected place manually.
-   * @param {Object} event - The Google Maps click event.
-   */
-  const handleMapClick = (event) => {
-    if (event?.latLng) {
-      const newPlace = {
-        lat: event.latLng.lat(),
-        lng: event.latLng.lng(),
-        name: "Pinned Location",
-      };
-      setSelectedPlace(newPlace);
-      setActiveDemand(null); // Reset active demand when new place selected
-    }
-  };
+    verifyUser()
+  }, [router])
 
-  /**
-   * Raises a demand at the selected location.
-   * @param {Object} demandDetails - Details of the demand (title, description, etc.).
-   */
-  const raiseDemand = (demandDetails) => {
-    if (selectedPlace) {
-      const newDemand = {
-        id: Date.now(), // Temporary ID for tracking
-        ...demandDetails,
-        location: selectedPlace,
-        status: 'active'
-      };
-      setDemandLocations((prev) => [...prev, newDemand]);
-      setSelectedPlace(null); // Reset selection after raising demand
-    }
-  };
-
-  /**
-   * Searches for demands and updates markers accordingly.
-   * @param {Array} fetchedDemands - Array of demand objects from backend response.
-   */
-  const loadDemandMarkers = (fetchedDemands) => {
-    setDemandLocations(fetchedDemands);
-    setSearchResults(fetchedDemands); // Store search results
-  };
-
-  /**
-   * Highlights a specific demand on the map
-   * @param {string} demandId - ID of demand to highlight
-   */
-  const highlightDemand = (demandId) => {
-    const demand = demandLocations.find(d => d.id === demandId);
-    if (demand) {
-      setActiveDemand(demand);
-      setSelectedPlace(null); // Clear any selected place
-    }
-  };
+  // Logout function
+  const logout = () => {
+    Cookies.remove('crowdInfra_token') // Remove token
+    setUser(null) // Clear user state
+    // router.push('/landing') // Redirect to login page
+  }
 
   return (
     <UserContext.Provider
       value={{
+        user,
+        logout,
         selectedPlace,
         setSelectedPlace,
         demandLocations,
@@ -98,16 +68,54 @@ export const UserProvider = ({ children }) => {
         setScaleVal,
         searchResults,
         activeDemand,
-        handlePlaceSelect,
-        handleMapClick,
-        raiseDemand,
-        loadDemandMarkers,
-        highlightDemand
+        handlePlaceSelect: (place) => {
+          if (place?.geometry?.location) {
+            setSelectedPlace({
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng(),
+              name: place.formatted_address || '',
+              placeId: place.place_id,
+            })
+            setActiveDemand(null)
+          }
+        },
+        handleMapClick: (event) => {
+          if (event?.latLng) {
+            setSelectedPlace({
+              lat: event.latLng.lat(),
+              lng: event.latLng.lng(),
+              name: 'Pinned Location',
+            })
+            setActiveDemand(null)
+          }
+        },
+        raiseDemand: (demandDetails) => {
+          if (selectedPlace) {
+            setDemandLocations((prev) => [
+              ...prev,
+              {
+                id: Date.now(),
+                ...demandDetails,
+                location: selectedPlace,
+                status: 'active',
+              },
+            ])
+            setSelectedPlace(null)
+          }
+        },
+        loadDemandMarkers: setDemandLocations,
+        highlightDemand: (demandId) => {
+          const demand = demandLocations.find((d) => d.id === demandId)
+          if (demand) {
+            setActiveDemand(demand)
+            setSelectedPlace(null)
+          }
+        },
       }}
     >
       {children}
     </UserContext.Provider>
-  );
-};
+  )
+}
 
-export const useUserContext = () => useContext(UserContext);
+export const useUserContext = () => useContext(UserContext)
