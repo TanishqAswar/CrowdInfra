@@ -50,7 +50,7 @@ const initializeDemandModel = async () => {
         required: true,
         enum: [
           "infrastructure",
-          "public Service",
+          "public service",
           "transportation",
           "utilities",
           "education",
@@ -66,11 +66,6 @@ const initializeDemandModel = async () => {
       up_votes: {
         type: Number,
         default: 1,
-        min: 0, // Prevents negative votes
-      },
-      down_votes: {
-        type: Number,
-        default: 0,
         min: 0, // Prevents negative votes
       },
     },
