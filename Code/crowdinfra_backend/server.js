@@ -9,6 +9,7 @@ const cors = require('cors')
 const colors = require('colors')
 const morgan = require('morgan')
 const path = require('path')
+const cookieParser = require('cookie-parser')
 
 //> Import Routes
 // const userRoutes = require("./routes/userRoutes");
@@ -27,7 +28,13 @@ const app = express();
     // Middlewares
     app.use(express.urlencoded({ extended: true }))
     app.use(express.json())
-    app.use(cors())
+    app.use(
+      cors({
+        origin: 'http://localhost:3000', // 👈 Set frontend URL
+        credentials: true, // 👈 Allow cookies & authorization headers
+      })
+    )
+    app.use(cookieParser())
     app.use(morgan('dev'))
     
     // Serve static files from the "uploads" folder

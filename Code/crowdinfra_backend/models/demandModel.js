@@ -1,21 +1,20 @@
-// import mongoose from "mongoose";
-const mongoose = require("mongoose");
-const connectDBs = require("../config/db");
-let Demand = null;
-let modelInitialized = false;
+const mongoose = require('mongoose')
+const connectDBs = require('../config/db')
 
-// Ensure `demandsDB` is initialized before use
+let Demand = null
+let modelInitialized = false
 
 const initializeDemandModel = async () => {
-  if (modelInitialized) return Demand;
+  if (modelInitialized) return Demand
 
-  const { demandsDB } = await connectDBs();
+  const { demandsDB } = await connectDBs()
+
   const demandSchema = new mongoose.Schema(
     {
       user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: false, //TODO: Change to true and get userid from token
+        ref: 'User',
+        required: false, // TODO: Change to true and get userid from token
       },
       title: {
         type: String,
@@ -30,7 +29,7 @@ const initializeDemandModel = async () => {
       location: {
         type: {
           type: String,
-          enum: ["Point"],
+          enum: ['Point'],
           required: true,
         },
         coordinates: {
@@ -38,10 +37,10 @@ const initializeDemandModel = async () => {
           required: true,
           validate: {
             validator: function (coords) {
-              return coords.length === 2; // Ensure exactly 2 values
+              return coords.length === 2 // Ensure exactly 2 values
             },
             message:
-              "Coordinates must be an array of two numbers [longitude, latitude].",
+              'Coordinates must be an array of two numbers [longitude, latitude].',
           },
         },
       },
@@ -60,40 +59,37 @@ const initializeDemandModel = async () => {
       },
       status: {
         type: String,
-        enum: ["fulfilled", "not_fulfilled"],
-        default: "not_fulfilled",
+        enum: ['fulfilled', 'not_fulfilled'],
+        default: 'not_fulfilled',
       },
       up_votes: {
         type: Number,
         default: 1,
-        min: 0, // Prevents negative votes
+        min: 0,
       },
     },
     { timestamps: true }
-  );
+  )
 
-  // Bind to propertiesDB and assign to the global variable
-  Demand = demandsDB.model("Demand", demandSchema);
-  modelInitialized = true;
-  return Demand;
-};
+  // ✅ Ensure geospatial indexing
+  demandSchema.index({ location: '2dsphere' })
 
-// // **GeoSpatial Index for Efficient Location-Based Queries**
-// demandSchema.index({ location: "2dsphere" });
+  Demand = demandsDB.model('Demand', demandSchema)
+  modelInitialized = true
+  return Demand
+}
 
-// export const Demand = demandsDB.model("Demand", demandSchema);
-
-// Initialize immediately
+// ✅ Initialize immediately
 initializeDemandModel().catch((err) =>
-  console.error("Failed to initialize Demand model:", err)
-);
+  console.error('Failed to initialize Demand model:', err)
+)
 
-// Export an async function that ensures the model is available
+// ✅ Export function to get Demand model
 const getDemandModel = async () => {
   if (!Demand) {
-    await initializeDemandModel();
+    await initializeDemandModel()
   }
-  return Demand;
-};
+  return Demand
+}
 
-module.exports = getDemandModel;
+module.exports = getDemandModel

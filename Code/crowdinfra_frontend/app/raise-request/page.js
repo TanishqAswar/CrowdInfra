@@ -6,6 +6,7 @@ import Navbar from "../components/navbar";
 import { useUserContext } from "../components/user_context";
 import PlaceAutocomplete from "../components/autocomplete";
 import { ThumbsUp, MessageCircle } from "lucide-react";
+import Footer from "../components/footer";
 
 const containerStyle = {
   width: "100%",
@@ -165,6 +166,7 @@ const RaiseRequestPage = () => {
     );
 
   return (
+    <>
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-10 text-gray-100">
       <Navbar />
 
@@ -364,7 +366,6 @@ const RaiseRequestPage = () => {
 
           {requests.length === 0 ? (
             <div className="text-center text-gray-400 py-8">
-              <p>No requests yet. Be the first to raise a request!</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -470,6 +471,8 @@ const RaiseRequestPage = () => {
         </div>
       </div>
     </div>
+     <Footer />
+     </>
   );
 };
 
