@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 const Footer = () => {
     return (
-        <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-8 shadow-2xl">
+        <footer className="bg-black to-gray-900 text-white py-8 shadow-2xl">
             <div className="container mx-auto px-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 place-items-start">
                     {/* Company Info */}
@@ -10,9 +10,7 @@ const Footer = () => {
                         <div>
                             <h3 className="text-3xl font-bold mb-4 text-white bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600 flex items-center">
                                 CrowdInfra
-                                <span className="ml-2 animate-pulse text-yellow-400">
-                                    ⚡
-                                </span>
+                                
                             </h3>
                             <p className="text-gray-300 text-opacity-80 leading-relaxed">
                                 Building better infrastructure through community collaboration and innovative solutions.
