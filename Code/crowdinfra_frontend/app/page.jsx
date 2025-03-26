@@ -14,6 +14,7 @@ import NearbyDemandsMap from "./components/NearbyDemandsMap";
 import Loading from "./components/loading";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Rating from "./components/ratings";
 
 export default function GlobePage() {
   const globeRef = useRef();
@@ -331,7 +332,7 @@ export default function GlobePage() {
             </div>
             
             <div className="text-center">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Ready to improve your community?</h2>
+              <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-6">Ready to improve your community?</h2>
               <Link href="/raise-request" className="inline-block px-4 py-2 md:px-5 md:py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300 text-base md:text-lg font-semibold">
                 Lets Bring a Change
               </Link>
@@ -339,9 +340,13 @@ export default function GlobePage() {
           </div>
         </div>
 
-        <NearbyDemandsMap />
+        {/* <NearbyDemandsMap /> */}
 
-        {showMap && <Maps />}
+        {/* {showMap && <Maps />} */}
+        <div className="bg-black py-5">
+        <Rating />
+        </div>
+
         <Footer />
     </>
   );
