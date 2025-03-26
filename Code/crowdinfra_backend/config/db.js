@@ -12,9 +12,10 @@ const connectDBs = async () => {
     const demandsDB = await mongoose.createConnection(
       process.env.DEMANDS_DB_URI
     )
+    const ratingDB = await mongoose.connect(process.env.RATING_DB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
     console.log('✅ All Databases Connected...'.green)
-    return { usersDB, propertiesDB, demandsDB }
+    return { usersDB, propertiesDB, demandsDB, ratingDB }
   } catch (err) {
     console.error('❌ DB Connection Error:', err.message)
     process.exit(1)
