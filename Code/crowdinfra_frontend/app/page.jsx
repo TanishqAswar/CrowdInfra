@@ -377,8 +377,8 @@ export default function GlobePage() {
         </div>
 
         <Footer />
-
-
+      </div>
+    </div>
     </>
-  )
+  );
 }
