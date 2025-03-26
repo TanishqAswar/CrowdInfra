@@ -14,6 +14,7 @@ import NearbyDemandsMap from "./components/NearbyDemandsMap";
 import Loading from "./components/loading";
 import axios from "axios";
 import { toast } from "react-toastify";
+import DecryptedText from './ui_comp/de_para'
 
 export default function GlobePage() {
   const globeRef = useRef();
@@ -159,12 +160,12 @@ export default function GlobePage() {
 
   return (
     <>
-      <Script src='//unpkg.com/globe.gl' onLoad={initGlobe} />
       <div
         id='navC'
         className='bg-black pt-4 md:pt-8 pb-2 md:pb-4 sticky top-0 z-[999]'
       >
         <Navbar />
+      <Script src='//unpkg.com/globe.gl' onLoad={initGlobe} />
       </div>
       <div
         style={{ marginTop: '0px', padding: '0px' }}
@@ -296,8 +297,11 @@ export default function GlobePage() {
             </div>
           </div>
           <div className='bg-gray-800/30 backdrop-blur-lg p-6 md:p-8 rounded-2xl border border-gray-700/50 shadow-xl mb-8 md:mb-16 text-center'>
-            <h2 className='text-2xl md:text-3xl font-bold mb-3 md:mb-4 ' style={{ color: '#f9fafb', marginBottom: '1.5rem' }}>
-              ~ Nearby Demands ~
+            <h2
+              className='text-2xl md:text-3xl font-bold mb-3 md:mb-4'
+              style={{ color: '#f9fafb', marginBottom: '1.5rem' }}
+            >
+              <DecryptedText text='~ Nearby Demands ~' />
             </h2>
 
             <NearbyDemandsMap />

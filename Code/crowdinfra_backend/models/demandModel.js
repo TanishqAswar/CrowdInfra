@@ -53,6 +53,7 @@ const initializeDemandModel = async () => {
           'transportation',
           'utilities',
           'education',
+          'public service',
           'healthcare',
           'other',
         ],
