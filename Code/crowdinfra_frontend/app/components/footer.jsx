@@ -17,6 +17,7 @@ const Footer = () => {
                             </p>
                         </div>
                         
+                        
                         <div className="flex space-x-4">
                             {[
                                 { 

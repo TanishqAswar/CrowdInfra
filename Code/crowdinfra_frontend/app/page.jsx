@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -124,7 +123,7 @@ export default function GlobePage() {
         mapElement.scrollIntoView({ behavior: 'smooth' });
         
         // Show map with transition
-        mapElement.style.transition = `opacity 1000ms`;
+        mapElement.style.transition = "opacity 1000ms";
         mapElement.style.opacity = "1";
       } else {
         // If map element doesn't exist yet, scroll to bottom
@@ -385,9 +384,15 @@ export default function GlobePage() {
 
         {/* {showMap && <Maps />} */}
         <div className="bg-black py-5">
-        <Rating />
-        </div>
+          <Rating />
 
+        <Link
+          href="/rating"
+          className="text-white rounded-full p-3 shadow-lg hover:bg-blue-700 transition-all duration-300 z-50" style={{ background: 'linear-gradient(45deg, #40ffaa, #4079ff)', marginTop: '1rem', display: 'inline-block', marginLeft: '44%'
+           }}>
+            Give us a Thumbs Up
+        </Link>
+        </div>
         <Footer />
       </div>
     </div>

@@ -2,15 +2,18 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Footer from '../components/footer'
+import { Globe, Network, Users } from 'lucide-react'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import DecryptedText from '../ui_comp/de_para'
 import * as THREE from 'three'
+import VariableProximity from '../components/VariableProximity'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 // Custom HeroSection component with Three.js
 const HeroSection = () => {
   const mountRef = useRef(null)
+  const textContainerRef = useRef(null)  // Add this line
   const [isReady, setIsReady] = useState(false)
 
   useEffect(() => {
@@ -199,7 +202,7 @@ const HeroSection = () => {
       controls.update()
       renderer.render(scene, camera)
     }
-    
+
     animate()
     setIsReady(true)
     
@@ -209,33 +212,43 @@ const HeroSection = () => {
       mountRef.current?.removeChild(renderer.domElement)
       renderer.dispose()
     }
-  }, [])
-
+  }, []);
+  
   return (
     <div className="relative w-full h-screen">
       <div ref={mountRef} className="absolute inset-0" />
       <div className="absolute inset-0 flex items-center justify-center z-10 p-4">
-        <div className={`text-center transition-opacity duration-1000 ${isReady ? 'opacity-100' : 'opacity-0'}`}>
-          <DecryptedText
-            text="CROWD INFRA"
-            className="text-white text-7xl font-bold tracking-wider mb-4 text-shadow-lg"
-            animateOn="view"
-            speed={80}
-            revealDirection="center"
-          />
-          <br />
-          <DecryptedText
-            text="Mapping Community Infrastructure Together"
-            className="text-white text-2xl mt-4"
-            animateOn="view"
-            speed={120}
-            revealDirection="center"
-          />
+        <div 
+          ref={textContainerRef}
+          className="absolute inset-0 flex items-center justify-center z-10 p-4"
+          style={{position: 'relative'}}
+        >
+          <div className={`text-center transition-opacity duration-1000 ${isReady ? 'opacity-100' : 'opacity-0'}`}>
+            <VariableProximity
+              label="CrowdInfra"
+              className="text-white text-7xl font-bold tracking-tighter mb-4 text-shadow-lg"
+              fromFontVariationSettings="'wght' 400, 'opsz' 9"
+              toFontVariationSettings="'wght' 1000, 'opsz' 40"
+              containerRef={textContainerRef}
+              radius={150}
+              falloff='linear'
+            />
+            <br />
+            <DecryptedText
+              text="Mapping Community Infrastructure Together"
+              className="text-white text-2xl mt-4"
+              animateOn="view"
+              speed={120}
+              revealDirection="center"
+            />
+          </div>
         </div>
       </div>
     </div>
   )
 }
+
+
 
 export default function Home() {
   const router = useRouter()
@@ -404,7 +417,7 @@ export default function Home() {
             
             <div className="w-16 h-1 bg-blue-500 rounded-full mb-6 transition-all duration-300 hover:w-24 hover:bg-blue-400"></div>
             
-            <p className="text-gray-300 text-lg mb-10 max-w-xl transition-all duration-300 hover:text-gray-200">
+            <p className="text-gray-300 text-lg mb-7 max-w-xl transition-all duration-300 hover:text-gray-200">
               Join us in building better infrastructure for everyone
             </p>
             
@@ -415,18 +428,17 @@ export default function Home() {
               Get Started
             </button>
             
-            <div className="mt-10 text-sm text-gray-400 transition-all duration-300 hover:text-gray-300">
+            <div className="mt-6 text-sm text-gray-400 transition-all duration-300 hover:text-gray-300">
               <p className="mb-4">Trusted by communities worldwide</p>
               <div className="flex items-center justify-center space-x-6">
-          <div className="w-8 h-8 bg-gray-700 rounded-full transition-all duration-300 hover:bg-blue-700 hover:scale-110"></div>
-          <div className="w-8 h-8 bg-gray-700 rounded-full transition-all duration-300 hover:bg-blue-700 hover:scale-110"></div>
-          <div className="w-8 h-8 bg-gray-700 rounded-full transition-all duration-300 hover:bg-blue-700 hover:scale-110"></div>
+              <div className="transition-all duration-300 hover:scale-110 hover:text-blue-400 "> <Globe size={32} /></div>
+              <div className="transition-all duration-300 hover:scale-110 hover:text-green-400"> <Network size={32} /></div>
+              <div className="transition-all duration-300 hover:scale-110 hover:text-purple-400"> <Users size={32} /></div>
               </div>
             </div>
           </div>
         </div>
               </div>
-              
               {/* Footer */}
       <Footer/>
     </main>

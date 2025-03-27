@@ -43,6 +43,54 @@ const ProfilePage = () => {
     }
   }
 
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     setLoading(true)
+  //     setError(null)
+
+  //     try {
+  //       const response = await axios.get(
+  //         'http://localhost:5030/api/user/profile',
+  //         {
+  //           withCredentials: true, // ✅ Send cookies with request
+  //         }
+  //       )
+
+  //       if (response.status !== 200) {
+  //         throw new Error('Failed to fetch user data')
+  //       }
+
+  //       setUser(response.data)
+
+  //       if (response.data?.address && isLoaded) {
+  //         const geocoder = new window.google.maps.Geocoder()
+  //         geocoder.geocode(
+  //           { address: response.data.address },
+  //           (results, status) => {
+  //             if (status === 'OK' && results[0]) {
+  //               const { lat, lng } = results[0].geometry.location
+  //               setMapCenter({ lat: lat(), lng: lng() })
+  //             } else {
+  //               setMapCenter(
+  //                 response.data.location || { lat: 28.6139, lng: 77.209 }
+  //               )
+  //             }
+  //           }
+  //         )
+  //       } else if (response.data?.location) {
+  //         setMapCenter(response.data.location)
+  //       }
+  //     } catch (err) {
+  //       console.error('Error fetching profile:', err)
+  //       setError(err.message || 'Failed to load profile data')
+  //     } finally {
+  //       setLoading(false)
+  //     }
+  //   }
+
+  //   fetchUserData()
+  // }, [isLoaded]) // ✅ Re-run when Google Maps is loaded
+
   useEffect(() => {
     const fetchUserData = async () => {
       setLoading(true)
@@ -52,7 +100,7 @@ const ProfilePage = () => {
         const response = await axios.get(
           'http://localhost:5030/api/user/profile',
           {
-            withCredentials: true, // ✅ Send cookies with request
+            withCredentials: true,
           }
         )
 
@@ -62,6 +110,7 @@ const ProfilePage = () => {
 
         setUser(response.data)
 
+        // Improved geocoding logic
         if (response.data?.address && isLoaded) {
           const geocoder = new window.google.maps.Geocoder()
           geocoder.geocode(
@@ -69,16 +118,23 @@ const ProfilePage = () => {
             (results, status) => {
               if (status === 'OK' && results[0]) {
                 const { lat, lng } = results[0].geometry.location
-                setMapCenter({ lat: lat(), lng: lng() })
+                setMapCenter({ 
+                  lat: lat(), 
+                  lng: lng() 
+                })
               } else {
-                setMapCenter(
-                  response.data.location || { lat: 28.6139, lng: 77.209 }
-                )
+                // Fallback to a default location if geocoding fails
+                setMapCenter({ lat: 28.6139, lng: 77.209 })
+                console.warn('Geocoding failed, using default location')
               }
             }
           )
         } else if (response.data?.location) {
+          // Ensure location is in the correct format
           setMapCenter(response.data.location)
+        } else {
+          // Default location if no address or location is provided
+          setMapCenter({ lat: 28.6139, lng: 77.209 })
         }
       } catch (err) {
         console.error('Error fetching profile:', err)
@@ -89,7 +145,7 @@ const ProfilePage = () => {
     }
 
     fetchUserData()
-  }, [isLoaded]) // ✅ Re-run when Google Maps is loaded
+  }, [isLoaded])
 
   if (loading) {
     return (
@@ -280,12 +336,12 @@ const ProfilePage = () => {
                         </div>
                       </div>
 
-                      <h2 className='text-xl font-semibold mb-4 mt-8 text-gray-200 border-b border-gray-700 pb-2'>
+                      {/* <h2 className='text-xl font-semibold mb-4 mt-8 text-gray-200 border-b border-gray-700 pb-2'>
                         Bio
                       </h2>
                       <p className='text-gray-300 leading-relaxed'>
                         {user.bio}
-                      </p>
+                      </p> */}
                     </div>
 
                     <div>
@@ -304,35 +360,35 @@ const ProfilePage = () => {
                       </div>
 
                       <div className='rounded-xl overflow-hidden shadow-lg border border-gray-700 hover:border-blue-500/50 transition-colors duration-300'>
-                        {isLoaded ? (
-                          <GoogleMap
-                            mapContainerStyle={containerStyle}
-                            center={user.address}
-                            zoom={14}
-                            options={{
-                              mapTypeControl: false,
-                              streetViewControl: false,
-                              fullscreenControl: false,
-                              zoomControl: true,
-                              styles: [
-                                {
-                                  featureType: 'all',
-                                  elementType: 'all',
-                                  stylers: [{ saturation: -70 }],
-                                },
-                              ],
-                            }}
-                          >
-                            <Marker position={user.location} />
-                          </GoogleMap>
-                        ) : (
-                          <div className='h-64 w-full flex items-center justify-center bg-gray-800'>
-                            <div className='animate-pulse flex flex-col items-center'>
-                              <div className='rounded-full bg-gray-700 h-10 w-10 mb-2'></div>
-                              <div className='h-2 bg-gray-700 rounded w-24'></div>
-                            </div>
-                          </div>
-                        )}
+  {isLoaded && mapCenter ? (
+    <GoogleMap
+      mapContainerStyle={containerStyle}
+      center={mapCenter}  // Use mapCenter state
+      zoom={14}
+      options={{
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: false,
+        zoomControl: true,
+        styles: [
+          {
+            featureType: 'all',
+            elementType: 'all',
+            stylers: [{ saturation: -70 }],
+          },
+        ],
+      }}
+    >
+      <Marker position={mapCenter} />
+    </GoogleMap>
+  ) : (
+    <div className='h-64 w-full flex items-center justify-center bg-gray-800'>
+      <div className='animate-pulse flex flex-col items-center'>
+        <div className='rounded-full bg-gray-700 h-10 w-10 mb-2'></div>
+        <div className='h-2 bg-gray-700 rounded w-24'></div>
+      </div>
+    </div>
+  )}
                       </div>
                     </div>
                   </div>
