@@ -562,6 +562,9 @@ import NearbyDemandsMap from "./components/NearbyDemandsMap";
 import Loading from "./components/loading";
 import axios from "axios";
 import { toast } from "react-toastify";
+import DecryptedText from './ui_comp/de_para'
+import GradientText from './components/ui/gradientText'
+import Rating from "./components/ratings";
 
 export default function GlobePage() {
   const globeRef = useRef();
@@ -697,6 +700,23 @@ export default function GlobePage() {
           className="z-1000 cursor-pointer w-full h-full transition-transform duration-500 hover:scale-105 hover:shadow-2xl"
         />
         <div className="absolute inset-0 bg-black opacity-20 mix-blend-overlay"></div>
+      </div>
+      <div
+        id='navC'
+        className='bg-black pt-4 md:pt-8 pb-2 md:pb-4 sticky top-0 z-[999]'
+      >
+        <Navbar />
+        <Script src='//unpkg.com/globe.gl' onLoad={initGlobe} />
+      </div>
+      <div
+        style={{ marginTop: '0px', padding: '0px' }}
+        className='z-10 h-[50vh] md:h-[70vh] lg:h-[80vh]'
+      >
+        <div
+          ref={globeRef}
+          id='globeViz'
+          className='z-1000 cursor-pointer w-full h-full'
+        />
       </div>
 
       {/* Main Content with Enhanced Styling */}

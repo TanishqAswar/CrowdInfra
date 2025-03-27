@@ -2,14 +2,15 @@ import Link from 'next/link';
 
 const Footer = () => {
     return (
-        <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-8 shadow-2xl">
+        <footer className="bg-black to-gray-900 text-white py-8 shadow-2xl">
             <div className="container mx-auto px-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 place-items-start">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 place-items-start items-stretch">
                     {/* Company Info */}
                     <div className="w-full space-y-3 bg-gray-800/30 p-5 rounded-xl transform transition-all duration-500 hover:bg-gray-800/50 hover:scale-105">
                         <div>
                             <h3 className="text-3xl font-bold mb-4 text-white bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600 flex items-center">
                                 CrowdInfra
+                                
                             </h3>
                             <p className="text-gray-300 text-opacity-80 leading-relaxed">
                                 Building better infrastructure through community collaboration and innovative solutions.
@@ -93,28 +94,43 @@ const Footer = () => {
                     </div>
                     
                     {/* Quick Links */}
-                    <div className="w-full space-y-4 bg-gray-800/30 p-5 rounded-xl transform transition-all duration-500 hover:bg-gray-800/50 hover:scale-105">
+                    <div className="w-full bg-gray-800/30 p-5 rounded-xl transform transition-all duration-500 hover:bg-gray-800/50 hover:scale-105">
                         <h3 className="text-2xl font-bold mb-4 text-white bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500">
                             Quick Links
                         </h3>
-                        <ul className="space-y-2">
-                            {[
-                                { href: "/home", label: "Home" },
-                                { href: "/search-demands", label: "Demands" },
-                                { href: "/properties", label: "Properties" },
-                                { href: "/Post Demand", label: "Post Demand" },
-                                { href: "/contact", label: "Contact" }
-                            ].map(({ href, label }) => (
-                                <li key={href}>
-                                    <Link 
-                                        href={href} 
-                                        className="text-gray-300 hover:text-white hover:pl-3 transition-all duration-300 inline-block border-l-2 border-transparent hover:border-blue-500"
-                                    >
-                                        {label}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
+                        <div className="flex flex-wrap justify-between space-y-2">
+                            <ul className="space-y-2">
+                                {[
+                                    { href: "/", label: "Home" },
+                                    { href: "/search-demands", label: "Demands" },
+                                    { href: "/properties", label: "Properties" }
+                                ].map(({ href, label }) => (
+                                    <li key={href}>
+                                        <Link 
+                                            href={href} 
+                                            className="text-gray-300 hover:text-white hover:pl-3 transition-all duration-300 inline-block border-l-2 border-transparent hover:border-blue-500"
+                                        >
+                                            {label}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                            <ul className="space-y-2 flex flex-col items-end">
+                                {[
+                                    { href: "/Post Demand", label: "Post Demand" },
+                                    { href: "/contact", label: "Contact" }
+                                ].map(({ href, label }) => (
+                                    <li key={href}>
+                                        <Link 
+                                            href={href} 
+                                            className="text-gray-300 hover:text-white hover:pr-3 transition-all duration-300 inline-block border-r-2 border-transparent hover:border-blue-500"
+                                        >
+                                            {label}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     </div>
                     
                     {/* Contact Info */}

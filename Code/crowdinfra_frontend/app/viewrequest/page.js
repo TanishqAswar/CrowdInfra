@@ -177,8 +177,6 @@ export default function ViewRequest() {
             await axios.post(`http://localhost:5030/api/demand/${type}/${request._id}`);
             if (type === 'upvote') {
                 setRequest({...request, up_votes: request.up_votes + 1});
-            } else {
-                setRequest({...request, down_votes: request.down_votes + 1});
             }
         } catch (error) {
             console.error(`Failed to ${type}:`, error);
@@ -274,15 +272,6 @@ export default function ViewRequest() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
                             </svg>
                             Upvote ({request.up_votes})
-                        </button>
-                        <button 
-                            onClick={() => handleVote('downvote')}
-                            className="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 rounded-full text-white font-medium transition-colors shadow-lg hover:shadow-xl"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14h4.764a2 2 0 001.789-2.894l-3.5-7A2 2 0 0015.263 3h-4.017c-.163 0-.326.02-.485.06L7 4m7 10v5a2 2 0 01-2 2h-.095c-.5 0-.905-.405-.905-.905 0-.714-.211-1.412-.608-2.006L7 13v-9m7 10h-2M7 4H5a2 2 0 00-2 2v6a2 2 0 002 2h2.5" />
-                            </svg>
-                            Downvote ({request.down_votes})
                         </button>
                         <div className="relative group ml-auto">
                             <button 

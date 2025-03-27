@@ -23,11 +23,19 @@ const SearchDemandsPage = () => {
   const [demands, setDemands] = useState([]);
   const [filteredDemands, setFilteredDemands] = useState([]);
   const [selectedDemand, setSelectedDemand] = useState(null);
-  const [comments, setComments] = useState({});
   const [newComment, setNewComment] = useState('');
   const [businessCategory, setBusinessCategory] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [visibleDemands, setVisibleDemands] = useState(3) // Show 6 initially
+
+  const handleLoadMore = () => {
+    setVisibleDemands((prev) => prev + 3) // Load 6 more each time
+  }
+
+  const handleShowLess = () => {
+    setVisibleDemands(6) // Reset to initial state
+  }
 
   const { selectedPlace } = useUserContext() || {};
 
@@ -107,37 +115,58 @@ const SearchDemandsPage = () => {
 
   const handleUpvote = async (demandId) => {
     try {
-      const response = await axios.patch(`http://localhost:5000/api/demands/${demandId}/upvote`);
+      const response = await axios.patch(
+        `http://localhost:5030/api/demand/${demandId}/upvote`,
+        {},
+        {
+          withCredentials: true, // Ensure cookies are sent with the request
+        }
+      );
+      const updatedDemand = response.data.data;
       
       // Update the demands list with the updated demand
       setDemands(prevDemands => 
         prevDemands.map(demand => 
-          demand._id === demandId ? response.data.data : demand
+          demand._id === demandId ? updatedDemand : demand
         )
       );
+
+      // Update the selected demand if it's the one we just upvoted 
+      if (selectedDemand && selectedDemand._id === demandId) {
+        setSelectedDemand(updatedDemand);
+      }
     } catch (err) {
       console.error('Error upvoting demand:', err);
     }
   };
 
-  // Mock comment functionality (you'd need to implement backend support)
-  const handleAddComment = (demandId) => {
+  const handleAddComment = async (demandId) => {
     if (!newComment.trim()) return;
     
-    // This is a placeholder. In a real app, you'd send this to the backend
-    const comment = {
-      id: Date.now(),
-      text: newComment,
-      user: "Business User", // Replace with actual user name
-      timestamp: new Date().toISOString()
-    };
-    
-    setComments(prev => ({
-      ...prev,
-      [demandId]: [...(prev[demandId] || []), comment]
-    }));
-    
-    setNewComment('');
+    try {
+      // Make a POST request to the backend to add the comment.
+      const response = await axios.post(
+        `http://localhost:5030/api/demand/${demandId}/comments`,
+        { text: newComment },
+        { withCredentials: true } // Ensures cookies (and auth) are sent.
+      );
+      
+      // The backend returns the updated demand with the new comment.
+      const updatedDemand = response.data.demand;
+      
+      // Update the selected demand if it's the one we just commented on.
+      if (selectedDemand && selectedDemand._id === demandId) {
+        setSelectedDemand(updatedDemand);
+      }
+      
+      // Also update the overall demands list.
+      setDemands(prev => prev.map(d => d._id === demandId ? updatedDemand : d));
+      
+      // Clear the new comment input.
+      setNewComment('');
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
   };
 
   if (!isLoaded) return (
@@ -164,9 +193,10 @@ const SearchDemandsPage = () => {
     <>
       <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-10 text-gray-100'>
         <Navbar />
-  
-        <div className='container mx-auto px-4 py-8'>
-          <h1 className='text-4xl font-bold mt-7 mb-8 text-center text-transparent bg-clip-text bg-gray-200 transition-all duration-300 hover:scale-105'>
+
+        <div className='container mx-auto px-4 py-8 mt-8'>
+          <h1 className='text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gray-200'>
+
             Search Demands
           </h1>
   
@@ -183,7 +213,7 @@ const SearchDemandsPage = () => {
                 onChange={(e) => setBusinessCategory(e.target.value)}
               >
                 <option value='all'>infrastructure</option>
-                <option value='restaurant'>public Service</option>
+                <option value='restaurant'>public service</option>
                 <option value='retail'>transportation</option>
                 <option value='medical'>utilities</option>
                 <option value='education'>education</option>
@@ -286,11 +316,10 @@ const SearchDemandsPage = () => {
                     </h3>
   
                     <div className='space-y-3 mb-4 max-h-60 overflow-y-auto'>
-                      {(comments[selectedDemand._id] || []).map((comment) => (
+                      {(selectedDemand.comments || []).map((comment, index) => (
                         <div
-                          key={comment.id}
-                          className='bg-gray-800/50 p-3 rounded-lg 
-                          transition-all duration-300 hover:bg-gray-800/60 hover:scale-[1.02]'
+                          key={index}
+                          className='bg-gray-800/50 p-3 rounded-lg'
                         >
                           <div className='flex justify-between text-sm text-gray-400 mb-1'>
                             <span>{comment.user}</span>
@@ -301,8 +330,8 @@ const SearchDemandsPage = () => {
                           <p className='text-gray-200'>{comment.text}</p>
                         </div>
                       ))}
-  
-                      {(comments[selectedDemand._id] || []).length === 0 && (
+
+                      {(selectedDemand.comments || []).length === 0 && (
                         <p className='text-gray-500 text-center py-2'>
                           No comments yet
                         </p>
@@ -379,12 +408,11 @@ const SearchDemandsPage = () => {
   
           {filteredDemands.length > 0 && (
             <div className='mt-8'>
-              <h2 className='text-2xl font-bold mb-4 text-gray-200 
-              transition-all duration-300 hover:text-gray-100'>
-                All Demands ({filteredDemands.length})
+              <h2 className='text-2xl font-bold mb-4 text-gray-200'>
+                Nearby Demands ({filteredDemands.length})
               </h2>
               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                {filteredDemands.map((demand) => (
+                {filteredDemands.slice(0, visibleDemands).map((demand) => (
                   <div
                     key={demand._id}
                     className={`p-4 rounded-lg cursor-pointer transition-all duration-300 
@@ -426,6 +454,26 @@ const SearchDemandsPage = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Buttons for Load More and Show Less */}
+              <div className='mt-6 text-center'>
+                {visibleDemands < filteredDemands.length && (
+                  <button
+                    onClick={handleLoadMore}
+                    className='px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition mx-2'
+                  >
+                    Load More Demands
+                  </button>
+                )}
+                {visibleDemands > 6 && (
+                  <button
+                    onClick={handleShowLess}
+                    className='px-4 py-2 bg-gray-600 text-white font-semibold rounded-md hover:bg-gray-700 transition mx-2'
+                  >
+                    Show Less
+                  </button>
+                )}
               </div>
             </div>
           )}
