@@ -37,16 +37,6 @@ const RaiseRequestPage = () => {
   const [submittedRequests, setSubmittedRequests] = useState([])
   const [activeRequest, setActiveRequest] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-    title: "",
-    description: "",
-    category: "infrastructure",
-  });
-  const [requests, setRequests] = useState([]);
-  const [comments, setComments] = useState({});
-  const [newComment, setNewComment] = useState("");
-  const [activeRequest, setActiveRequest] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState(null);
 
   const { selectedPlace } = useUserContext() || {}
 
