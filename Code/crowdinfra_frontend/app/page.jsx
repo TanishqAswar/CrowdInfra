@@ -14,6 +14,7 @@ import NearbyDemandsMap from "./components/NearbyDemandsMap";
 import Loading from "./components/loading";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Rating from "./components/ratings";
 
 export default function GlobePage() {
   const globeRef = useRef();
@@ -300,7 +301,7 @@ export default function GlobePage() {
               className='text-2xl md:text-3xl font-bold mb-3 md:mb-4'
               style={{ color: '#f9fafb', marginBottom: '1.5rem' }}
             >
-              <DecryptedText text='~ Nearby Demands ~' />
+             ~ Nearby Demands ~
             </h2>
 
             <NearbyDemandsMap />
