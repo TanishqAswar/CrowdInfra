@@ -159,12 +159,12 @@ export default function GlobePage() {
 
   return (
     <>
-      <Script src='//unpkg.com/globe.gl' onLoad={initGlobe} />
       <div
         id='navC'
         className='bg-black pt-4 md:pt-8 pb-2 md:pb-4 sticky top-0 z-[999]'
       >
         <Navbar />
+      <Script src='//unpkg.com/globe.gl' onLoad={initGlobe} />
       </div>
       <div
         style={{ marginTop: '0px', padding: '0px' }}
@@ -296,8 +296,11 @@ export default function GlobePage() {
             </div>
           </div>
           <div className='bg-gray-800/30 backdrop-blur-lg p-6 md:p-8 rounded-2xl border border-gray-700/50 shadow-xl mb-8 md:mb-16 text-center'>
-            <h2 className='text-2xl md:text-3xl font-bold mb-3 md:mb-4 ' style={{ color: '#f9fafb', marginBottom: '1.5rem' }}>
-              ~ Nearby Demands ~
+            <h2
+              className='text-2xl md:text-3xl font-bold mb-3 md:mb-4'
+              style={{ color: '#f9fafb', marginBottom: '1.5rem' }}
+            >
+              <DecryptedText text='~ Nearby Demands ~' />
             </h2>
 
             <NearbyDemandsMap />
@@ -358,24 +361,26 @@ export default function GlobePage() {
                 </div>
               </div>
             </div>
+
+{/*           
+            {/* <div className="text-center">
+              <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-6">Ready to improve your community?</h2>
+              <Link href="/raise-request" className="inline-block px-4 py-2 md:px-5 md:py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300 text-base md:text-lg font-semibold">
+                Lets Bring a Change
+              </Link>
+            </div> */} 
           </div>
 
-          <div className='text-center'>
-            <h2 className='text-2xl md:text-3xl font-bold mb-4 md:mb-6'>
-              Ready to improve your community?
-            </h2>
-            <Link
-              href='/raise-request'
-              className='inline-block px-4 py-2 md:px-5 md:py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300 text-base md:text-lg font-semibold'
-            >
-              Lets Bring a Change
-            </Link>
-          </div>
+        {/* <NearbyDemandsMap /> */}
+
+        {/* {showMap && <Maps />} */}
+        <div className="bg-black py-5">
+        <Rating />
         </div>
-      </div>
 
-      {showMap && <Maps />}
-      <Footer />
+        <Footer />
+      </div>
+    </div>
     </>
-  )
+  );
 }

@@ -1,222 +1,231 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
-import dynamic from 'next/dynamic'
-import Link from 'next/link'
-import axios from 'axios'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import {
+  useLoadScript,
   GoogleMap,
   Marker,
   InfoWindow,
-  useLoadScript,
 } from '@react-google-maps/api'
-import Loading from './loading'
+import Link from 'next/link'
+import Navbar from '../components/navbar'
+import { useUserContext } from '../components/user_context'
+import PlaceAutocomplete from '../components/autocomplete'
+import { X, MapPin } from 'lucide-react'
+import Footer from '../components/footer'
 
 const containerStyle = {
   width: '100%',
-  height: '450px',
+  height: '70vh',
 }
 
-const defaultCenter = { lat: 20.5937, lng: 78.9629 } // Default: India center
+const center = {
+  lat: 20.5937,
+  lng: 78.9629,
+}
 
-export default function NearbyDemandsMap({ onDemandSelect }) {
-  const [location, setLocation] = useState(null)
-  const [error, setError] = useState(null)
-  const [demands, setDemands] = useState([])
-  const [selectedDemand, setSelectedDemand] = useState(null)
-  const [hoveringInfoWindow, setHoveringInfoWindow] = useState(false)
-  const [hoveringUserLocation, setHoveringUserLocation] = useState(false)
+const RaiseRequestPage = () => {
+  const [selectedLocation, setSelectedLocation] = useState(null)
+  const [showLocationPopup, setShowLocationPopup] = useState(false)
+  const [showForm, setShowForm] = useState(false)
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    category: 'infrastructure',
+  })
+  const [submittedRequests, setSubmittedRequests] = useState([])
+  const [activeRequest, setActiveRequest] = useState(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Memoized API key and libraries
-  const scriptOptions = useMemo(
-    () => ({
-      googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
-      libraries: ['places'],
-    }),
-    []
-  )
+  const { selectedPlace } = useUserContext() || {}
 
-  // Load Google Maps script
-  const { isLoaded, loadError } = useLoadScript(scriptOptions)
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+    libraries: ['places'],
+    id: 'google-maps-script',
+  })
 
   useEffect(() => {
-    if (!navigator.geolocation) {
-      setError('Geolocation is not supported by your browser.')
+    if (selectedPlace && selectedPlace.lat && selectedPlace.lng) {
+      setSelectedLocation({
+        lat: selectedPlace.lat,
+        lng: selectedPlace.lng,
+      })
+    }
+  }, [selectedPlace])
+
+  const handleMapClick = useCallback((event) => {
+    if (event && event.latLng) {
+      try {
+        const lat = event.latLng.lat()
+        const lng = event.latLng.lng()
+        if (typeof lat === 'number' && typeof lng === 'number') {
+          setSelectedLocation({ lat, lng })
+          setShowLocationPopup(true)
+          setShowForm(false)
+        }
+      } catch (error) {
+        console.error('Error in map click handling:', error)
+      }
+    }
+  }, [])
+
+  const handleCloseLocationPopup = () => {
+    setShowLocationPopup(false)
+    setSelectedLocation(null)
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    if (!selectedLocation || !selectedLocation.lat || !selectedLocation.lng) {
+      alert('Please select a location on the map')
       return
     }
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const userLocation = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        }
-        setLocation(userLocation)
-        fetchNearbyDemands(userLocation)
-      },
-      (err) => {
-        setError(`Location access denied: ${err.message}`)
-      }
-    )
-  }, [])
+    setIsSubmitting(true)
 
-  const fetchNearbyDemands = async (userLocation) => {
     try {
-      console.log('Fetching nearby demands...', userLocation)
-      const response = await axios.get(
-        `http://localhost:5030/api/demand/nearby?latitude=${userLocation.lat}&longitude=${userLocation.lng}&radius=5000`
-      )
-      console.log('Nearby demands:', response.data)
-      setDemands(response.data)
+      const demandData = {
+        ...formData,
+        location: {
+          type: 'Point',
+          coordinates: [selectedLocation.lng, selectedLocation.lat],
+        },
+      }
+
+      const response = await fetch('http://localhost:5030/api/demand/demand', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(demandData),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        const newRequest = {
+          ...demandData,
+          id: data._id || Date.now(), // Use backend ID if available
+          coordinates: demandData.location.coordinates,
+        }
+
+        setSubmittedRequests((prev) => [...prev, newRequest])
+
+        // Reset form and show location marker
+        setFormData({
+          title: '',
+          description: '',
+          category: 'infrastructure',
+        })
+        setShowForm(false)
+        setShowLocationPopup(false)
+        setActiveRequest(newRequest.id)
+      } else {
+        alert(`Error: ${data.error || 'Failed to submit demand'}`)
+      }
     } catch (error) {
-      console.error('Error fetching demands:', error)
-      setError('Failed to load nearby demands.')
+      console.error('Error submitting demand:', error)
+      alert('Failed to submit demand. Please try again.')
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
-  const handleDemandSelect = (demand) => {
-    setSelectedDemand(demand)
-    onDemandSelect && onDemandSelect(demand)
-  }
-
-  if (loadError)
-    return <p className='text-red-500'>Failed to load Google Maps.</p>
-  if (!isLoaded) return <Loading text='Loading map...' />
-  if (error) return <p className='text-red-500'>{error}</p>
+  if (!isLoaded)
+    return (
+      <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center'>
+        <div className='animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500'></div>
+        <span className='ml-4 text-xl text-gray-200'>Loading...</span>
+      </div>
+    )
 
   return (
-    <div className='relative'>
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={location || defaultCenter}
-        zoom={location ? 14 : 5}
-      >
-        {console.log('Google Map Loaded')}
-        {location && (
-          <>
-            {/* "You Are Here" Card - Shown on Hover */}
-            {hoveringUserLocation && (
-              <InfoWindow
-                position={location}
-                onCloseClick={() => setHoveringUserLocation(false)}
-              >
-                <div
-                  className='bg-gradient-to-br from-blue-100 to-blue-200 p-4 rounded-lg shadow-lg'
-                  onMouseEnter={() => setHoveringUserLocation(true)}
-                  onMouseLeave={() => setHoveringUserLocation(false)}
-                >
-                  <div className='flex items-center mb-2'>
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      className='h-6 w-6 text-blue-600 mr-2'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                      stroke='currentColor'
-                    >
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth={2}
-                        d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z'
-                      />
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth={2}
-                        d='M15 11a3 3 0 11-6 0 3 3 0 016 0z'
-                      />
-                    </svg>
-                    <h3 className='text-lg font-bold text-blue-900'>
-                      Your Location
-                    </h3>
-                  </div>
+    <>
+      <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-10 text-gray-100'>
+        <Navbar />
 
-                  <div className='bg-white/50 backdrop-blur-sm rounded-md p-2'>
-                    <p className='text-sm text-blue-800 mb-1'>
-                      <strong>Latitude:</strong> {location.lat.toFixed(4)}°N
-                    </p>
-                    <p className='text-sm text-blue-800'>
-                      <strong>Longitude:</strong> {location.lng.toFixed(4)}°E
-                    </p>
-                  </div>
+        <div className='container mx-auto px-4 py-8'>
+          <h1 className='text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600'>
+            Raise Facility Request
+          </h1>
 
-                  <p className='text-xs text-blue-700 mt-2 italic'>
-                    Your current precise location
-                  </p>
-                </div>
-              </InfoWindow>
-            )}
+          <div className='mb-6 flex items-center justify-center'>
+            <div className='w-1/2'>
+              <PlaceAutocomplete />
+            </div>
+          </div>
 
-            {/* Green Marker for Current Location */}
-            <Marker
-              position={location}
-              icon={'http://maps.google.com/mapfiles/ms/icons/green-dot.png'}
-              onMouseOver={() => setHoveringUserLocation(true)}
-              onMouseOut={() => setHoveringUserLocation(false)}
-            />
-          </>
-        )}
-
-        {/* Rest of the existing code remains the same */}
-        {demands.map((demand) => (
-          <Marker
-            key={demand._id}
-            position={{
-              lat: demand.location.coordinates[1],
-              lng: demand.location.coordinates[0],
-            }}
-            onMouseOver={() => handleDemandSelect(demand)}
-            onMouseOut={() => {
-              if (!hoveringInfoWindow) {
-                handleDemandSelect(null)
-              }
-            }}
-            icon={'http://maps.google.com/mapfiles/ms/icons/red-dot.png'}
-          />
-        ))}
-
-        {selectedDemand && (
-          <InfoWindow
-            position={{
-              lat: selectedDemand.location.coordinates[1],
-              lng: selectedDemand.location.coordinates[0],
-            }}
-            onCloseClick={() => {
-              handleDemandSelect(null)
-              setHoveringInfoWindow(false)
-            }}
-          >
-            <div
-              className='bg-white p-3 rounded shadow-lg'
-              onMouseEnter={() => setHoveringInfoWindow(true)}
-              onMouseLeave={() => {
-                setHoveringInfoWindow(false)
-                handleDemandSelect(null)
+          <div className='rounded-xl overflow-hidden shadow-2xl relative'>
+            <GoogleMap
+              mapContainerStyle={containerStyle}
+              center={selectedLocation || center}
+              zoom={selectedLocation ? 15 : 5}
+              onClick={handleMapClick}
+              options={{
+                mapTypeControl: true,
+                mapTypeId: 'hybrid',
+                fullscreenControl: true,
+                streetViewControl: true,
+                zoomControl: true,
               }}
             >
-              <Link
-                href={`/viewrequest?id=${selectedDemand._id}`}
-                className='text-blue-600 hover:underline text-xs mt-2 block'
-              >
-                <h3 className='text-lg font-bold'>{selectedDemand.title}</h3>
-              </Link>
-              <p className='text-sm text-gray-700 mb-2 leading-relaxed'>
-                {selectedDemand.description}
-              </p>
-              <p className='text-xs text-gray-500 mt-2'>
-                <strong>Category:</strong> {selectedDemand.category}
-              </p>
-              <p className='text-xs text-gray-500'>
-                <strong>Upvotes:</strong> {selectedDemand.up_votes} |{' '}
-                <strong>Downvotes:</strong> {selectedDemand.down_votes}
-              </p>
-              <p className='text-xs text-gray-500 mt-2'>
-                Click on the title to view details
-              </p>
-            </div>
-          </InfoWindow>
-        )}
-      </GoogleMap>
-    </div>
+              {/* ... previous code remains the same ... */}
+
+              {/* Submitted Requests Markers */}
+              {submittedRequests.map((request) => (
+                <Marker
+                  key={request.id}
+                  position={{
+                    lat: request.coordinates[1],
+                    lng: request.coordinates[0],
+                  }}
+                  onClick={() =>
+                    setActiveRequest(
+                      activeRequest === request.id ? null : request.id
+                    )
+                  }
+                >
+                  {activeRequest === request.id && (
+                    <InfoWindow
+                      position={{
+                        lat: request.coordinates[1],
+                        lng: request.coordinates[0],
+                      }}
+                      onCloseClick={() => {
+                        setActiveRequest(null)
+                      }}
+                    >
+                      <div className='p-4 max-w-xs'>
+                        <Link
+                          href={`/viewrequest?id=${request.id}`}
+                          className='block hover:underline'
+                        >
+                          <h3 className='text-xl font-bold text-blue-600 mb-2'>
+                            {request.title}
+                          </h3>
+                        </Link>
+                        <p className='text-gray-700 mb-2'>
+                          {request.description}
+                        </p>
+                        <span className='bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm'>
+                          {request.category}
+                        </span>
+                      </div>
+                    </InfoWindow>
+                  )}
+                </Marker>
+              ))}
+            </GoogleMap>
+          </div>
+
+          {/* ... rest of the code remains the same ... */}
+        </div>
+      </div>
+      <Footer />
+    </>
   )
 }
+
+export default RaiseRequestPage
