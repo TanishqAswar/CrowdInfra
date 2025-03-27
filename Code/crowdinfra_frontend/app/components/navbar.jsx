@@ -110,13 +110,13 @@ export default function Navbar() {
       '>
         <NavItem href='/' icon={Home} title='Go Home' />
         <NavItem href='/raise-request' icon={MapPin} title='Raise a Request' />
-        <NavItem href='/search-demands' icon={Search} title='Search Demands' />
         <NavItem 
           href='/property' 
           icon={Route} 
           title='Raise Property' 
           isActive={overlayOn} 
         />
+        <NavItem href='/search-demands' icon={Search} title='Search Demands' />
       </div>
 
       {/* Right Section - Profile */}

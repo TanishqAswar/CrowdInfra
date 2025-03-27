@@ -14,6 +14,8 @@ import NearbyDemandsMap from "./components/NearbyDemandsMap";
 import Loading from "./components/loading";
 import axios from "axios";
 import { toast } from "react-toastify";
+import DecryptedText from './ui_comp/de_para'
+import GradientText from './components/ui/gradientText'
 import Rating from "./components/ratings";
 
 export default function GlobePage() {
@@ -165,7 +167,7 @@ export default function GlobePage() {
         className='bg-black pt-4 md:pt-8 pb-2 md:pb-4 sticky top-0 z-[999]'
       >
         <Navbar />
-      <Script src='//unpkg.com/globe.gl' onLoad={initGlobe} />
+        <Script src='//unpkg.com/globe.gl' onLoad={initGlobe} />
       </div>
       <div
         style={{ marginTop: '0px', padding: '0px' }}
@@ -185,7 +187,14 @@ export default function GlobePage() {
         <div className='max-w-7xl mx-auto'>
           <div className='text-center mb-8 md:mb-16'>
             <h1 className='text-3xl md:text-5xl font-bold mb-4 md:mb-6 bg-clip-text text-transparent bg-gray-200'>
-              CrowdInfra - India's First Crowdsourced Infrastructure Platform
+              <GradientText
+                colors={['#40ffaa', '#4079ff', '#40ffaa', '#4079ff', '#40ffaa']}
+                animationSpeed={10}
+                showBorder={false}
+                className='custom-class'
+              >
+                CrowdInfra - India's First Crowdsourced Infrastructure Platform
+              </GradientText>
             </h1>
             <p className='text-lg md:text-xl text-gray-300 max-w-3xl mx-auto'>
               Contribute to improving infrastructure around you and be a part of

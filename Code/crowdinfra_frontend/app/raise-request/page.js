@@ -13,6 +13,7 @@ import PlaceAutocomplete from '../components/autocomplete'
 import { X, MapPin } from 'lucide-react'
 import Footer from '../components/footer'
 import Link from 'next/link'
+import Loading from '../components/loading'
 
 const containerStyle = {
   width: '100%',
@@ -104,10 +105,13 @@ const RaiseRequestPage = () => {
 
       const data = await response.json()
 
+      console.log('Demand submission response:', data)
+
       if (response.ok) {
+        console.log("demand._id ",data.demand._id);
         const newRequest = {
           ...demandData,
-          id: Date.now(), // Temporary ID
+          id: data.demand._id, // Temporary ID
           coordinates: demandData.location.coordinates,
         }
 
@@ -137,7 +141,7 @@ const RaiseRequestPage = () => {
     return (
       <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center'>
         <div className='animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500'></div>
-        <span className='ml-4 text-xl text-gray-200'>Loading...</span>
+        <Loading text="Loading Map ..." />
       </div>
     )
 
@@ -146,10 +150,10 @@ const RaiseRequestPage = () => {
       <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-10 text-gray-100'>
         <Navbar />
 
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gray-200 mt-8">
-          Raise Facility Request
-        </h1>
+        <div className='container mx-auto px-4 py-8 mt-8'>
+          <h1 className='text-4xl font-bold mb-8 text-center mt-8'>
+            Raise Facility Request
+          </h1>
 
           <div className='mb-6 flex items-center justify-center'>
             <div className='w-1/2'>
@@ -165,7 +169,7 @@ const RaiseRequestPage = () => {
               onClick={handleMapClick}
               options={{
                 mapTypeControl: true,
-                mapTypeId: 'hybrid',
+                mapTypeId: 'terrain',
                 fullscreenControl: true,
                 streetViewControl: true,
                 zoomControl: true,
@@ -250,7 +254,7 @@ const RaiseRequestPage = () => {
                       }}
                     >
                       <div className='p-4 max-w-xs'>
-                        <h3 className='text-xl font-bold text-blue-600 mb-2'>
+                        <h3 className='text-xl font-bold text-blue-600 mb-2' >
                           <Link
                             href={`/viewrequest?id=${request.id}`}
                             className='block hover:underline'
