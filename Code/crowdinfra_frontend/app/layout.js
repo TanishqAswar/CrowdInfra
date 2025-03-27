@@ -76,7 +76,6 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* {showCursor && <Cursor style={{ position: 'fixed', top: 0, left: 0, zIndex: 9999 }} />} */}
         <UserProvider>
           <ToastContainer position='top-right' autoClose={3000} />
           <APIProvider
