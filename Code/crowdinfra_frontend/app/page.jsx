@@ -16,7 +16,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import DecryptedText from './ui_comp/de_para'
 import GradientText from './components/ui/gradientText'
-
+import Rating from "./components/ratings";
 
 export default function GlobePage() {
   const globeRef = useRef();
@@ -310,7 +310,7 @@ export default function GlobePage() {
               className='text-2xl md:text-3xl font-bold mb-3 md:mb-4'
               style={{ color: '#f9fafb', marginBottom: '1.5rem' }}
             >
-              <DecryptedText text='~ Nearby Demands ~' />
+             ~ Nearby Demands ~
             </h2>
 
             <NearbyDemandsMap />
@@ -371,24 +371,26 @@ export default function GlobePage() {
                 </div>
               </div>
             </div>
+
+{/*           
+            {/* <div className="text-center">
+              <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-6">Ready to improve your community?</h2>
+              <Link href="/raise-request" className="inline-block px-4 py-2 md:px-5 md:py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300 text-base md:text-lg font-semibold">
+                Lets Bring a Change
+              </Link>
+            </div> */} 
           </div>
 
-          <div className='text-center'>
-            <h2 className='text-2xl md:text-3xl font-bold mb-4 md:mb-6'>
-              Ready to improve your community?
-            </h2>
-            <Link
-              href='/raise-request'
-              className='inline-block px-4 py-2 md:px-5 md:py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300 text-base md:text-lg font-semibold'
-            >
-              Lets Bring a Change
-            </Link>
-          </div>
+        {/* <NearbyDemandsMap /> */}
+
+        {/* {showMap && <Maps />} */}
+        <div className="bg-black py-5">
+        <Rating />
         </div>
-      </div>
 
-      {showMap && <Maps />}
-      <Footer />
+        <Footer />
+      </div>
+    </div>
     </>
-  )
+  );
 }

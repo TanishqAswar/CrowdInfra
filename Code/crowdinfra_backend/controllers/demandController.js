@@ -118,3 +118,72 @@ exports.getNearbyDemands = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+// **TO track which users have upvoted a demand**
+exports.toggleUpvote = async (req, res) => {
+  try {
+    const Demand = await getDemandModel();
+    const { id } = req.params;
+    const userId = req.user.id; // your auth middleware populates req.user
+    
+    // Find the demand
+    const demand = await Demand.findById(id);
+    if (!demand) {
+      return res.status(404).json({ message: "Demand not found" });
+    }
+
+    // Check if the user already upvoted
+    const hasUpvoted = demand.upvotedBy?.some(
+      (voterId) => voterId.toString() === userId.toString()
+    );
+
+    if (!hasUpvoted) {
+      // Add vote
+      demand.upvotedBy.push(userId);
+      demand.up_votes += 1;
+    } else {
+      // Remove vote
+      demand.upvotedBy = demand.upvotedBy.filter(
+        (voterId) => voterId.toString() !== userId.toString()
+      );
+      demand.up_votes -= 1;
+    }
+
+    await demand.save();
+    res.status(200).json({ data: demand });
+  } catch (err) {
+    console.error("Error toggling upvote:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.addComment = async (req, res) => {
+  try {
+    const Demand = await getDemandModel();
+    const { id } = req.params; // the demand's id
+    const { text } = req.body; // the comment text
+    const userId = req.user._id; // ensure your auth middleware populates this
+
+    const demand = await Demand.findById(id);
+    if (!demand) {
+      return res.status(404).json({ msg: "Demand not found" });
+    }
+
+    // Create a comment object
+    const newComment = {
+      user: userId,  // optionally, you can populate with more user data later
+      text,
+      timestamp: new Date(),
+    };
+
+    // Push the comment into the existing comments array
+    demand.comments.push(newComment);
+    await demand.save();
+
+    // Return the updated comments array or the whole demand
+    res.status(201).json({ comment: newComment, demand });
+  } catch (err) {
+    console.error("Error adding comment:", err.message);
+    res.status(500).json({ msg: "Server error", error: err.message });
+  }
+};

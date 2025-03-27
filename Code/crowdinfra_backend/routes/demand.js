@@ -3,13 +3,18 @@ const {
   demand,
   getDemand,
   getDemandById,
-  getNearbyDemands
+  getNearbyDemands,
+  toggleUpvote,
+  addComment,
 } = require("../controllers/demandController");
+const authMiddleware = require("../middlewares/authMiddleware");
 const router = express.Router();
 
 router.post("/demand", demand);
 router.get("/getDemand", getDemand);
 router.get("/getDemandById/:id", getDemandById);
+router.patch('/:id/upvote', authMiddleware, toggleUpvote);
+router.post('/:id/comments', authMiddleware, addComment);
 
 /**
  * GET /api/demands/nearby

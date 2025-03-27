@@ -117,7 +117,7 @@ const loginUser = async (req, res) => {
     res.cookie('crowdInfra_token', token, {
       httpOnly: true, // Prevents JavaScript access
       secure: process.env.NODE_ENV === 'production', // ✅ Only secure on production
-      sameSite: 'Strict', // Prevents CSRF attacks
+       sameSite: 'lax', // Prevents CSRF attacks // TODO: make this "Secure" this for production, but for development need to keep "lax"
       maxAge: 60 * 60 * 9000, // Token expiration (9 hour)
     })
 
