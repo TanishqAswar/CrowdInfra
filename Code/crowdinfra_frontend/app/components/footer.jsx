@@ -10,14 +10,12 @@ const Footer = () => {
                         <div>
                             <h3 className="text-3xl font-bold mb-4 text-white bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600 flex items-center">
                                 CrowdInfra
-                                <span className="ml-2 animate-pulse text-yellow-400">
-                                    ⚡
-                                </span>
                             </h3>
                             <p className="text-gray-300 text-opacity-80 leading-relaxed">
                                 Building better infrastructure through community collaboration and innovative solutions.
                             </p>
                         </div>
+                        
                         
                         <div className="flex space-x-4">
                             {[

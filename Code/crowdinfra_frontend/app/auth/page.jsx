@@ -107,17 +107,6 @@ export default function Auth() {
                 {isLogin ? "Sign In" : "Create Account"}
               </h2>
               <div className="h-1 w-20 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto mt-2 rounded-full"></div>
-              {/* {!isLogin && (
-                <p className="text-center mt-3 text-gray-600 dark:text-gray-400">
-                  Already have an account?{" "}
-                  <button
-                    onClick={() => setIsLogin(true)}
-                    className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium hover:underline transition-colors"
-                  >
-                    Login
-                  </button>
-                </p>
-              )} */}
             </div>
 
             {isLogin ? (

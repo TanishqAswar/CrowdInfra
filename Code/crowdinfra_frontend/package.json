@@ -16,7 +16,7 @@
     "axios": "^1.7.9",
     "canvas": "^3.1.0",
     "dom-to-image-more": "^3.5.0",
-    "framer-motion": "^12.4.1",
+    "framer-motion": "^12.6.2",
     "globe.gl": "^2.41.1",
     "html2canvas": "^1.4.1",
     "js-cookie": "^3.0.5",

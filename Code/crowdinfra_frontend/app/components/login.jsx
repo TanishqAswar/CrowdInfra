@@ -53,13 +53,9 @@ const LoginPage = ({ setIsLogin }) => {
         const response = await axios.post(
           `http://localhost:5030/api/auth/login`,
           formData,
-          { withCredentials: true } // Allow cookies to be sent
-
+          { withCredentials: true } 
         )
-    
-  
-          console.log('Login response:', response.data)
-  
+          console.log('Login response:', response.data);
         if (response.data && response.data.success) {
           toast.success('Login successful! Redirecting to home...')
           setIsLogin(true)
@@ -72,7 +68,6 @@ const LoginPage = ({ setIsLogin }) => {
         setErrors({ submit: 'Failed to login. Please try again.' })
       } finally {
         setIsSubmitting(false)
-  
       }
     } else {
       setErrors(newErrors)
@@ -110,7 +105,7 @@ const LoginPage = ({ setIsLogin }) => {
                     className={`w-full px-4 py-3 bg-transparent rounded-lg border ${
                       errors.email ? 'border-red-500' : 'border-gray-700'
                     } focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
-                    placeholder='your.email@example.com'
+                    placeholder='Enter your Email'
                   />
                   {errors.email && (
                     <p className='text-red-500 text-xs mt-1'>{errors.email}</p>

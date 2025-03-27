@@ -164,19 +164,21 @@ const SearchDemandsPage = () => {
     <>
       <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-10 text-gray-100'>
         <Navbar />
-
+  
         <div className='container mx-auto px-4 py-8'>
-          <h1 className='text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gray-200'>
+          <h1 className='text-4xl font-bold mt-7 mb-8 text-center text-transparent bg-clip-text bg-gray-200 transition-all duration-300 hover:scale-105'>
             Search Demands
           </h1>
-
+  
           <div className='mb-6 grid grid-cols-1 md:grid-cols-3 gap-4'>
             <div className='md:col-span-2'>
               <PlaceAutocomplete />
             </div>
             <div>
               <select
-                className='w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all duration-300'
+                className='w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700 text-white 
+                focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all duration-300 
+                hover:bg-gray-800/70 hover:shadow-lg'
                 value={businessCategory}
                 onChange={(e) => setBusinessCategory(e.target.value)}
               >
@@ -190,10 +192,10 @@ const SearchDemandsPage = () => {
               </select>
             </div>
           </div>
-
+  
           <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
             <div className='lg:col-span-2'>
-              <div className='rounded-xl overflow-hidden shadow-2xl'>
+              <div className='rounded-xl overflow-hidden shadow-2xl transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl'>
                 <GoogleMap
                   mapContainerStyle={containerStyle}
                   center={selectedLocation || center}
@@ -230,15 +232,16 @@ const SearchDemandsPage = () => {
                 </GoogleMap>
               </div>
             </div>
-
-            <div className='bg-gray-800/30 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-gray-700/50 h-[70vh] overflow-y-auto'>
-              <h2 className='text-2xl font-bold mb-4 text-blue-400'>
+  
+            <div className='bg-gray-800/30 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-gray-700/50 h-[70vh] overflow-y-auto 
+            transition-all duration-300 hover:shadow-2xl'>
+              <h2 className='text-2xl font-bold mb-4 text-blue-400 transition-all duration-300 hover:text-blue-300'>
                 {selectedDemand ? selectedDemand.title : 'Demand Details'}
               </h2>
-
+  
               {selectedDemand ? (
                 <div>
-                  <div className='mb-4 p-4 bg-gray-800/50 rounded-lg'>
+                  <div className='mb-4 p-4 bg-gray-800/50 rounded-lg transition-all duration-300 hover:bg-gray-800/60'>
                     <p className='text-gray-300 mb-3'>
                       {selectedDemand.description}
                     </p>
@@ -256,7 +259,8 @@ const SearchDemandsPage = () => {
                       </span>
                       <button
                         onClick={() => handleUpvote(selectedDemand._id)}
-                        className='flex items-center space-x-1 text-blue-400 hover:text-blue-300'
+                        className='flex items-center space-x-1 text-blue-400 hover:text-blue-300 
+                        transition-all duration-300 transform hover:scale-110'
                       >
                         <svg
                           xmlns='http://www.w3.org/2000/svg'
@@ -274,17 +278,19 @@ const SearchDemandsPage = () => {
                       </button>
                     </div>
                   </div>
-
+  
                   <div className='mt-6'>
-                    <h3 className='text-xl font-semibold mb-3 text-gray-200'>
+                    <h3 className='text-xl font-semibold mb-3 text-gray-200 
+                    transition-all duration-300 hover:text-gray-100'>
                       Comments
                     </h3>
-
+  
                     <div className='space-y-3 mb-4 max-h-60 overflow-y-auto'>
                       {(comments[selectedDemand._id] || []).map((comment) => (
                         <div
                           key={comment.id}
-                          className='bg-gray-800/50 p-3 rounded-lg'
+                          className='bg-gray-800/50 p-3 rounded-lg 
+                          transition-all duration-300 hover:bg-gray-800/60 hover:scale-[1.02]'
                         >
                           <div className='flex justify-between text-sm text-gray-400 mb-1'>
                             <span>{comment.user}</span>
@@ -295,25 +301,28 @@ const SearchDemandsPage = () => {
                           <p className='text-gray-200'>{comment.text}</p>
                         </div>
                       ))}
-
+  
                       {(comments[selectedDemand._id] || []).length === 0 && (
                         <p className='text-gray-500 text-center py-2'>
                           No comments yet
                         </p>
                       )}
                     </div>
-
+  
                     <div className='flex space-x-2'>
                       <input
                         type='text'
-                        className='flex-1 px-3 py-2 rounded-lg bg-gray-800/50 border border-gray-700 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
+                        className='flex-1 px-3 py-2 rounded-lg bg-gray-800/50 border border-gray-700 text-white 
+                        focus:border-blue-500 focus:ring-1 focus:ring-blue-500 
+                        transition-all duration-300 hover:bg-gray-800/60'
                         placeholder='Write your comment...'
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
                       />
                       <button
                         onClick={() => handleAddComment(selectedDemand._id)}
-                        className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700'
+                        className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 
+                        transition-all duration-300 transform hover:scale-105'
                       >
                         Send
                       </button>
@@ -321,7 +330,9 @@ const SearchDemandsPage = () => {
                     <div className='flex justify-center mt-10'>
                       <a
                         href={`/viewrequest/?id=${selectedDemand._id}`}
-                        className='px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-300 flex items-center space-x-2'
+                        className='px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 
+                        transition-colors duration-300 flex items-center space-x-2 
+                        transform hover:scale-105'
                       >
                         <span>View Details</span>
                         <svg
@@ -346,7 +357,7 @@ const SearchDemandsPage = () => {
                 <div className='flex flex-col items-center justify-center h-full text-center text-gray-400'>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
-                    className='h-16 w-16 mb-4 text-gray-600'
+                    className='h-16 w-16 mb-4 text-gray-600 transition-all duration-300 hover:text-gray-500'
                     fill='none'
                     viewBox='0 0 24 24'
                     stroke='currentColor'
@@ -365,34 +376,39 @@ const SearchDemandsPage = () => {
               )}
             </div>
           </div>
-
+  
           {filteredDemands.length > 0 && (
             <div className='mt-8'>
-              <h2 className='text-2xl font-bold mb-4 text-gray-200'>
+              <h2 className='text-2xl font-bold mb-4 text-gray-200 
+              transition-all duration-300 hover:text-gray-100'>
                 All Demands ({filteredDemands.length})
               </h2>
               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
                 {filteredDemands.map((demand) => (
                   <div
                     key={demand._id}
-                    className={`p-4 rounded-lg cursor-pointer transition-all duration-300 ${
+                    className={`p-4 rounded-lg cursor-pointer transition-all duration-300 
+                    hover:shadow-lg transform hover:scale-[1.03] ${
                       selectedDemand && selectedDemand._id === demand._id
                         ? 'bg-blue-900/30 border border-blue-500/50'
-                        : 'bg-gray-800/30 border border-gray-700/50 hover:bg-gray-700/30'
+                        : 'bg-gray-800/30 border border-gray-700/50 hover:bg-gray-700/40'
                     }`}
                     onClick={() => handleMarkerClick(demand)}
                   >
-                    <h3 className='text-lg font-semibold mb-2'>
+                    <h3 className='text-lg font-semibold mb-2 
+                    transition-all duration-300 hover:text-blue-400'>
                       {demand.title}
                     </h3>
                     <p className='text-gray-400 text-sm mb-3 line-clamp-2'>
                       {demand.description}
                     </p>
                     <div className='flex justify-between items-center'>
-                      <span className='text-xs text-gray-500'>
+                      <span className='text-xs text-gray-500 
+                      transition-all duration-300 hover:text-gray-400'>
                         {demand.category}
                       </span>
-                      <div className='flex items-center space-x-1 text-blue-400'>
+                      <div className='flex items-center space-x-1 text-blue-400 
+                      transition-all duration-300 transform hover:scale-110'>
                         <svg
                           xmlns='http://www.w3.org/2000/svg'
                           className='h-4 w-4'
@@ -414,8 +430,8 @@ const SearchDemandsPage = () => {
             </div>
           )}
         </div>
+        <Footer />
       </div>
-      <Footer />
     </>
   )
 };
