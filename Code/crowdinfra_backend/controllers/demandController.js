@@ -64,6 +64,12 @@ exports.getDemand = async (req, res) => {
 
 // **Get demand by ID**
 exports.getDemandById = async (req, res) => {
+
+  res.setHeader(
+    'Cache-Control',
+    'no-store, no-cache, must-revalidate, proxy-revalidate'
+  )
+
   try {
     const Demand = await getDemandModel();
     const { id } = req.params;

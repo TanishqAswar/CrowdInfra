@@ -28,6 +28,15 @@ const SearchDemandsPage = () => {
   const [businessCategory, setBusinessCategory] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [visibleDemands, setVisibleDemands] = useState(3) // Show 6 initially
+
+  const handleLoadMore = () => {
+    setVisibleDemands((prev) => prev + 3) // Load 6 more each time
+  }
+
+  const handleShowLess = () => {
+    setVisibleDemands(6) // Reset to initial state
+  }
 
   const { selectedPlace } = useUserContext() || {};
 
@@ -165,7 +174,7 @@ const SearchDemandsPage = () => {
       <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-10 text-gray-100'>
         <Navbar />
 
-        <div className='container mx-auto px-4 py-8'>
+        <div className='container mx-auto px-4 py-8 mt-8'>
           <h1 className='text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gray-200'>
             Search Demands
           </h1>
@@ -369,10 +378,10 @@ const SearchDemandsPage = () => {
           {filteredDemands.length > 0 && (
             <div className='mt-8'>
               <h2 className='text-2xl font-bold mb-4 text-gray-200'>
-                All Demands ({filteredDemands.length})
+                Nearby Demands ({filteredDemands.length})
               </h2>
               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                {filteredDemands.map((demand) => (
+                {filteredDemands.slice(0, visibleDemands).map((demand) => (
                   <div
                     key={demand._id}
                     className={`p-4 rounded-lg cursor-pointer transition-all duration-300 ${
@@ -410,6 +419,26 @@ const SearchDemandsPage = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Buttons for Load More and Show Less */}
+              <div className='mt-6 text-center'>
+                {visibleDemands < filteredDemands.length && (
+                  <button
+                    onClick={handleLoadMore}
+                    className='px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition mx-2'
+                  >
+                    Load More Demands
+                  </button>
+                )}
+                {visibleDemands > 6 && (
+                  <button
+                    onClick={handleShowLess}
+                    className='px-4 py-2 bg-gray-600 text-white font-semibold rounded-md hover:bg-gray-700 transition mx-2'
+                  >
+                    Show Less
+                  </button>
+                )}
               </div>
             </div>
           )}
