@@ -117,7 +117,7 @@ export default function ViewRequest() {
         setBusinessLoading(true);
         try {
             const prompt = `
-            Analyze this business request and provide suggestions as JSON:
+            Analyze this business request based on location and type of bussiness analyzing existing resources and competetion in that location  as JSON:
             
             Title: ${requestData.title}
             Category: ${requestData.category}
@@ -553,7 +553,7 @@ export default function ViewRequest() {
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                         </svg>
-                        Back to all requests
+                        Back to Home
                     </Link>
                 </div>
             </div>
