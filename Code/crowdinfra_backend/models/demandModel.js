@@ -48,15 +48,14 @@ const initializeDemandModel = async () => {
         type: String,
         required: true,
         enum: [
-          'infrastructure',
-          'public Service',
-          'transportation',
-          'utilities',
-          'education',
-          'public service',
-          'healthcare',
-          'other',
-        ],
+          "infrastructure",
+          "public_service",
+          "transportation",
+          "utilities",
+          "education",
+          "healthcare",
+          "other",
+        ], // Extend as needed
       },
       status: {
         type: String,
@@ -68,11 +67,28 @@ const initializeDemandModel = async () => {
         default: 1,
         min: 0,
       },
-      down_votes: {
-        type: Number,
-        default: 0,
-        min: 0,
-      },
+      upvotedBy: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User',
+        }
+      ],
+      comments: [
+        {
+          user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+          },
+          text: {
+            type: String,
+            required: true,
+          },
+          timestamp: {
+            type: Date,
+            default: Date.now,
+          },
+        }
+      ],
     },
     { timestamps: true }
   )

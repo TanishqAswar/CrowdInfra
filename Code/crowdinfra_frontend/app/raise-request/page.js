@@ -146,10 +146,10 @@ const RaiseRequestPage = () => {
       <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-10 text-gray-100'>
         <Navbar />
 
-        <div className='container mx-auto px-4 py-8'>
-          <h1 className='text-4xl font-bold mb-8 text-center mt-8'>
-            Raise Facility Request
-          </h1>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gray-200 mt-8">
+          Raise Facility Request
+        </h1>
 
           <div className='mb-6 flex items-center justify-center'>
             <div className='w-1/2'>

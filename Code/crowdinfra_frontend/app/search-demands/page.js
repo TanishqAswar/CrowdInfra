@@ -23,7 +23,6 @@ const SearchDemandsPage = () => {
   const [demands, setDemands] = useState([]);
   const [filteredDemands, setFilteredDemands] = useState([]);
   const [selectedDemand, setSelectedDemand] = useState(null);
-  const [comments, setComments] = useState({});
   const [newComment, setNewComment] = useState('');
   const [businessCategory, setBusinessCategory] = useState('all');
   const [loading, setLoading] = useState(true);
@@ -107,37 +106,58 @@ const SearchDemandsPage = () => {
 
   const handleUpvote = async (demandId) => {
     try {
-      const response = await axios.patch(`http://localhost:5000/api/demands/${demandId}/upvote`);
+      const response = await axios.patch(
+        `http://localhost:5030/api/demand/${demandId}/upvote`,
+        {},
+        {
+          withCredentials: true, // Ensure cookies are sent with the request
+        }
+      );
+      const updatedDemand = response.data.data;
       
       // Update the demands list with the updated demand
       setDemands(prevDemands => 
         prevDemands.map(demand => 
-          demand._id === demandId ? response.data.data : demand
+          demand._id === demandId ? updatedDemand : demand
         )
       );
+
+      // Update the selected demand if it's the one we just upvoted 
+      if (selectedDemand && selectedDemand._id === demandId) {
+        setSelectedDemand(updatedDemand);
+      }
     } catch (err) {
       console.error('Error upvoting demand:', err);
     }
   };
 
-  // Mock comment functionality (you'd need to implement backend support)
-  const handleAddComment = (demandId) => {
+  const handleAddComment = async (demandId) => {
     if (!newComment.trim()) return;
     
-    // This is a placeholder. In a real app, you'd send this to the backend
-    const comment = {
-      id: Date.now(),
-      text: newComment,
-      user: "Business User", // Replace with actual user name
-      timestamp: new Date().toISOString()
-    };
-    
-    setComments(prev => ({
-      ...prev,
-      [demandId]: [...(prev[demandId] || []), comment]
-    }));
-    
-    setNewComment('');
+    try {
+      // Make a POST request to the backend to add the comment.
+      const response = await axios.post(
+        `http://localhost:5030/api/demand/${demandId}/comments`,
+        { text: newComment },
+        { withCredentials: true } // Ensures cookies (and auth) are sent.
+      );
+      
+      // The backend returns the updated demand with the new comment.
+      const updatedDemand = response.data.demand;
+      
+      // Update the selected demand if it's the one we just commented on.
+      if (selectedDemand && selectedDemand._id === demandId) {
+        setSelectedDemand(updatedDemand);
+      }
+      
+      // Also update the overall demands list.
+      setDemands(prev => prev.map(d => d._id === demandId ? updatedDemand : d));
+      
+      // Clear the new comment input.
+      setNewComment('');
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
   };
 
   if (!isLoaded) return (
@@ -166,7 +186,7 @@ const SearchDemandsPage = () => {
         <Navbar />
 
         <div className='container mx-auto px-4 py-8'>
-          <h1 className='text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gray-200'>
+          <h1 className='text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gray-200 mt-8'>
             Search Demands
           </h1>
 
@@ -181,7 +201,7 @@ const SearchDemandsPage = () => {
                 onChange={(e) => setBusinessCategory(e.target.value)}
               >
                 <option value='all'>infrastructure</option>
-                <option value='restaurant'>public Service</option>
+                <option value='restaurant'>public service</option>
                 <option value='retail'>transportation</option>
                 <option value='medical'>utilities</option>
                 <option value='education'>education</option>
@@ -281,9 +301,9 @@ const SearchDemandsPage = () => {
                     </h3>
 
                     <div className='space-y-3 mb-4 max-h-60 overflow-y-auto'>
-                      {(comments[selectedDemand._id] || []).map((comment) => (
+                      {(selectedDemand.comments || []).map((comment, index) => (
                         <div
-                          key={comment.id}
+                          key={index}
                           className='bg-gray-800/50 p-3 rounded-lg'
                         >
                           <div className='flex justify-between text-sm text-gray-400 mb-1'>
@@ -296,7 +316,7 @@ const SearchDemandsPage = () => {
                         </div>
                       ))}
 
-                      {(comments[selectedDemand._id] || []).length === 0 && (
+                      {(selectedDemand.comments || []).length === 0 && (
                         <p className='text-gray-500 text-center py-2'>
                           No comments yet
                         </p>
