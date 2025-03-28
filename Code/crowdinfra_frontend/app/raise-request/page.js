@@ -95,20 +95,23 @@ const RaiseRequestPage = () => {
         },
       }
 
-      const response = await fetch('http://localhost:5030/api/demand/demand', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(demandData),
-      })
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/demand/demand`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(demandData),
+        }
+      )
 
       const data = await response.json()
 
       console.log('Demand submission response:', data)
 
       if (response.ok) {
-        console.log("demand._id ",data.demand._id);
+        console.log('demand._id ', data.demand._id)
         const newRequest = {
           ...demandData,
           id: data.demand._id, // Temporary ID
@@ -141,7 +144,7 @@ const RaiseRequestPage = () => {
     return (
       <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center'>
         <div className='animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500'></div>
-        <Loading text="Loading Map ..." />
+        <Loading text='Loading Map ...' />
       </div>
     )
 
@@ -185,12 +188,12 @@ const RaiseRequestPage = () => {
                       <h3 className='text-xl font-bold text-gray-800'>
                         Raise a Request
                       </h3>
-                      <button
+                      {/* <button
                         onClick={handleCloseLocationPopup}
                         className='text-gray-500 hover:text-gray-700'
                       >
                         <X size={24} />
-                      </button>
+                      </button> */}
                     </div>
                     <button
                       onClick={() => {
@@ -254,7 +257,7 @@ const RaiseRequestPage = () => {
                       }}
                     >
                       <div className='p-4 max-w-xs'>
-                        <h3 className='text-xl font-bold text-blue-600 mb-2' >
+                        <h3 className='text-xl font-bold text-blue-600 mb-2'>
                           <Link
                             href={`/viewrequest?id=${request.id}`}
                             className='block hover:underline'

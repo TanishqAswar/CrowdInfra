@@ -15,7 +15,6 @@ const containerStyle = {
   height: '250px',
 }
 
-
 const ProfilePage = () => {
   const [user, setUser] = useState(null)
   const [mapCenter, setMapCenter] = useState(null)
@@ -33,7 +32,7 @@ const ProfilePage = () => {
   const handleLogout = async () => {
     try {
       await axios.post(
-        'http://localhost:5030/api/auth/logout',
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/logout`,
         {},
         { withCredentials: true }
       ) // ✅ Sends request to clear cookie
@@ -43,54 +42,6 @@ const ProfilePage = () => {
     }
   }
 
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     setLoading(true)
-  //     setError(null)
-
-  //     try {
-  //       const response = await axios.get(
-  //         'http://localhost:5030/api/user/profile',
-  //         {
-  //           withCredentials: true, // ✅ Send cookies with request
-  //         }
-  //       )
-
-  //       if (response.status !== 200) {
-  //         throw new Error('Failed to fetch user data')
-  //       }
-
-  //       setUser(response.data)
-
-  //       if (response.data?.address && isLoaded) {
-  //         const geocoder = new window.google.maps.Geocoder()
-  //         geocoder.geocode(
-  //           { address: response.data.address },
-  //           (results, status) => {
-  //             if (status === 'OK' && results[0]) {
-  //               const { lat, lng } = results[0].geometry.location
-  //               setMapCenter({ lat: lat(), lng: lng() })
-  //             } else {
-  //               setMapCenter(
-  //                 response.data.location || { lat: 28.6139, lng: 77.209 }
-  //               )
-  //             }
-  //           }
-  //         )
-  //       } else if (response.data?.location) {
-  //         setMapCenter(response.data.location)
-  //       }
-  //     } catch (err) {
-  //       console.error('Error fetching profile:', err)
-  //       setError(err.message || 'Failed to load profile data')
-  //     } finally {
-  //       setLoading(false)
-  //     }
-  //   }
-
-  //   fetchUserData()
-  // }, [isLoaded]) // ✅ Re-run when Google Maps is loaded
-
   useEffect(() => {
     const fetchUserData = async () => {
       setLoading(true)
@@ -98,7 +49,7 @@ const ProfilePage = () => {
 
       try {
         const response = await axios.get(
-          'http://localhost:5030/api/user/profile',
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/profile`,
           {
             withCredentials: true,
           }
@@ -118,9 +69,9 @@ const ProfilePage = () => {
             (results, status) => {
               if (status === 'OK' && results[0]) {
                 const { lat, lng } = results[0].geometry.location
-                setMapCenter({ 
-                  lat: lat(), 
-                  lng: lng() 
+                setMapCenter({
+                  lat: lat(),
+                  lng: lng(),
                 })
               } else {
                 // Fallback to a default location if geocoding fails
@@ -210,7 +161,7 @@ const ProfilePage = () => {
                   <Image
                     src={
                       user.profile_image
-                        ? `http://localhost:5030${user.profile_image}`
+                        ? `${process.env.NEXT_PUBLIC_BACKEND_URL}${user.profile_image}`
                         : '/default-avatar.png'
                     }
                     alt={user.name || 'User Profile'}
@@ -360,35 +311,35 @@ const ProfilePage = () => {
                       </div>
 
                       <div className='rounded-xl overflow-hidden shadow-lg border border-gray-700 hover:border-blue-500/50 transition-colors duration-300'>
-  {isLoaded && mapCenter ? (
-    <GoogleMap
-      mapContainerStyle={containerStyle}
-      center={mapCenter}  // Use mapCenter state
-      zoom={14}
-      options={{
-        mapTypeControl: false,
-        streetViewControl: false,
-        fullscreenControl: false,
-        zoomControl: true,
-        styles: [
-          {
-            featureType: 'all',
-            elementType: 'all',
-            stylers: [{ saturation: -70 }],
-          },
-        ],
-      }}
-    >
-      <Marker position={mapCenter} />
-    </GoogleMap>
-  ) : (
-    <div className='h-64 w-full flex items-center justify-center bg-gray-800'>
-      <div className='animate-pulse flex flex-col items-center'>
-        <div className='rounded-full bg-gray-700 h-10 w-10 mb-2'></div>
-        <div className='h-2 bg-gray-700 rounded w-24'></div>
-      </div>
-    </div>
-  )}
+                        {isLoaded && mapCenter ? (
+                          <GoogleMap
+                            mapContainerStyle={containerStyle}
+                            center={mapCenter} // Use mapCenter state
+                            zoom={14}
+                            options={{
+                              mapTypeControl: false,
+                              streetViewControl: false,
+                              fullscreenControl: false,
+                              zoomControl: true,
+                              styles: [
+                                {
+                                  featureType: 'all',
+                                  elementType: 'all',
+                                  stylers: [{ saturation: -70 }],
+                                },
+                              ],
+                            }}
+                          >
+                            <Marker position={mapCenter} />
+                          </GoogleMap>
+                        ) : (
+                          <div className='h-64 w-full flex items-center justify-center bg-gray-800'>
+                            <div className='animate-pulse flex flex-col items-center'>
+                              <div className='rounded-full bg-gray-700 h-10 w-10 mb-2'></div>
+                              <div className='h-2 bg-gray-700 rounded w-24'></div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

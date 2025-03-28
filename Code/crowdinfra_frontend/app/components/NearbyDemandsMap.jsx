@@ -62,11 +62,11 @@ export default function NearbyDemandsMap({ onDemandSelect }) {
 
   const fetchNearbyDemands = async (userLocation) => {
     try {
-      console.log('Fetching nearby demands...', userLocation)
+      // console.log('Fetching nearby demands...', userLocation)
       const response = await axios.get(
-        `http://localhost:5030/api/demand/nearby?latitude=${userLocation.lat}&longitude=${userLocation.lng}&radius=5000`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/demand/nearby?latitude=${userLocation.lat}&longitude=${userLocation.lng}&radius=5000`
       )
-      console.log('Nearby demands:', response.data)
+      // console.log('Nearby demands:', response.data)
       setDemands(response.data)
     } catch (error) {
       console.error('Error fetching demands:', error)

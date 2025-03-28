@@ -87,7 +87,7 @@ exports.getDemandById = async (req, res) => {
 
 // **Get nearby demands**
 exports.getNearbyDemands = async (req, res) => {
-  console.log("Fetching nearby demands...".blue.bgYellow);
+  // console.log("Fetching nearby demands...".blue.bgYellow);
   try {
     const { latitude, longitude, radius = 5000 } = req.query; // Default 5km radius
 
@@ -109,8 +109,8 @@ exports.getNearbyDemands = async (req, res) => {
       },
     });
 
-    console.log("Nearby demands fetched successfully!".green);
-    console.log(demands);
+    // console.log("Nearby demands fetched successfully!".green);
+    // console.log(demands);
 
     res.json(demands);
   } catch (error) {

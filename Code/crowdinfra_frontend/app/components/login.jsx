@@ -2,12 +2,11 @@
 
 import { useState } from 'react'
 
-import { useRouter } from 'next/navigation'; // For redirection
-import { toast } from 'react-toastify'; // For toast messages
+import { useRouter } from 'next/navigation' // For redirection
+import { toast } from 'react-toastify' // For toast messages
 
 import Link from 'next/link'
 import axios from 'axios'
-
 
 const LoginPage = ({ setIsLogin }) => {
   const [formData, setFormData] = useState({
@@ -17,7 +16,7 @@ const LoginPage = ({ setIsLogin }) => {
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData({
@@ -46,16 +45,15 @@ const LoginPage = ({ setIsLogin }) => {
 
     console.log(JSON.stringify(formData, null, 2))
 
-
     if (Object.keys(newErrors).length === 0) {
       setIsSubmitting(true)
       try {
         const response = await axios.post(
-          `http://localhost:5030/api/auth/login`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
           formData,
-          { withCredentials: true } 
+          { withCredentials: true }
         )
-          console.log('Login response:', response.data);
+        console.log('Login response:', response.data)
         if (response.data && response.data.success) {
           toast.success('Login successful! Redirecting to home...')
           setIsLogin(true)
@@ -73,20 +71,31 @@ const LoginPage = ({ setIsLogin }) => {
       setErrors(newErrors)
     }
   }
-  
-    return (
+
+  return (
     <div className='min-h-screen w-full bg-transparent py-5 text-white'>
       <div className='container mx-auto px-4 py-8'>
         <div className='max-w-full mx-auto'>
           <div className='bg-transparent backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden p-8 border-none'>
             <div className='text-center mb-8'>
-              <h1 className='text-4xl font-bold text-white mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500'>Login</h1>
-              <div className="text-gray-400 text-sm mt-2 mb-6" onClick={()=>setIsLogin(false)}>
-                Don't have an account? <Link href="/auth" className="text-blue-400 hover:text-blue-300 underline-none transition-colors duration-300">Create account</Link>
+              <h1 className='text-4xl font-bold text-white mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500'>
+                Login
+              </h1>
+              <div
+                className='text-gray-400 text-sm mt-2 mb-6'
+                onClick={() => setIsLogin(false)}
+              >
+                Don't have an account?{' '}
+                <Link
+                  href='/auth'
+                  className='text-blue-400 hover:text-blue-300 underline-none transition-colors duration-300'
+                >
+                  Create account
+                </Link>
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className='space-y-4'>
               {/* Email */}
               <div className='mb-4'>
                 <label
@@ -95,7 +104,7 @@ const LoginPage = ({ setIsLogin }) => {
                 >
                   Email Address
                 </label>
-                <div className="relative">
+                <div className='relative'>
                   <input
                     type='email'
                     id='email'
@@ -121,7 +130,7 @@ const LoginPage = ({ setIsLogin }) => {
                 >
                   Password
                 </label>
-                <div className="relative">
+                <div className='relative'>
                   <input
                     type='password'
                     id='password'
@@ -134,14 +143,19 @@ const LoginPage = ({ setIsLogin }) => {
                     placeholder='Enter your password'
                   />
                   {errors.password && (
-                    <p className='text-red-500 text-xs mt-1'>{errors.password}</p>
+                    <p className='text-red-500 text-xs mt-1'>
+                      {errors.password}
+                    </p>
                   )}
                 </div>
               </div>
 
               {/* Forgot Password Link */}
-              <div className="flex justify-end mb-6">
-                <Link href="/forgot-password" className="text-sm text-blue-400 hover:text-blue-300 transition-colors duration-300">
+              <div className='flex justify-end mb-6'>
+                <Link
+                  href='/forgot-password'
+                  className='text-sm text-blue-400 hover:text-blue-300 transition-colors duration-300'
+                >
                   Forgot password?
                 </Link>
               </div>
@@ -183,7 +197,9 @@ const LoginPage = ({ setIsLogin }) => {
                     </svg>
                     Logging in...
                   </span>
-                ) : 'Login'}
+                ) : (
+                  'Login'
+                )}
               </button>
             </form>
           </div>
@@ -193,4 +209,4 @@ const LoginPage = ({ setIsLogin }) => {
   )
 }
 
-export default LoginPage  
+export default LoginPage

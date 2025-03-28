@@ -27,9 +27,12 @@ export const UserProvider = ({ children }) => {
       }
 
       try {
-        const response = await axios.get('http://localhost:5030/api/verify', {
-          withCredentials: true, // Ensure cookies are sent
-        })
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/verify`,
+          {
+            withCredentials: true, // Ensure cookies are sent
+          }
+        )
 
         if (response.data.valid) {
           setUser(response.data.user) // Store user data

@@ -111,16 +111,16 @@ const loginUser = async (req, res) => {
 
     // Generate JWT token
     const payload = { user: { id: user.id, role: user.role } }
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '9h' })
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '10h' })
 
     // console.log('Token:', token)
 
     // Store token in HTTP-Only Cookie
     res.cookie('crowdInfra_token', token, {
-      httpOnly: true, // Prevents JavaScript access
-      secure: process.env.NODE_ENV === 'production', // ✅ Only secure on production
-       sameSite: 'lax', // Prevents CSRF attacks // TODO: make this "Secure" this for production, but for development need to keep "lax"
-      maxAge: 60 * 60 * 9000, // Token expiration (9 hour)
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production' ? true : false,
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+      maxAge: 60 * 60 * 9000,
     })
 
     console.log('Set-Cookie Header:', res.getHeaders()['set-cookie'])
