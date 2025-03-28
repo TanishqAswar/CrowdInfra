@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter} from "next/navigation";
 import Link from 'next/link';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
@@ -14,14 +14,15 @@ export default function ViewRequest() {
     const [error, setError] = useState(null);
     const [businessAnalysis, setBusinessAnalysis] = useState(null);
     const [businessLoading, setBusinessLoading] = useState(false);
-    const searchParams = useSearchParams();
+    const { search } = useRouter();
+    const searchParams = new URLSearchParams(search);
     const mapRef = useRef(null);
     const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    const requestId = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : null;
 
     useEffect(() => {
         async function fetchRequest() {
             try {
-                const requestId = searchParams.get('id');
                 console.log(requestId);
                 if (!requestId) {
                     throw new Error('Request ID not found in URL');
@@ -52,7 +53,7 @@ export default function ViewRequest() {
         }
 
         fetchRequest();
-    }, [searchParams]);
+    }, []);
 
     useEffect(() => {
         // Initialize map when request data is loaded

@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from 'next/navigation'
 import Script from "next/script";
 import * as THREE from "three";
-import Maps from "./maps/page";
 import Navbar from "./components/navbar";
 import { useUserContext } from "./components/user_context";
 import Link from "next/link";
