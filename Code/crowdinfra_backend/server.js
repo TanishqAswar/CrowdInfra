@@ -52,7 +52,15 @@ const app = express();
     app.use('/api/demand', demandRoutes)
     app.use('/api/rating', ratingRoutes)
 
-
+    // Basic route for health check at root endpoint
+    app.get('/', (req, res) => {
+      res.json({ 
+        message: 'CrowdInfra API is running',
+        status: 'OK',
+        version: '1.0.0',
+        timestamp: new Date().toISOString()
+      });
+    });
     // Environment Variables
     console.log('=========================================='.yellow)
     console.log('🚀 Database Connection URIs'.cyan.bold)
