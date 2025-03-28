@@ -7,7 +7,7 @@ import ReactMarkdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import remarkGfm from 'remark-gfm'
-import { useSearchParams } from 'next/navigation'
+// import { useSearchParams } from 'next/navigation'
 
 export default function ViewRequest() {
   const [request, setRequest] = useState(null)
@@ -15,17 +15,18 @@ export default function ViewRequest() {
   const [error, setError] = useState(null)
   const [businessAnalysis, setBusinessAnalysis] = useState(null)
   const [businessLoading, setBusinessLoading] = useState(false)
-  // const { search } = useRouter()
-  // const searchParams = new URLSearchParams(search)
+  const { search } = useRouter()
+  const searchParams = new URLSearchParams(search)
   const mapRef = useRef(null)
   const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY
-  // const requestId =
-  //   typeof window !== 'undefined'
-  //     ? new URLSearchParams(window.location.search).get('id')
-  //     : null
+  const requestId =
+    typeof window !== 'undefined'
+      ? new URLSearchParams(window.location.search).get('id')
+      : null
+  const NEXT_PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL
 
-  const searchParams = useSearchParams()
-  const requestId = searchParams.get('id')
+  // const searchParams = useSearchParams()
+  // const requestId = searchParams.get('id')
 
 
   useEffect(() => {
@@ -38,7 +39,7 @@ export default function ViewRequest() {
         }
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/demand/getDemandById/${requestId}`,
+          `${NEXT_PUBLIC_BACKEND_URL}/api/demand/getDemandById/${requestId}`,
           { cache: 'no-store' } // ✅ Prevents caching
         )
 

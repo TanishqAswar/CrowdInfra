@@ -194,12 +194,12 @@ export default function NearbyDemandsMap({ onDemandSelect }) {
                 handleDemandSelect(null)
               }}
             >
-              <Link
+              <a
                 href={`/viewrequest?id=${selectedDemand._id}`}
                 className='text-blue-600 hover:underline text-xs mt-2 block'
               >
                 <h3 className='text-lg font-bold'>{selectedDemand.title}</h3>
-              </Link>
+              </a>
               <p className='text-sm text-gray-700 mb-2 leading-relaxed'>
                 {selectedDemand.description}
               </p>
