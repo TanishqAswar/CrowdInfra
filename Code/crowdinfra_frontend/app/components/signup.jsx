@@ -74,7 +74,7 @@ const SignupPage = ({ setIsLogin, profilePhoto }) => {
 
         // Make API request using Axios
         const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/signup`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/signup`,
           formDataWithPhoto,
           {
             headers: {
