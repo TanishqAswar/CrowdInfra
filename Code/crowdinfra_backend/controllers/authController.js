@@ -118,8 +118,9 @@ const loginUser = async (req, res) => {
     // Store token in HTTP-Only Cookie
     res.cookie('crowdInfra_token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production' ? true : false,
-      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+      secure: true, // Always use Secure, even in development
+      sameSite: 'None', // Required for cross-origin cookies
+      partitioned: true, // NEW: Enables cross-origin but isolated cookies
       maxAge: 60 * 60 * 9000,
     })
 

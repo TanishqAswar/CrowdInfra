@@ -67,6 +67,7 @@ export default function GlobePage() {
     return () => cancelAnimationFrame(checkPerformance)
   }, [showCursor])
 
+  // Variable to track if the user is authenticated
   useEffect(() => {
     const verifyUser = async () => {
       try {
@@ -89,6 +90,7 @@ export default function GlobePage() {
         }
       } catch (error) {
         console.error('Error verifying user:', error)
+        toast.error('Session expired. Please login again')
         router.push('/landing')
       }
     }
