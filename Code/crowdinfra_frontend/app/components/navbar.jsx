@@ -74,7 +74,7 @@ export default function Navbar() {
       {/* Left Section - Logo and Text */}
       <div className='flex items-center gap-3'>
         {/* Logo */}
-        <Link href='/' className='group'>
+        <Link href='/landing' className='group'>
           <div className='
             w-10 h-10 
             relative 
@@ -94,7 +94,7 @@ export default function Navbar() {
         </Link>
 
         {/* Brand Name */}
-        <Link href='/home'>
+        <Link href='/landing'>
           <h1 className='text-gray-100  font-bold text-xl tracking-wide'>
             CrowdInfra
           </h1>

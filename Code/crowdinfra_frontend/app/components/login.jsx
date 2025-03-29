@@ -153,7 +153,7 @@ const LoginPage = ({ setIsLogin }) => {
               {/* Forgot Password Link */}
               <div className='flex justify-end mb-6'>
                 <Link
-                  href='/forgot-password'
+                  href='/forgot-password' 
                   className='text-sm text-blue-400 hover:text-blue-300 transition-colors duration-300'
                 >
                   Forgot password?
