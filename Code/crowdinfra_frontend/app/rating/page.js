@@ -26,7 +26,7 @@ const CustomerReviewForm = () => {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/rating/rating`,
         {
-          email: 'mrmishra@gmail.com',
+          email: localStorage.getItem('email'),
           review,
           rating,
         }

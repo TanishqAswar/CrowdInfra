@@ -153,7 +153,7 @@ const LoginPage = ({ setIsLogin }) => {
               {/* Forgot Password Link */}
               <div className='flex justify-end mb-6'>
                 <Link
-                  href='/forgot-password' 
+                  href='/forgot-password'
                   className='text-sm text-blue-400 hover:text-blue-300 transition-colors duration-300'
                 >
                   Forgot password?
@@ -171,6 +171,9 @@ const LoginPage = ({ setIsLogin }) => {
               <button
                 type='submit'
                 className='w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg'
+                onClick={() =>{
+                  localStorage.setItem('email', formData.email)
+                }}
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
