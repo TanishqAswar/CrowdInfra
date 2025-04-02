@@ -336,12 +336,6 @@ const ProfilePage = () => {
                         </div>
                       </div>
 
-                      {/* <h2 className='text-xl font-semibold mb-4 mt-8 text-gray-200 border-b border-gray-700 pb-2'>
-                        Bio
-                      </h2>
-                      <p className='text-gray-300 leading-relaxed'>
-                        {user.bio}
-                      </p> */}
                     </div>
 
                     <div>
