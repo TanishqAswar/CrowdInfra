@@ -5,7 +5,6 @@ import Link from 'next/link'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
-
 const SignupPage = ({ setIsLogin, profilePhoto }) => {
   const [formData, setFormData] = useState({
     name: '',
@@ -75,7 +74,7 @@ const SignupPage = ({ setIsLogin, profilePhoto }) => {
 
         // Make API request using Axios
         const response = await axios.post(
-          'http://localhost:5000/api/auth/signup',
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/signup`,
           formDataWithPhoto,
           {
             headers: {
@@ -83,7 +82,6 @@ const SignupPage = ({ setIsLogin, profilePhoto }) => {
             },
           }
         )
-
 
         toast.success('Registration successful! Redirecting to login...')
 
@@ -123,7 +121,9 @@ const SignupPage = ({ setIsLogin, profilePhoto }) => {
               value={formData.name}
               onChange={handleChange}
               className={`w-full px-3 py-2 bg-white text-white dark:bg-gray-800 rounded-lg border ${
-                errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                errors.name
+                  ? 'border-red-500'
+                  : 'border-gray-300 dark:border-gray-600'
               } focus:outline-none focus:ring-2 focus:ring-blue-500`}
               placeholder='John Doe'
             />
@@ -147,7 +147,9 @@ const SignupPage = ({ setIsLogin, profilePhoto }) => {
               value={formData.email}
               onChange={handleChange}
               className={`w-full px-3 py-2 text-white dark:bg-gray-800 rounded-lg border ${
-                errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                errors.email
+                  ? 'border-red-500'
+                  : 'border-gray-300 dark:border-gray-600'
               } focus:outline-none focus:ring-2 focus:ring-blue-500`}
               placeholder='your.email@example.com'
             />
@@ -190,7 +192,11 @@ const SignupPage = ({ setIsLogin, profilePhoto }) => {
               onChange={handleChange}
               className='w-full px-3 py-2 bg-white text-white  dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
             >
-              <option value='' disabled className='text-gray-700 dark:text-gray-300 mb-1 text-sm ' >
+              <option
+                value=''
+                disabled
+                className='text-gray-700 dark:text-gray-300 mb-1 text-sm '
+              >
                 Select gender
               </option>
               <option value='Male'>Male</option>
@@ -255,14 +261,14 @@ const SignupPage = ({ setIsLogin, profilePhoto }) => {
               value={formData.password}
               onChange={handleChange}
               className={`w-full px-3 py-2 bg-white text-white dark:bg-gray-800 rounded-lg border ${
-                errors.password ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                errors.password
+                  ? 'border-red-500'
+                  : 'border-gray-300 dark:border-gray-600'
               } focus:outline-none focus:ring-2 focus:ring-blue-500`}
               placeholder='••••••••'
             />
             {errors.password && (
-              <p className='text-red-500 text-xs mt-1'>
-                {errors.password}
-              </p>
+              <p className='text-red-500 text-xs mt-1'>{errors.password}</p>
             )}
           </div>
 
@@ -310,25 +316,22 @@ const SignupPage = ({ setIsLogin, profilePhoto }) => {
                 htmlFor='agreeTerms'
               >
                 I agree to the{' '}
-                <Link
-                  href='/terms'
-                  className='text-blue-600 hover:underline'
-                >
+                <Link href='/terms' className='text-blue-600 hover:underline'>
                   Terms and Conditions
                 </Link>
               </label>
             </div>
             {errors.agreeTerms && (
-              <p className='text-red-500 text-xs mt-1'>
-                {errors.agreeTerms}
-              </p>
+              <p className='text-red-500 text-xs mt-1'>{errors.agreeTerms}</p>
             )}
           </div>
 
           {/* Submit Error */}
           {errors.submit && (
             <div className='col-span-2 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-500 rounded-lg p-3 mb-4'>
-              <p className='text-red-700 dark:text-red-400 text-sm'>{errors.submit}</p>
+              <p className='text-red-700 dark:text-red-400 text-sm'>
+                {errors.submit}
+              </p>
             </div>
           )}
 

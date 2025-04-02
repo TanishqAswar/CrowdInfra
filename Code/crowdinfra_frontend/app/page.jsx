@@ -1,166 +1,213 @@
-"use client";
+'use client'
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Script from "next/script";
-import * as THREE from "three";
-import Maps from "./maps/page";
-import Navbar from "./components/navbar";
-import { useUserContext } from "./components/user_context";
-import Link from "next/link";
-import Footer from "./components/footer";
-import NearbyDemandsMap from "./components/NearbyDemandsMap";
-import Loading from "./components/loading";
-import axios from "axios";
-import { toast } from "react-toastify";
+import Script from 'next/script'
+import * as THREE from 'three'
+import Navbar from './components/navbar'
+import { useUserContext } from './components/user_context'
+import Link from 'next/link'
+import Footer from './components/footer'
+import NearbyDemandsMap from './components/NearbyDemandsMap'
+import Loading from './components/loading'
+import axios from 'axios'
+import { toast } from 'react-toastify'
 import DecryptedText from './ui_comp/de_para'
 import GradientText from './components/ui/gradientText'
-import Rating from "./components/ratings";
+import Rating from './components/ratings'
+import Cursor from './components/ui/cursor'
 
 export default function GlobePage() {
-  const globeRef = useRef();
-  const [isMapExpanded, setIsMapExpanded] = useState(false);
-  const [showMap, setShowMap] = useState(false);
+  const globeRef = useRef()
+  const [isMapExpanded, setIsMapExpanded] = useState(false)
+  const [showMap, setShowMap] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const router = useRouter()
+  // State to track whether to show cursor based on performance
+  const [showCursor, setShowCursor] = useState(true)
 
-   useEffect(() => {
-     const verifyUser = async () => {
-       try {
-         const response = await axios.get(
-           'http://localhost:5030/api/auth/verify',
-           {
-             withCredentials: true, // Send cookies with the request
-           }
-         )
+  // Effect to monitor performance and disable cursor if needed
+  useEffect(() => {
+    let lastTime = performance.now()
+    let frameCount = 0
+    let lowPerformanceCount = 0
 
-         if (response.data.valid) {
-           console.log('User is authenticated:', response.data.user)
-           setIsAuthenticated(true)
-         } else {
-           console.log('Invalid token. Redirecting...')
-           toast.error('Please login to continue')
-           router.push('/landing')
-         }
-       } catch (error) {
-         console.error('Error verifying user:', error)
-         router.push('/landing')
-       }
-     }
+    const checkPerformance = () => {
+      const now = performance.now()
+      const elapsed = now - lastTime
+      frameCount++
 
-     verifyUser()
-   }, [])
+      // Check every second
+      if (elapsed >= 1000) {
+        const fps = frameCount / (elapsed / 1000)
 
-   // Prevent rendering until authentication check is complete
-   if (isAuthenticated === null) {
-     return <Loading text='Verifying user...' />
-   }
+        // If FPS is below threshold, increment counter
+        if (fps < 30) {
+          lowPerformanceCount++
+          if (lowPerformanceCount >= 3 && showCursor) {
+            setShowCursor(false)
+          }
+        } else {
+          // Reset counter if performance improves
+          lowPerformanceCount = 0
+          if (!showCursor) {
+            setShowCursor(true)
+          }
+        }
 
-  
+        frameCount = 0
+        lastTime = now
+      }
+
+      requestAnimationFrame(checkPerformance)
+    }
+
+    requestAnimationFrame(checkPerformance)
+
+    return () => cancelAnimationFrame(checkPerformance)
+  }, [showCursor])
+
+  // Variable to track if the user is authenticated
+  useEffect(() => {
+    const verifyUser = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/verify`,
+          {
+            withCredentials: true, // Send cookies with the request
+          }
+        )
+
+        console.log('Response:', response.data)
+
+        if (response.data.valid) {
+          console.log('User is authenticated:', response.data.user)
+          setIsAuthenticated(true)
+        } else {
+          console.log('Invalid token. Redirecting...')
+          toast.error('Please login to continue')
+          router.push('/landing')
+        }
+      } catch (error) {
+        console.error('Error verifying user:', error)
+        toast.error('Session expired. Please login again')
+        router.push('/landing')
+      }
+    }
+
+    verifyUser()
+  }, [])
+
+  // Prevent rendering until authentication check is complete
+  if (isAuthenticated === null) {
+    return <Loading text='Verifying user...' />
+  }
+
   const initGlobe = () => {
     const world = (globeRef.current.__world = new Globe(globeRef.current, {
       animateIn: false,
     })
       .globeImageUrl(
-        "//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+        '//unpkg.com/three-globe/example/img/earth-blue-marble.jpg'
       )
-      .bumpImageUrl("//unpkg.com/three-globe/example/img/earth-topology.png"));
+      .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png'))
 
-      // Auto-rotate
-      world.controls().autoRotate = true;
-      world.controls().autoRotateSpeed = 0.35;
-      
-      // Add clouds sphere
-      const CLOUDS_IMG_URL = "./clouds.png";
-      const CLOUDS_ALT = 0.004;
-      const CLOUDS_ROTATION_SPEED = -0.006; // deg/frame
-      
-      new THREE.TextureLoader().load(CLOUDS_IMG_URL, (cloudsTexture) => {
-        const clouds = new THREE.Mesh(
-          new THREE.SphereGeometry(
+    // Auto-rotate
+    world.controls().autoRotate = true
+    world.controls().autoRotateSpeed = 0.35
+
+    // Add clouds sphere
+    const CLOUDS_IMG_URL = './clouds.png'
+    const CLOUDS_ALT = 0.004
+    const CLOUDS_ROTATION_SPEED = -0.006 // deg/frame
+
+    new THREE.TextureLoader().load(CLOUDS_IMG_URL, (cloudsTexture) => {
+      const clouds = new THREE.Mesh(
+        new THREE.SphereGeometry(
           world.getGlobeRadius() * (1 + CLOUDS_ALT),
           75,
           75
         ),
         new THREE.MeshPhongMaterial({ map: cloudsTexture, transparent: true })
-      );
-      world.scene().add(clouds);
-      (function rotateClouds() {
-        clouds.rotation.y += (CLOUDS_ROTATION_SPEED * Math.PI) / 180;
-        requestAnimationFrame(rotateClouds);
-      })();
-    });
-    
+      )
+      world.scene().add(clouds)
+      ;(function rotateClouds() {
+        clouds.rotation.y += (CLOUDS_ROTATION_SPEED * Math.PI) / 180
+        requestAnimationFrame(rotateClouds)
+      })()
+    })
+
     // Add double-click event listener to toggle map expansion
-    globeRef.current.addEventListener('dblclick', handleMapToggle);
-    
+    globeRef.current.addEventListener('dblclick', handleMapToggle)
+
     // Make globe responsive
     const handleResize = () => {
       if (world) {
-        world.width(window.innerWidth);
-        world.height(window.innerHeight * 0.8);
+        world.width(window.innerWidth)
+        world.height(window.innerHeight * 0.8)
       }
-    };
-    
-    window.addEventListener('resize', handleResize);
-    handleResize(); // Initial sizing
-    
+    }
+
+    window.addEventListener('resize', handleResize)
+    handleResize() // Initial sizing
+
     return () => {
-      window.removeEventListener('resize', handleResize);
-      globeRef.current?.removeEventListener('dblclick', handleMapToggle);
-    };
-  };
-  
+      window.removeEventListener('resize', handleResize)
+      globeRef.current?.removeEventListener('dblclick', handleMapToggle)
+    }
+  }
+
   const handleMapToggle = () => {
-    if (!showMap) return; // Don't toggle if map shouldn't be shown
-    
-    setIsMapExpanded(!isMapExpanded);
-    
+    if (!showMap) return // Don't toggle if map shouldn't be shown
+
+    setIsMapExpanded(!isMapExpanded)
+
     if (!isMapExpanded) {
       // Expand map
-      const mapElement = document.getElementById("map");
+      const mapElement = document.getElementById('map')
       if (mapElement) {
-        mapElement.scrollIntoView({ behavior: 'smooth' });
-        
+        mapElement.scrollIntoView({ behavior: 'smooth' })
+
         // Show map with transition
-        mapElement.style.transition = "opacity 1000ms";
-        mapElement.style.opacity = "1";
+        mapElement.style.transition = 'opacity 1000ms'
+        mapElement.style.opacity = '1'
       } else {
         // If map element doesn't exist yet, scroll to bottom
         window.scrollTo({
           top: document.body.scrollHeight,
-          behavior: 'smooth'
-        });
+          behavior: 'smooth',
+        })
       }
-      
+
       // Change navbar background
-      const navC = document.getElementById("navC");
+      const navC = document.getElementById('navC')
       if (navC) {
-        navC.style.background = "transparent";
+        navC.style.background = 'transparent'
       }
     } else {
       // Collapse map - scroll to top
       window.scrollTo({
         top: 0,
-        behavior: 'smooth'
-      });
-      
+        behavior: 'smooth',
+      })
+
       // Hide map
-      const bottomElement = document.getElementById("map");
+      const bottomElement = document.getElementById('map')
       if (bottomElement) {
-        bottomElement.style.opacity = "0";
+        bottomElement.style.opacity = '0'
       }
-      
+
       // Reset navbar
-      const navC = document.getElementById("navC");
+      const navC = document.getElementById('navC')
       if (navC) {
-        navC.style.background = "black";
+        navC.style.background = 'black'
       }
     }
-  };
+  }
 
   return (
     <>
+    {/* {showCursor && <Cursor/>} */}
       <div
         id='navC'
         className='bg-black pt-4 md:pt-8 pb-2 md:pb-4 sticky top-0 z-[999]'
@@ -415,7 +462,7 @@ export default function GlobePage() {
               className='text-2xl md:text-3xl font-bold mb-3 md:mb-4'
               style={{ color: '#f9fafb', marginBottom: '1.5rem' }}
             >
-             ~ Nearby Demands ~
+              ~ Nearby Demands ~
             </h2>
 
             <NearbyDemandsMap />
@@ -516,6 +563,6 @@ export default function GlobePage() {
       </div>
     </div>
     </>
-  );
+  )
 }
 

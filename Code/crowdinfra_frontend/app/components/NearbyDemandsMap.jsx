@@ -62,11 +62,11 @@ export default function NearbyDemandsMap({ onDemandSelect }) {
 
   const fetchNearbyDemands = async (userLocation) => {
     try {
-      console.log('Fetching nearby demands...', userLocation)
+      // console.log('Fetching nearby demands...', userLocation)
       const response = await axios.get(
-        `http://localhost:5030/api/demand/nearby?latitude=${userLocation.lat}&longitude=${userLocation.lng}&radius=5000`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/demand/nearby?latitude=${userLocation.lat}&longitude=${userLocation.lng}&radius=5000`
       )
-      console.log('Nearby demands:', response.data)
+      // console.log('Nearby demands:', response.data)
       setDemands(response.data)
     } catch (error) {
       console.error('Error fetching demands:', error)
@@ -194,12 +194,12 @@ export default function NearbyDemandsMap({ onDemandSelect }) {
                 handleDemandSelect(null)
               }}
             >
-              <Link
+              <a
                 href={`/viewrequest?id=${selectedDemand._id}`}
                 className='text-blue-600 hover:underline text-xs mt-2 block'
               >
                 <h3 className='text-lg font-bold'>{selectedDemand.title}</h3>
-              </Link>
+              </a>
               <p className='text-sm text-gray-700 mb-2 leading-relaxed'>
                 {selectedDemand.description}
               </p>

@@ -53,6 +53,7 @@ router.get('/verify', (req, res) => {
   }
 })
 
+// **Logout route**
 router.post('/logout', (req, res) => {
   res.clearCookie('crowdInfra_token', {
     httpOnly: true,

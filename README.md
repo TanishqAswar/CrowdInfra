@@ -1,178 +1,82 @@
-# 🚀 CrowdInfra - Infrastructure Demand & Supply Platform
+# CrowdInfra: Powering Smart Infrastructure Through Community Demand
 
-## 🌍 About the Project
-**CrowdInfra** is a decentralized platform designed to connect communities with service providers for essential infrastructure needs. Users can request, upvote, and track demands for services like ATMs, hospitals, public transport, etc. Service providers can browse aggregated demand and offer their services efficiently. The platform leverages **Google Maps API**, **Machine Learning**, and **Blockchain** to optimize infrastructure distribution.
+## 📌 Overview
+CrowdInfra is a crowdsourced demand-mapping platform that empowers communities to influence infrastructure development. Users can pin locations where essential services are needed, upvote demands, and help businesses and policymakers make data-driven decisions.
 
-## 🏗️ Tech Stack
-### 🖥️ **Frontend (Next.js)**
-- **Framework**: Next.js (React-based for SSR & CSR)
-- **Styling**: Tailwind CSS
-- **State Management**: SWR (Client-side data fetching)
-- **Maps & Location**: Google Maps API
-- **Authentication**: Auth.js / Clerk / Firebase
+## 🚀 Features
+- **Community-Driven Demand Mapping** – Users can pin locations and upvote service requests (e.g., hospitals, ATMs, banks, canteens).
+- **AI-Powered Insights** – Uses Google Gemini API to analyze market competition, demand trends, and feasibility.
+- **Real-Time Analytics** – Provides businesses and policymakers with up-to-date demand data.
+- **Property Marketplace** – Property owners can list spaces, and businesses can discover high-demand locations.
+- **Interactive Map** – Uses Google Maps API for visualization of demand hotspots and property listings.
+- **User Engagement** – Users can comment on demands and share requests within their network.
 
-### ⚙️ **Backend (Express.js)**
-- **Server**: Node.js with Express.js
-- **Database**: MongoDB (with Mongoose ORM)
-- **Authentication**: JWT (JSON Web Tokens)
-- **API Communication**: REST APIs
-- **Crowdfunding (Optional)**: Stripe / Razorpay
+## 🛠️ Tech Stack
+- **Frontend:** Next.js
+- **Backend:** Node.js, Express.js
+- **Database:** MongoDB
+- **AI Integration:** Google Gemini API
+- **Mapping:** Google Maps API
 
-### 🧠 **Machine Learning Model (FastAPI & Python)**
-- **Algorithm**: Regression & Classification for demand prediction
-- **Libraries**: Scikit-learn, Pandas, TensorFlow
-- **Deployment**: Google Cloud AI / Heroku
+## 📥 Installation & Setup
+1. **Clone the Repository:**
+   ```sh
+   git clone https://github.com/yourusername/crowdinfra.git
+   cd crowdinfra
+   ```
 
-### ☁️ **Cloud & Deployment**
-- **Frontend**: Vercel
-- **Backend**: AWS / DigitalOcean / GCP
-- **Database**: MongoDB Atlas
-- **Serverless Functions**: AWS Lambda (for scaling)
+2. **Setup Frontend:**
+   ```sh
+   cd crowdinfra_frontend
+   npm install
+   ```
+   **Create a `.env` file inside `crowdinfra_frontend` with:**
+   ```
+   NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=<your-google-maps-api-key>
+   ```
+   **Start the frontend server:**
+   ```sh
+   npm run dev
+   ```
 
----
+3. **Setup Backend:**
+   ```sh
+   cd ../crowdinfra_backend
+   npm install
+   ```
+   **Create a `.env` file inside `crowdinfra_backend` with:**
+   ```
+   MONGO_URI=<your-mongodb-uri>
+   GEMINI_API_KEY=<your-google-gemini-api-key>
+   ```
+   **Start the backend server:**
+   ```sh
+   npm run start
+   ```
 
-## 🎯 Key Features
-### 🔹 User Features
-✅ **Request Services** - Users can request infrastructure services in their locality.  
-✅ **Upvote & Comment** - Upvote existing requests & add comments for additional details.  
-✅ **Live Map View** - View demand hotspots via **Google Maps heatmap**.  
-✅ **Search for Services** - Find nearby infrastructure requests & trending demands.  
-✅ **Crowdfunding (Optional)** - Contribute to fund essential infrastructure.  
+## ⚙️ How It Works
+1. Users log in and pin locations where they need essential services.
+2. Other users can upvote or comment on existing demands.
+3. Google Gemini API analyzes the data to provide insights on demand hotspots and business feasibility.
+4. Property owners list available spaces for businesses to explore.
+5. Businesses and policymakers access real-time analytics to make informed decisions.
 
-### 🔹 Service Provider Features
-✅ **View Aggregated Requests** - Service providers can browse grouped requests.  
-✅ **Accept & Schedule Services** - Providers can respond to bulk demands.  
-✅ **Trend Analysis** - Leverage ML-based demand prediction to optimize service allocation.  
+## 🌍 Future Enhancements
+- **Radius-Based Demand Selection** – Let users define an area instead of a pinpoint location.
+- **Enhanced AI Analysis** – Optimize Google Gemini API for more precise insights.
+- **Business & Property Recommendations** – Match businesses with high-demand areas.
+- **UI/UX Improvements** – Improve interface for a smoother user experience.
+- **Scalability & Security** – Ensure a robust and secure infrastructure.
 
-### 🔹 Admin Features
-✅ **Moderate Requests & Comments** - Ensure a clean and authentic demand platform.  
-✅ **Generate Demand Reports** - Use ML-driven insights for better decision-making.  
+## 👥 Team Members
+- **Tanishq Aswar**
+- **Pranav Reddy K** 
+- **Mayank Mishra**
 
----
-
-## 🗺️ Google Maps API Integration
-- **Interactive Maps**: Display demand clusters & service locations.
-- **Geolocation**: Auto-detect user location & suggest nearby services.
-- **Route Optimization**: Provide the best service routes for providers.
-
----
-
-## 🤖 Machine Learning Model
-The ML model analyzes **historical service requests, population density, and real-time trends** to predict upcoming infrastructure demands.  
-- **Example API Call:**
-```bash
-GET /predict?service=atm&lat=28.6139&lng=77.209
-```
-- **Response:**
-```json
-{
-  "predicted_demand": 120
-}
-```
-
----
-
-## 🚀 How to Run Locally
-### 🔧 Prerequisites
-Ensure you have the following installed:
-- Node.js (>=16)
-- MongoDB Atlas or Local MongoDB
-- Google Cloud API Key
-
-### 🏗️ Setup
-#### 1️⃣ Clone the Repository
-```bash
-git clone https://github.com/yourusername/crowdinfra.git
-cd crowdinfra
-```
-
-#### 2️⃣ Install Dependencies
-**Frontend:**
-```bash
-cd frontend
-npm install
-```
-**Backend:**
-```bash
-cd backend
-npm install
-```
-
-#### 3️⃣ Setup Environment Variables
-Create a `.env` file in both `frontend` and `backend` directories with:
-```env
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret_key
-```
-
-#### 4️⃣ Start the Application
-```bash
-# Start backend
-cd backend
-npm start
-
-# Start frontend
-cd frontend
-npm run dev
-```
+## 🎥 Demo & Screenshots
+- [Screenshots](https://drive.google.com/drive/folders/1U-NyO2vEY45Ps-9mBNcHgH2Rj7egfcXX)
+- [Live Demo](#) *(Coming Soon)*
+- [Deployed Link](https://infra-crowd.vercel.app)
 
 ---
-
-## 📦 API Endpoints
-### 🔹 Authentication
-- `POST /auth/register` - User Registration
-- `POST /auth/login` - User Login
-
-### 🔹 Requests
-- `POST /requests/new` - Create a new request
-- `GET /requests` - Fetch all requests
-- `PUT /requests/:id/upvote` - Upvote a request
-- `POST /requests/:id/comment` - Comment on a request
-
-### 🔹 Search & Analytics
-- `GET /search?service=atm` - Search infrastructure needs
-- `GET /trends` - Get ML-based demand trends
-
----
-
-## 🚀 Deployment
-### 🔹 Frontend
-```bash
-git push origin main  # Auto-deployed via Vercel
-```
-### 🔹 Backend
-```bash
-npm run build && npm start  # Deploy on AWS/GCP
-```
-### 🔹 Machine Learning Model
-```bash
-uvicorn app:app --host 0.0.0.0 --port 8000  # Deploy FastAPI server
-```
-
----
-
-## 🎯 Future Enhancements
-🔹 **Real-time WebSockets** - Live updates on demand spikes.  
-🔹 **Blockchain Integration** - Smart contracts for transparent funding.  
-🔹 **AI Chatbot** - AI-powered recommendations for service providers.  
-
----
-
-## 🤝 Contributing
-Contributions are welcome! 🚀
-- Fork the repo & create a new branch.
-- Make changes & raise a PR.
-
----
-
-## 📜 License
-This project is licensed under the MIT License.
-
----
-
-## 📞 Contact
-📧 Email: crowdinfra.email@example.com  
-🌐 LinkedIn: [CrowdInfra](https://linkedin.com/in/yourprofile)  
-🐦 Twitter: [CrowdInfra](https://twitter.com/yourhandle)  
-
+_This project is proprietary and not open-source. Unauthorized distribution or reproduction is prohibited._

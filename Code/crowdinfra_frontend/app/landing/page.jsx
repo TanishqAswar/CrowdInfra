@@ -9,154 +9,211 @@ import DecryptedText from '../ui_comp/de_para'
 import * as THREE from 'three'
 import VariableProximity from '../components/VariableProximity'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import Cursor from '../components/ui/cursor'
 
 // Custom HeroSection component with Three.js
 const HeroSection = () => {
   const mountRef = useRef(null)
-  const textContainerRef = useRef(null)  // Add this line
+  const textContainerRef = useRef(null) // Add this line
   const [isReady, setIsReady] = useState(false)
+  // State to track whether to show cursor based on performance
+  const [showCursor, setShowCursor] = useState(true);
+
+  // Effect to monitor performance and disable cursor if needed
+  useEffect(() => {
+    let lastTime = performance.now();
+    let frameCount = 0;
+    let lowPerformanceCount = 0;
+
+    const checkPerformance = () => {
+      const now = performance.now();
+      const elapsed = now - lastTime;
+      frameCount++;
+
+      // Check every second
+      if (elapsed >= 1000) {
+        const fps = frameCount / (elapsed / 1000);
+
+        // If FPS is below threshold, increment counter
+        if (fps < 30) {
+          lowPerformanceCount++;
+          if (lowPerformanceCount >= 3 && showCursor) {
+            setShowCursor(false);
+          }
+        } else {
+          // Reset counter if performance improves
+          lowPerformanceCount = 0;
+          if (!showCursor) {
+            setShowCursor(true);
+          }
+        }
+
+        frameCount = 0;
+        lastTime = now;
+      }
+
+      requestAnimationFrame(checkPerformance);
+    };
+
+    requestAnimationFrame(checkPerformance);
+
+    return () => cancelAnimationFrame(checkPerformance);
+  }, [showCursor]);
 
   useEffect(() => {
     if (!mountRef.current) return
 
     // Scene setup
     const scene = new THREE.Scene()
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000)
+    const camera = new THREE.PerspectiveCamera(
+      60,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    )
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
-    
+
     renderer.setSize(window.innerWidth, window.innerHeight)
     renderer.setPixelRatio(window.devicePixelRatio)
     mountRef.current.appendChild(renderer.domElement)
-    
+
     // Lighting
     const ambientLight = new THREE.AmbientLight(0x404040, 2)
     scene.add(ambientLight)
-    
+
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
     directionalLight.position.set(1, 1, 1)
     scene.add(directionalLight)
-    
+
     // City grid
     const gridSize = 50
     const cityGroup = new THREE.Group()
     scene.add(cityGroup)
-    
+
     // Ground plane with grid
-    const gridHelper = new THREE.GridHelper(gridSize * 2, gridSize * 2, 0x0088ff, 0x001a33)
+    const gridHelper = new THREE.GridHelper(
+      gridSize * 2,
+      gridSize * 2,
+      0x0088ff,
+      0x001a33
+    )
     gridHelper.position.y = -0.1
     cityGroup.add(gridHelper)
-    
+
     // Create buildings
     const buildingGeometries = [
       new THREE.BoxGeometry(1, 1, 1),
       new THREE.BoxGeometry(1, 2, 1),
       new THREE.BoxGeometry(1, 3, 1),
       new THREE.BoxGeometry(1, 4, 1),
-      new THREE.CylinderGeometry(0.5, 0.5, 2, 6)
+      new THREE.CylinderGeometry(0.5, 0.5, 2, 6),
     ]
-    
+
     const buildingMaterials = [
       new THREE.MeshPhongMaterial({ color: 0x3498db, emissive: 0x0a2e52 }),
       new THREE.MeshPhongMaterial({ color: 0x2ecc71, emissive: 0x0b4d28 }),
       new THREE.MeshPhongMaterial({ color: 0xe74c3c, emissive: 0x5c1d16 }),
       new THREE.MeshPhongMaterial({ color: 0xf1c40f, emissive: 0x614e06 }),
-      new THREE.MeshPhongMaterial({ color: 0x9b59b6, emissive: 0x3d2348 })
+      new THREE.MeshPhongMaterial({ color: 0x9b59b6, emissive: 0x3d2348 }),
     ]
-    
+
     // Create city layout
     for (let x = -gridSize / 2; x < gridSize / 2; x += 2) {
       for (let z = -gridSize / 2; z < gridSize / 2; z += 2) {
         // Skip some positions to create roads and empty spaces
         if (Math.random() > 0.7) continue
-        
+
         const geoIndex = Math.floor(Math.random() * buildingGeometries.length)
         const matIndex = Math.floor(Math.random() * buildingMaterials.length)
-        
+
         const building = new THREE.Mesh(
           buildingGeometries[geoIndex],
           buildingMaterials[matIndex]
         )
-        
+
         const height = buildingGeometries[geoIndex].parameters.height || 1
         building.position.set(x, height / 2, z)
         building.scale.y = Math.random() * 2 + 0.5
-        
+
         // Rotate some buildings
         if (Math.random() > 0.5) {
           building.rotation.y = Math.PI / (Math.random() * 4)
         }
-        
+
         cityGroup.add(building)
       }
     }
-    
+
     // Add pulsing marker points for "needed infrastructure"
     const markerPositions = [
       { x: 10, z: 10, type: 'hospital', color: 0xff3333 },
       { x: -15, z: 5, type: 'bank', color: 0x33ff33 },
       { x: 0, z: -20, type: 'school', color: 0x3333ff },
       { x: -8, z: -12, type: 'market', color: 0xffff33 },
-      { x: 20, z: -5, type: 'transport', color: 0xff33ff }
+      { x: 20, z: -5, type: 'transport', color: 0xff33ff },
     ]
-    
+
     const markers = []
-    markerPositions.forEach(marker => {
+    markerPositions.forEach((marker) => {
       const markerGeometry = new THREE.SphereGeometry(0.5, 16, 16)
-      const markerMaterial = new THREE.MeshPhongMaterial({ 
+      const markerMaterial = new THREE.MeshPhongMaterial({
         color: marker.color,
         emissive: marker.color,
         emissiveIntensity: 0.5,
         transparent: true,
-        opacity: 0.8
+        opacity: 0.8,
       })
-      
+
       const markerMesh = new THREE.Mesh(markerGeometry, markerMaterial)
       markerMesh.position.set(marker.x, 5, marker.z)
-      markerMesh.userData = { 
+      markerMesh.userData = {
         type: marker.type,
         initialScale: 1,
         pulseDirection: 1,
-        pulseSpeed: 0.02 + Math.random() * 0.01
+        pulseSpeed: 0.02 + Math.random() * 0.01,
       }
-      
+
       // Add connecting line to ground
       const lineMaterial = new THREE.LineBasicMaterial({ color: marker.color })
       const lineGeometry = new THREE.BufferGeometry().setFromPoints([
         new THREE.Vector3(marker.x, 0, marker.z),
-        new THREE.Vector3(marker.x, 5, marker.z)
+        new THREE.Vector3(marker.x, 5, marker.z),
       ])
       const line = new THREE.Line(lineGeometry, lineMaterial)
-      
+
       cityGroup.add(markerMesh)
       cityGroup.add(line)
       markers.push(markerMesh)
     })
-    
+
     // Add floating particles
     const particlesGeometry = new THREE.BufferGeometry()
     const particleCount = 500
     const posArray = new Float32Array(particleCount * 3)
-    
+
     for (let i = 0; i < particleCount * 3; i++) {
       posArray[i] = (Math.random() - 0.5) * 100
     }
-    
-    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3))
+
+    particlesGeometry.setAttribute(
+      'position',
+      new THREE.BufferAttribute(posArray, 3)
+    )
     const particlesMaterial = new THREE.PointsMaterial({
       size: 0.2,
       color: 0x0088ff,
       transparent: true,
       opacity: 0.6,
-      sizeAttenuation: true
+      sizeAttenuation: true,
     })
-    
+
     const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial)
     scene.add(particlesMesh)
-    
+
     // Position camera
     camera.position.set(30, 20, 30)
     camera.lookAt(0, 0, 0)
-    
+
     // Add controls
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.enableDamping = true
@@ -164,69 +221,79 @@ const HeroSection = () => {
     controls.maxPolarAngle = Math.PI / 2 - 0.1
     controls.minDistance = 15
     controls.maxDistance = 60
-    
+
     // Handle window resize
     const handleResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight
       camera.updateProjectionMatrix()
       renderer.setSize(window.innerWidth, window.innerHeight)
     }
-    
+
     window.addEventListener('resize', handleResize)
-    
+
     // Animation loop
     const animate = () => {
       requestAnimationFrame(animate)
-      
+
       // Rotate city slowly
       cityGroup.rotation.y += 0.001
-      
+
       // Animate particles
       particlesMesh.rotation.y += 0.0005
-      
+
       // Animate markers (pulsing effect)
-      markers.forEach(marker => {
+      markers.forEach((marker) => {
         const data = marker.userData
-        
+
         // Pulsing scale
         if (data.initialScale > 1.3) data.pulseDirection = -1
         if (data.initialScale < 0.7) data.pulseDirection = 1
-        
+
         data.initialScale += data.pulseSpeed * data.pulseDirection
-        marker.scale.set(data.initialScale, data.initialScale, data.initialScale)
-        
+        marker.scale.set(
+          data.initialScale,
+          data.initialScale,
+          data.initialScale
+        )
+
         // Float up and down
-        marker.position.y = 5 + Math.sin(Date.now() * 0.001 + markers.indexOf(marker)) * 0.5
+        marker.position.y =
+          5 + Math.sin(Date.now() * 0.001 + markers.indexOf(marker)) * 0.5
       })
-      
+
       controls.update()
       renderer.render(scene, camera)
     }
 
     animate()
     setIsReady(true)
-    
+
     // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize)
       mountRef.current?.removeChild(renderer.domElement)
       renderer.dispose()
     }
-  }, []);
-  
+  }, [])
+
   return (
-    <div className="relative w-full h-screen">
-      <div ref={mountRef} className="absolute inset-0" />
-      <div className="absolute inset-0 flex items-center justify-center z-10 p-4">
-        <div 
+    <div className='relative w-full h-screen'>
+      {/* {showCursor && <Cursor />} */}
+      <div ref={mountRef} className='absolute inset-0' />
+      <div className='absolute inset-0 flex items-center justify-center z-10 p-4'>
+        <div
           ref={textContainerRef}
-          className="absolute inset-0 flex items-center justify-center z-10 p-4"
-          style={{position: 'relative'}}
+          className='absolute inset-0 flex items-center justify-center z-10 p-4'
+          style={{ position: 'relative' }}
         >
-          <div className={`text-center transition-opacity duration-1000 ${isReady ? 'opacity-100' : 'opacity-0'}`}>
+          <div
+            className={`text-center transition-opacity duration-1000 ${
+              isReady ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
             <VariableProximity
-              label="CrowdInfra"
-              className="text-white text-7xl font-bold tracking-tighter mb-4 text-shadow-lg"
+              label='CrowdInfra'
+              className='text-white text-7xl font-bold tracking-tighter mb-4 text-shadow-lg'
               fromFontVariationSettings="'wght' 400, 'opsz' 9"
               toFontVariationSettings="'wght' 1000, 'opsz' 40"
               containerRef={textContainerRef}
@@ -235,11 +302,11 @@ const HeroSection = () => {
             />
             <br />
             <DecryptedText
-              text="Mapping Community Infrastructure Together"
-              className="text-white text-2xl mt-4"
-              animateOn="view"
+              text='Mapping Community Infrastructure Together'
+              className='text-white text-2xl mt-4'
+              animateOn='view'
               speed={120}
-              revealDirection="center"
+              revealDirection='center'
             />
           </div>
         </div>

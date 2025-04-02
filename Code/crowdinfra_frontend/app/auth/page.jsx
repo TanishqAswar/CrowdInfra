@@ -104,7 +104,7 @@ export default function Auth() {
           <div className="w-full max-w-md">
             <div className="mb-8">
               <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white">
-                {isLogin ? "Sign In" : "Create Account"}
+                {isLogin ? "Log In" : "Create Account"}
               </h2>
               <div className="h-1 w-20 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto mt-2 rounded-full"></div>
             </div>

@@ -1,32 +1,32 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { useLoadScript, GoogleMap, Marker } from "@react-google-maps/api";
-import Navbar from "../components/navbar";
-import { useUserContext } from "../components/user_context";
-import PlaceAutocomplete from "../components/autocomplete";
-import Footer from "../components/footer";
-import axios from 'axios';
+import { useState, useEffect } from 'react'
+import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api'
+import Navbar from '../components/navbar'
+import { useUserContext } from '../components/user_context'
+import PlaceAutocomplete from '../components/autocomplete'
+import Footer from '../components/footer'
+import axios from 'axios'
 
 const containerStyle = {
   width: '100%',
-  height: '70vh'
-};
+  height: '70vh',
+}
 
 const center = {
   lat: 20.5937,
-  lng: 78.9629
-};
+  lng: 78.9629,
+}
 
 const SearchDemandsPage = () => {
-  const [selectedLocation, setSelectedLocation] = useState(null);
-  const [demands, setDemands] = useState([]);
-  const [filteredDemands, setFilteredDemands] = useState([]);
-  const [selectedDemand, setSelectedDemand] = useState(null);
-  const [newComment, setNewComment] = useState('');
-  const [businessCategory, setBusinessCategory] = useState('all');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null)
+  const [demands, setDemands] = useState([])
+  const [filteredDemands, setFilteredDemands] = useState([])
+  const [selectedDemand, setSelectedDemand] = useState(null)
+  const [newComment, setNewComment] = useState('')
+  const [businessCategory, setBusinessCategory] = useState('all')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [visibleDemands, setVisibleDemands] = useState(3) // Show 6 initially
 
   const handleLoadMore = () => {
@@ -37,157 +37,164 @@ const SearchDemandsPage = () => {
     setVisibleDemands(6) // Reset to initial state
   }
 
-  const { selectedPlace } = useUserContext() || {};
+  const { selectedPlace } = useUserContext() || {}
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     libraries: ['places'],
-    id: 'google-maps-script'
-  });
+    id: 'google-maps-script',
+  })
 
   // Fetch demands from backend
   useEffect(() => {
     const fetchDemands = async () => {
       try {
-        setLoading(true);
-        const url = 'http://localhost:5030/api/demand/getDemand';
-        
-        const response = await axios.get(url);
-        console.log(response.data);
-        setDemands(response.data);
-        setFilteredDemands(response.data);
-        setLoading(false);
-      } catch (err) {
-        console.error('Error fetching demands:', err);
-        setError('Failed to fetch demands');
-        setLoading(false);
-      }
-    };
+        setLoading(true)
+        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/demand/getDemand`
 
-    fetchDemands();
-  }, []);
+        const response = await axios.get(url)
+        console.log(response.data)
+        setDemands(response.data)
+        setFilteredDemands(response.data)
+        setLoading(false)
+      } catch (err) {
+        console.error('Error fetching demands:', err)
+        setError('Failed to fetch demands')
+        setLoading(false)
+      }
+    }
+
+    fetchDemands()
+  }, [])
 
   // Filter demands when location or category changes
   useEffect(() => {
-    filterDemands();
-  }, [businessCategory, demands, selectedLocation]);
+    filterDemands()
+  }, [businessCategory, demands, selectedLocation])
 
   // Update selected location when place changes
   useEffect(() => {
     if (selectedPlace && selectedPlace.lat && selectedPlace.lng) {
       setSelectedLocation({
         lat: selectedPlace.lat,
-        lng: selectedPlace.lng
-      });
+        lng: selectedPlace.lng,
+      })
     }
-  }, [selectedPlace]);
+  }, [selectedPlace])
 
   const filterDemands = () => {
-    let filtered = [...demands];
-    
+    let filtered = [...demands]
+
     // Filter by location if selected
     if (selectedLocation) {
-      const maxDistance = 0.1; // roughly ~11km
-      filtered = filtered.filter(demand => {
+      const maxDistance = 0.1 // roughly ~11km
+      filtered = filtered.filter((demand) => {
         // Correctly extract coordinates
-        const demandLat = demand.location.coordinates[1];
-        const demandLng = demand.location.coordinates[0];
-        
+        const demandLat = demand.location.coordinates[1]
+        const demandLng = demand.location.coordinates[0]
+
         const distance = Math.sqrt(
-          Math.pow(demandLat - selectedLocation.lat, 2) + 
-          Math.pow(demandLng - selectedLocation.lng, 2)
-        );
-        return distance <= maxDistance;
-      });
+          Math.pow(demandLat - selectedLocation.lat, 2) +
+            Math.pow(demandLng - selectedLocation.lng, 2)
+        )
+        return distance <= maxDistance
+      })
     }
-    
+
     // Filter by category
     if (businessCategory !== 'all') {
-      filtered = filtered.filter(demand => demand.category === businessCategory);
+      filtered = filtered.filter(
+        (demand) => demand.category === businessCategory
+      )
     }
-    
-    setFilteredDemands(filtered);
-  };
+
+    setFilteredDemands(filtered)
+  }
 
   const handleMarkerClick = (demand) => {
-    setSelectedDemand(demand);
-  };
+    setSelectedDemand(demand)
+  }
 
   const handleUpvote = async (demandId) => {
     try {
       const response = await axios.patch(
-        `http://localhost:5030/api/demand/${demandId}/upvote`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/demand/${demandId}/upvote`,
         {},
         {
           withCredentials: true, // Ensure cookies are sent with the request
         }
-      );
-      const updatedDemand = response.data.data;
-      
+      )
+      const updatedDemand = response.data.data
+
       // Update the demands list with the updated demand
-      setDemands(prevDemands => 
-        prevDemands.map(demand => 
+      setDemands((prevDemands) =>
+        prevDemands.map((demand) =>
           demand._id === demandId ? updatedDemand : demand
         )
-      );
+      )
 
-      // Update the selected demand if it's the one we just upvoted 
+      // Update the selected demand if it's the one we just upvoted
       if (selectedDemand && selectedDemand._id === demandId) {
-        setSelectedDemand(updatedDemand);
+        setSelectedDemand(updatedDemand)
       }
     } catch (err) {
-      console.error('Error upvoting demand:', err);
+      console.error('Error upvoting demand:', err)
     }
-  };
+  }
 
   const handleAddComment = async (demandId) => {
-    if (!newComment.trim()) return;
-    
+    if (!newComment.trim()) return
+
     try {
       // Make a POST request to the backend to add the comment.
       const response = await axios.post(
-        `http://localhost:5030/api/demand/${demandId}/comments`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/demand/${demandId}/comments`,
         { text: newComment },
         { withCredentials: true } // Ensures cookies (and auth) are sent.
-      );
-      
+      )
+
       // The backend returns the updated demand with the new comment.
-      const updatedDemand = response.data.demand;
-      
+      const updatedDemand = response.data.demand
+
       // Update the selected demand if it's the one we just commented on.
       if (selectedDemand && selectedDemand._id === demandId) {
-        setSelectedDemand(updatedDemand);
+        setSelectedDemand(updatedDemand)
       }
-      
+
       // Also update the overall demands list.
-      setDemands(prev => prev.map(d => d._id === demandId ? updatedDemand : d));
-      
+      setDemands((prev) =>
+        prev.map((d) => (d._id === demandId ? updatedDemand : d))
+      )
+
       // Clear the new comment input.
-      setNewComment('');
+      setNewComment('')
     } catch (error) {
-      console.error("Error adding comment:", error);
+      console.error('Error adding comment:', error)
     }
-  };
+  }
 
-  if (!isLoaded) return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center">
-      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
-      <span className="ml-4 text-xl text-gray-200">Loading...</span>
-    </div>
-  );
+  if (!isLoaded)
+    return (
+      <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center'>
+        <div className='animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500'></div>
+        <span className='ml-4 text-xl text-gray-200'>Loading...</span>
+      </div>
+    )
 
-  if (loading) return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center">
-      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
-      <span className="ml-4 text-xl text-gray-200">Loading Demands...</span>
-    </div>
-  );
+  if (loading)
+    return (
+      <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center'>
+        <div className='animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500'></div>
+        <span className='ml-4 text-xl text-gray-200'>Loading Demands...</span>
+      </div>
+    )
 
-  if (error) return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center">
-      <p className="text-red-500 text-xl">{error}</p>
-    </div>
-  );
+  if (error)
+    return (
+      <div className='min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center'>
+        <p className='text-red-500 text-xl'>{error}</p>
+      </div>
+    )
 
   return (
     <>
@@ -196,10 +203,9 @@ const SearchDemandsPage = () => {
 
         <div className='container mx-auto px-4 py-8 mt-8'>
           <h1 className='text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gray-200'>
-
             Search Demands
           </h1>
-  
+
           <div className='mb-6 grid grid-cols-1 md:grid-cols-3 gap-4'>
             <div className='md:col-span-2'>
               <PlaceAutocomplete />
@@ -222,7 +228,7 @@ const SearchDemandsPage = () => {
               </select>
             </div>
           </div>
-  
+
           <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
             <div className='lg:col-span-2'>
               <div className='rounded-xl overflow-hidden shadow-2xl transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl'>
@@ -262,13 +268,15 @@ const SearchDemandsPage = () => {
                 </GoogleMap>
               </div>
             </div>
-  
-            <div className='bg-gray-800/30 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-gray-700/50 h-[70vh] overflow-y-auto 
-            transition-all duration-300 hover:shadow-2xl'>
+
+            <div
+              className='bg-gray-800/30 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-gray-700/50 h-[70vh] overflow-y-auto 
+            transition-all duration-300 hover:shadow-2xl'
+            >
               <h2 className='text-2xl font-bold mb-4 text-blue-400 transition-all duration-300 hover:text-blue-300'>
                 {selectedDemand ? selectedDemand.title : 'Demand Details'}
               </h2>
-  
+
               {selectedDemand ? (
                 <div>
                   <div className='mb-4 p-4 bg-gray-800/50 rounded-lg transition-all duration-300 hover:bg-gray-800/60'>
@@ -308,13 +316,15 @@ const SearchDemandsPage = () => {
                       </button>
                     </div>
                   </div>
-  
+
                   <div className='mt-6'>
-                    <h3 className='text-xl font-semibold mb-3 text-gray-200 
-                    transition-all duration-300 hover:text-gray-100'>
+                    <h3
+                      className='text-xl font-semibold mb-3 text-gray-200 
+                    transition-all duration-300 hover:text-gray-100'
+                    >
                       Comments
                     </h3>
-  
+
                     <div className='space-y-3 mb-4 max-h-60 overflow-y-auto'>
                       {(selectedDemand.comments || []).map((comment, index) => (
                         <div
@@ -337,7 +347,7 @@ const SearchDemandsPage = () => {
                         </p>
                       )}
                     </div>
-  
+
                     <div className='flex space-x-2'>
                       <input
                         type='text'
@@ -405,7 +415,7 @@ const SearchDemandsPage = () => {
               )}
             </div>
           </div>
-  
+
           {filteredDemands.length > 0 && (
             <div className='mt-8'>
               <h2 className='text-2xl font-bold mb-4 text-gray-200'>
@@ -423,20 +433,26 @@ const SearchDemandsPage = () => {
                     }`}
                     onClick={() => handleMarkerClick(demand)}
                   >
-                    <h3 className='text-lg font-semibold mb-2 
-                    transition-all duration-300 hover:text-blue-400'>
+                    <h3
+                      className='text-lg font-semibold mb-2 
+                    transition-all duration-300 hover:text-blue-400'
+                    >
                       {demand.title}
                     </h3>
                     <p className='text-gray-400 text-sm mb-3 line-clamp-2'>
                       {demand.description}
                     </p>
                     <div className='flex justify-between items-center'>
-                      <span className='text-xs text-gray-500 
-                      transition-all duration-300 hover:text-gray-400'>
+                      <span
+                        className='text-xs text-gray-500 
+                      transition-all duration-300 hover:text-gray-400'
+                      >
                         {demand.category}
                       </span>
-                      <div className='flex items-center space-x-1 text-blue-400 
-                      transition-all duration-300 transform hover:scale-110'>
+                      <div
+                        className='flex items-center space-x-1 text-blue-400 
+                      transition-all duration-300 transform hover:scale-110'
+                      >
                         <svg
                           xmlns='http://www.w3.org/2000/svg'
                           className='h-4 w-4'
@@ -482,6 +498,6 @@ const SearchDemandsPage = () => {
       </div>
     </>
   )
-};
+}
 
-export default SearchDemandsPage;
+export default SearchDemandsPage

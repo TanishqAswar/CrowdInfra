@@ -31,13 +31,13 @@ const app = express();
     app.use(express.json())
     app.use(
       cors({
-        origin: 'http://localhost:3000', // 👈 Set frontend URL
-        credentials: true, // 👈 Allow cookies & authorization headers
+      origin: ['http://localhost:3000', 'https://infra-crowd.vercel.app'], // 👈 Allow both frontend URLs
+      credentials: true, // 👈 Allow cookies & authorization headers
       })
     )
     app.use(cookieParser())
     app.use(morgan('dev'))
-    
+    //dep
     // Serve static files from the "uploads" folder
     app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
     console.log(`${path.join(__dirname, 'uploads')}`.dim)
@@ -52,7 +52,15 @@ const app = express();
     app.use('/api/demand', demandRoutes)
     app.use('/api/rating', ratingRoutes)
 
-
+    // Basic route for health check at root endpoint
+    app.get('/', (req, res) => {
+      res.json({ 
+        message: 'CrowdInfra API is running',
+        status: 'OK',
+        version: '1.0.0',
+        timestamp: new Date().toISOString()
+      });
+    });
     // Environment Variables
     console.log('=========================================='.yellow)
     console.log('🚀 Database Connection URIs'.cyan.bold)
