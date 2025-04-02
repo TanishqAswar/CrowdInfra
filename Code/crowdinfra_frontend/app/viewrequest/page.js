@@ -1,5 +1,3 @@
-
-
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
@@ -11,44 +9,49 @@ import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import remarkGfm from 'remark-gfm';
 
 export default function ViewRequest() {
-  const [request, setRequest] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [businessAnalysis, setBusinessAnalysis] = useState(null)
-  const [businessLoading, setBusinessLoading] = useState(false)
-  const { search } = useRouter()
-  const searchParams = new URLSearchParams(search)
-  const mapRef = useRef(null)
-  const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY
-  const requestId =
-    typeof window !== 'undefined'
-      ? new URLSearchParams(window.location.search).get('id')
-      : null
-  const NEXT_PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL
+    const [request, setRequest] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [businessAnalysis, setBusinessAnalysis] = useState(null);
+    const [businessLoading, setBusinessLoading] = useState(false);
+    const searchParams = useSearchParams();
+    const mapRef = useRef(null);
+    const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 
-
-  // const searchParams = useSearchParams()
-  // const requestId = searchParams.get('id')
-
-
-  useEffect(() => {
-    async function fetchRequest() {
-      try {
-        console.log(requestId)
-        
-        if (!requestId) {
-          throw new Error('Request ID not found in URL')
+    useEffect(() => {
+        async function fetchRequest() {
+            try {
+                const requestId = searchParams.get('id');
+                if (!requestId) {
+                    throw new Error('Request ID not found in URL');
+                }
+                const response = await fetch(
+                  `http://localhost:5030/api/demand/getDemandById/${requestId}`,
+                  { cache: 'no-store' }
+                );
+                if (!response.ok) {
+                    throw new Error('Failed to fetch request details');
+                }
+                const data = await response.json();
+                setRequest(data);
+                if (data) {
+                    getBusinessSuggestions(data);
+                }
+            } catch (err) {
+                console.error('Error fetching request:', err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
         }
+        fetchRequest();
+    }, [searchParams]);
 
-        const response = await fetch(
-          `${NEXT_PUBLIC_BACKEND_URL}/api/demand/getDemandById/${requestId}`,
-          { cache: 'no-store' } // ✅ Prevents caching
-        )
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch request details')
-
+    useEffect(() => {
+        if (request && mapRef.current) {
+            initMap();
         }
+    }, [request]);
 
     function initMap() {
         if (typeof window !== 'undefined') {
@@ -96,84 +99,27 @@ export default function ViewRequest() {
         } catch (error) {
             console.error("Error rendering map:", error);
         }
-      } catch (err) {
-        console.error('Error fetching request:', err)
-        setError(err.message)
-      } finally {
-        setLoading(false)
-      }
     }
 
-    fetchRequest()
-  }, [])
+    const handleUpvote = async () => {
+        try {
+            const response = await axios.patch(
+                `http://localhost:5030/api/demand/${request._id}/upvote`,
+                {},
+                { withCredentials: true }
+            );
+            const updatedRequest = response.data.data;
+            setRequest(updatedRequest);
+        } catch (err) {
+            console.error('Error upvoting demand:', err);
+        }
+    };
 
-  useEffect(() => {
-    // Initialize map when request data is loaded
-    if (request && mapRef.current) {
-      initMap()
-    }
-  }, [request])
-
-  function initMap() {
-    if (typeof window !== 'undefined') {
-      if (typeof window.google === 'undefined') {
-        const script = document.createElement('script')
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`
-        script.async = true
-        script.defer = true
-        script.onload = () => renderMap()
-        document.head.appendChild(script)
-      } else {
-        renderMap()
-      }
-    }
-  }
-
-  function renderMap() {
-    try {
-      if (!mapRef.current || !window.google || !window.google.maps) {
-        console.error('Google Maps API not loaded yet')
-        return
-      }
-
-      const mapOptions = {
-        center: {
-          lat: request.location.coordinates[1],
-          lng: request.location.coordinates[0],
-        },
-        zoom: 15,
-        styles: [
-          { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
-          {
-            elementType: 'labels.text.stroke',
-            stylers: [{ color: '#242f3e' }],
-          },
-          { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
-        ],
-      }
-
-      const map = new window.google.maps.Map(mapRef.current, mapOptions)
-
-      // Use the modern approach for creating markers
-      const marker = new window.google.maps.Marker({
-        position: {
-          lat: request.location.coordinates[1],
-          lng: request.location.coordinates[0],
-        },
-        map: map,
-        title: request.title,
-        animation: window.google.maps.Animation.DROP,
-      })
-    } catch (error) {
-      console.error('Error rendering map:', error)
-    }
-  }
-
-  async function getBusinessSuggestions(requestData) {
-    setBusinessLoading(true)
-    try {
-      const prompt = `
-            Analyze this business request based on location and type of bussiness analyzing existing resources and competetion in that location  as JSON:
+    async function getBusinessSuggestions(requestData) {
+        setBusinessLoading(true);
+        try {
+            const prompt = `
+            Analyze this business request and provide suggestions as JSON:
             
             Title: ${requestData.title}
             Category: ${requestData.category}
@@ -263,75 +209,6 @@ export default function ViewRequest() {
         </div>
     );
 
-  function formatDate(dateString) {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
-  }
-
-  const handleVote = async (type) => {
-    try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/demand/${type}/${request._id}`
-      )
-      if (type === 'upvote') {
-        setRequest({ ...request, up_votes: request.up_votes + 1 })
-      }
-    } catch (error) {
-      console.error(`Failed to ${type}:`, error)
-    }
-  }
-
-  const MarkdownComponents = {
-    code({ node, inline, className, children, ...props }) {
-      const match = /language-(\w+)/.exec(className || '')
-      return !inline && match ? (
-        <SyntaxHighlighter
-          style={materialDark}
-          language={match[1]}
-          PreTag='div'
-          className='rounded-lg overflow-x-auto'
-          {...props}
-        >
-          {String(children).replace(/\n$/, '')}
-        </SyntaxHighlighter>
-      ) : (
-        <code
-          className={`${className} bg-gray-800 text-blue-400 px-1 rounded`}
-          {...props}
-        >
-          {children}
-        </code>
-      )
-    },
-    strong: ({ children }) => (
-      <strong className='font-bold text-blue-400'>{children}</strong>
-    ),
-    h1: ({ children }) => (
-      <h1 className='text-2xl font-bold text-blue-300 mb-4 border-b border-gray-700 pb-2'>
-        {children}
-      </h1>
-    ),
-    h2: ({ children }) => (
-      <h2 className='text-xl font-semibold text-blue-400 mb-3'>{children}</h2>
-    ),
-    h3: ({ children }) => (
-      <h3 className='text-lg font-medium text-blue-500 mb-2'>{children}</h3>
-    ),
-    ul: ({ children }) => (
-      <ul className='list-disc list-inside mb-3 pl-4 space-y-1'>{children}</ul>
-    ),
-    ol: ({ children }) => (
-      <ol className='list-decimal list-inside mb-3 pl-4 space-y-1'>
-        {children}
-      </ol>
-    ),
-    p: ({ children }) => <p className='mb-3 leading-relaxed'>{children}</p>,
-  }
-
-  if (loading)
     return (
         <div className="min-h-screen bg-black w-full">
             {/* Header Banner */}
@@ -352,7 +229,7 @@ export default function ViewRequest() {
                     <div className="flex flex-wrap justify-center gap-6">
                         <button 
                             onClick={() => handleUpvote()}
-                            className="inline-flex items-center px-6 py-3 bg-green-500 hover:bg-green-600 rounded-lg text-white font-bold transition-transform transform hover:scale-105 shadow-2xl"
+                            className="inline-flex items-center px-8 py-4 bg-green-500 hover:bg-green-600 rounded-full text-white font-bold transition-transform transform hover:scale-105 shadow-2xl"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9" />
@@ -361,7 +238,7 @@ export default function ViewRequest() {
                         </button>
                         <div className="relative">
                             <button 
-                                className="inline-flex items-center px-6 py-3 bg-indigo-500 hover:bg-indigo-600 rounded-lg text-white font-bold transition-transform transform hover:scale-105 shadow-2xl"
+                                className="inline-flex items-center px-8 py-4 bg-indigo-500 hover:bg-indigo-600 rounded-full text-white font-bold transition-transform transform hover:scale-105 shadow-2xl"
                                 onClick={() => {
                                     const dropdown = document.getElementById('share-dropdown');
                                     dropdown.classList.toggle('hidden');
@@ -535,9 +412,7 @@ export default function ViewRequest() {
                                                     </svg>
                                                     Executive Summary
                                                 </h3>
-                                                <ReactMarkdown components={MarkdownComponents}>
-                                                    {businessAnalysis.summary}
-                                                </ReactMarkdown>
+                                                <p className="text-gray-100 text-lg leading-relaxed">{businessAnalysis.summary}</p>
                                             </div>
                                         )}
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -551,9 +426,7 @@ export default function ViewRequest() {
                                                         </div>
                                                         <h3 className="text-2xl font-bold text-indigo-300">Competitive Analysis</h3>
                                                     </div>
-                                                    <ReactMarkdown components={MarkdownComponents}>
-                                                        {businessAnalysis.competitiveAnalysis}
-                                                    </ReactMarkdown>
+                                                    <p className="text-gray-300 text-lg leading-relaxed">{businessAnalysis.competitiveAnalysis}</p>
                                                 </div>
                                             )}
                                             {businessAnalysis.marketPotential && (
@@ -566,9 +439,7 @@ export default function ViewRequest() {
                                                         </div>
                                                         <h3 className="text-2xl font-bold text-green-300">Market Potential</h3>
                                                     </div>
-                                                    <ReactMarkdown components={MarkdownComponents}>
-                                                        {businessAnalysis.marketPotential}
-                                                    </ReactMarkdown>
+                                                    <p className="text-gray-300 text-lg leading-relaxed">{businessAnalysis.marketPotential}</p>
                                                 </div>
                                             )}
                                             {businessAnalysis.resourceRequirements && (
@@ -581,9 +452,7 @@ export default function ViewRequest() {
                                                         </div>
                                                         <h3 className="text-2xl font-bold text-purple-300">Resource Requirements</h3>
                                                     </div>
-                                                    <ReactMarkdown components={MarkdownComponents}>
-                                                        {businessAnalysis.resourceRequirements}
-                                                    </ReactMarkdown>
+                                                    <p className="text-gray-300 text-lg leading-relaxed">{businessAnalysis.resourceRequirements}</p>
                                                 </div>
                                             )}
                                             {businessAnalysis.successFactors && (
@@ -596,9 +465,7 @@ export default function ViewRequest() {
                                                         </div>
                                                         <h3 className="text-2xl font-bold text-yellow-300">Success Factors</h3>
                                                     </div>
-                                                    <ReactMarkdown components={MarkdownComponents}>
-                                                        {businessAnalysis.successFactors}
-                                                    </ReactMarkdown>
+                                                    <p className="text-gray-300 text-lg leading-relaxed">{businessAnalysis.successFactors}</p>
                                                 </div>
                                             )}
                                         </div>
