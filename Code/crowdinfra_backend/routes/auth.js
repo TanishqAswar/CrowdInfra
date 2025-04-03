@@ -2,13 +2,20 @@ const express = require('express')
 const multer = require('multer')
 const path = require('path')
 const jwt = require('jsonwebtoken')
-const { validateSignup, validateLogin } = require('../middlewares/validation')
+const {
+  validateSignup,
+  validateLogin,
+} = require('../middlewares/validation')
+
 // const authMiddleware = require('../middlewares/authMiddleware')
 const {
   signupUser,
   loginUser,
-  //   updateProfilePhoto,
+  sendOtp,
+  logoutUser,
+  verifyOtp,
 } = require('../controllers/authController')
+const { log } = require('console')
 
 const router = express.Router()
 
@@ -20,10 +27,20 @@ const upload = multer({ storage })
 router.post(
   '/signup',
   upload.single('profilePhoto'),
+  (req, res, next) => {
+    console.log('File received in middleware:', req.file ? 'Yes' : 'No');
+    if (req.file) {
+      console.log('File details:', {
+        originalname: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size
+      });
+    }
+    next();
+  },
   validateSignup,
-
   signupUser
-)
+);
 
 // Login route
 router.post('/login', validateLogin, loginUser)
@@ -53,15 +70,13 @@ router.get('/verify', (req, res) => {
   }
 })
 
-// **Logout route**
-router.post('/logout', (req, res) => {
-  res.clearCookie('crowdInfra_token', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // Only secure in production
-    sameSite: 'Strict',
-  })
+// Logout route
+router.post('/logout', logoutUser)
 
-  res.status(200).json({ success: true, message: 'Logged out successfully' })
-})
+// Verify OTP route
+router.post('/verifyOTP', verifyOtp)
+
+// Send OTP
+router.post('/sendOTP', sendOtp);
 
 module.exports = router

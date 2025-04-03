@@ -207,7 +207,7 @@ export default function GlobePage() {
 
   return (
     <>
-    {/* {showCursor && <Cursor/>} */}
+      {/* {showCursor && <Cursor/>} */}
       <div
         id='navC'
         className='bg-black pt-4 md:pt-8 pb-2 md:pb-4 sticky top-0 z-[999]'
@@ -352,7 +352,7 @@ export default function GlobePage() {
             </div>
           </div> */}
 
-<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mb-8 md:mb-16'>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mb-8 md:mb-16'>
             <div className='bg-gray-800/50 backdrop-blur-lg p-6 md:p-8 rounded-2xl border border-gray-700/50 shadow-xl hover:transform hover:scale-105 transition-all duration-300 group'>
               <div className='bg-blue-600/20 p-4 rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center mb-4 md:mb-6 transition-transform duration-500 group-hover:rotate-[360deg]'>
                 <svg
@@ -456,7 +456,6 @@ export default function GlobePage() {
             </div>
           </div>
 
-          
           <div className='bg-gray-800/30 backdrop-blur-lg p-6 md:p-8 rounded-2xl border border-gray-700/50 shadow-xl mb-8 md:mb-16 text-center'>
             <h2
               className='text-2xl md:text-3xl font-bold mb-3 md:mb-4'
@@ -468,101 +467,99 @@ export default function GlobePage() {
             <NearbyDemandsMap />
           </div>
           <div className='bg-gray-800/30 backdrop-blur-lg p-6 md:p-8 rounded-2xl border border-gray-700/50 shadow-xl mb-8 md:mb-16'>
-  <div className='text-center'>
-    <h2 className='text-2xl md:text-3xl font-bold mb-3 md:mb-4 text-white'>
-      How It Works
-    </h2>
-    <p className='text-gray-300 mb-6 md:mb-8 max-w-3xl mx-auto'>
-      CrowdInfra connects citizens, government agencies, and private
-      developers to collaboratively improve infrastructure.
-    </p>
+            <div className='text-center'>
+              <h2 className='text-2xl md:text-3xl font-bold mb-3 md:mb-4 text-white'>
+                How It Works
+              </h2>
+              <p className='text-gray-300 mb-6 md:mb-8 max-w-3xl mx-auto'>
+                CrowdInfra connects citizens, government agencies, and private
+                developers to collaboratively improve infrastructure.
+              </p>
 
-    <div className='grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8'>
-      <div className='group flex flex-col items-center p-4 transition-all duration-300 hover:bg-gray-700/20 rounded-2xl hover:scale-105 hover:shadow-lg'>
-        <div className='bg-blue-600/20 w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center mb-3 md:mb-4 group-hover:animate-pulse transition-transform'>
-          <span className='text-xl md:text-2xl font-bold text-blue-400 group-hover:text-blue-300 transition-colors'>
-            1
-          </span>
-        </div>
-        <h3 className='text-lg md:text-xl font-semibold mb-2 text-white group-hover:text-blue-300 transition-colors'>
-          Identify Needs
-        </h3>
-        <p className='text-gray-400 group-hover:text-gray-200 text-center transition-colors'>
-          Identify infrastructure needs in your community and create
-          requests
-        </p>
-      </div>
+              <div className='grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8'>
+                <div className='group flex flex-col items-center p-4 transition-all duration-300 hover:bg-gray-700/20 rounded-2xl hover:scale-105 hover:shadow-lg'>
+                  <div className='bg-blue-600/20 w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center mb-3 md:mb-4 group-hover:animate-pulse transition-transform'>
+                    <span className='text-xl md:text-2xl font-bold text-blue-400 group-hover:text-blue-300 transition-colors'>
+                      1
+                    </span>
+                  </div>
+                  <h3 className='text-lg md:text-xl font-semibold mb-2 text-white group-hover:text-blue-300 transition-colors'>
+                    Identify Needs
+                  </h3>
+                  <p className='text-gray-400 group-hover:text-gray-200 text-center transition-colors'>
+                    Identify infrastructure needs in your community and create
+                    requests
+                  </p>
+                </div>
 
-      <div className='group flex flex-col items-center p-4 transition-all duration-300 hover:bg-gray-700/20 rounded-2xl hover:scale-105 hover:shadow-lg'>
-        <div className='bg-purple-600/20 w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center mb-3 md:mb-4 group-hover:animate-pulse transition-transform'>
-          <span className='text-xl md:text-2xl font-bold text-purple-400 group-hover:text-purple-300 transition-colors'>
-            2
-          </span>
-        </div>
-        <h3 className='text-lg md:text-xl font-semibold mb-2 text-white group-hover:text-purple-300 transition-colors'>
-          Gather Support
-        </h3>
-        <p className='text-gray-400 group-hover:text-gray-200 text-center transition-colors'>
-          Community members upvote and comment on important requests
-        </p>
-      </div>
+                <div className='group flex flex-col items-center p-4 transition-all duration-300 hover:bg-gray-700/20 rounded-2xl hover:scale-105 hover:shadow-lg'>
+                  <div className='bg-purple-600/20 w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center mb-3 md:mb-4 group-hover:animate-pulse transition-transform'>
+                    <span className='text-xl md:text-2xl font-bold text-purple-400 group-hover:text-purple-300 transition-colors'>
+                      2
+                    </span>
+                  </div>
+                  <h3 className='text-lg md:text-xl font-semibold mb-2 text-white group-hover:text-purple-300 transition-colors'>
+                    Gather Support
+                  </h3>
+                  <p className='text-gray-400 group-hover:text-gray-200 text-center transition-colors'>
+                    Community members upvote and comment on important requests
+                  </p>
+                </div>
 
-      <div className='group flex flex-col items-center p-4 transition-all duration-300 hover:bg-gray-700/20 rounded-2xl hover:scale-105 hover:shadow-lg'>
-        <div className='bg-green-600/20 w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center mb-3 md:mb-4 group-hover:animate-pulse transition-transform'>
-          <span className='text-xl md:text-2xl font-bold text-green-400 group-hover:text-green-300 transition-colors'>
-            3
-          </span>
-        </div>
-        <h3 className='text-lg md:text-xl font-semibold mb-2 text-white group-hover:text-green-300 transition-colors'>
-          Implementation
-        </h3>
-        <p className='text-gray-400 group-hover:text-gray-200 text-center transition-colors'>
-          Authorities and developers respond to community-backed
-          requests
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
+                <div className='group flex flex-col items-center p-4 transition-all duration-300 hover:bg-gray-700/20 rounded-2xl hover:scale-105 hover:shadow-lg'>
+                  <div className='bg-green-600/20 w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center mb-3 md:mb-4 group-hover:animate-pulse transition-transform'>
+                    <span className='text-xl md:text-2xl font-bold text-green-400 group-hover:text-green-300 transition-colors'>
+                      3
+                    </span>
+                  </div>
+                  <h3 className='text-lg md:text-xl font-semibold mb-2 text-white group-hover:text-green-300 transition-colors'>
+                    Implementation
+                  </h3>
+                  <p className='text-gray-400 group-hover:text-gray-200 text-center transition-colors'>
+                    Authorities and developers respond to community-backed
+                    requests
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
 
-        <div className="bg-black py-5">
+          <div className='bg-black py-5'>
             <Rating />
             <Link
-              href="/rating"
-              className="group flex items-center justify-center space-x-2 text-white rounded-full px-6 py-3 shadow-lg transition-all duration-300 z-50 relative overflow-hidden"
-              style={{ 
-                background: 'linear-gradient(45deg, #40ffaa, #4079ff)', 
-                marginTop: '1rem', 
-                display: 'inline-block', 
+              href='/rating'
+              className='group flex items-center justify-center space-x-2 text-white rounded-full px-6 py-3 shadow-lg transition-all duration-300 z-50 relative overflow-hidden'
+              style={{
+                background: 'linear-gradient(45deg, #40ffaa, #4079ff)',
+                marginTop: '1rem',
+                display: 'inline-block',
                 marginLeft: '44%',
-                transform: 'translateX(-50%)'
+                // transform: 'translateX(-50%)',
               }}
             >
               <Link
-  href="/rating"
-  style={{ 
-    background: 'linear-gradient(45deg, #40ffaa, #4079ff)', 
-    transform: 'translateX(-50%)'
-  }}
->
-  <div className="relative overflow-hidden w-full text-center">
-    <span className="block transition-all duration-300 transform group-hover:translate-y-[-100%] group-hover:opacity-0">
-      Give us a Thumbs Up
-    </span>
-    <span className="absolute left-0 right-0 top-full opacity-0 transition-all duration-300 transform group-hover:translate-y-[-100%] group-hover:opacity-100 text-white">
-      We Appreciate You!
-    </span>
-  </div>
-</Link>
-              
+                href='/rating'
+                style={{
+                  background: 'linear-gradient(45deg, #40ffaa, #4079ff)',
+                  // transform: 'translateX(-50%)',
+                }}
+              >
+                <div className='relative overflow-hidden w-full text-center'>
+                  <span className='block transition-all duration-300 transform group-hover:translate-y-[-100%] group-hover:opacity-0'>
+                    Give us a Thumbs Up
+                  </span>
+                  <span className='absolute left-0 right-0 top-full opacity-0 transition-all duration-300 transform group-hover:translate-y-[-100%] group-hover:opacity-100 text-white'>
+                    We Appreciate You!
+                  </span>
+                </div>
+              </Link>
 
-              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className='absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300'></div>
             </Link>
           </div>
-        <Footer />
+          <Footer />
+        </div>
       </div>
-    </div>
     </>
   )
 }
-

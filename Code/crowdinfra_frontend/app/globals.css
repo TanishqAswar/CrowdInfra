@@ -6,7 +6,7 @@
 
 
 .Toastify__toast--success {
-  background: linear-gradient(135deg, #000000, #1E90FF) !important; /* Black to Blue Gradient */
+  background: linear-gradient(135deg, #000000, #0c3b6a) !important; /* Black to Blue Gradient */
   color: #ffffff !important;
   font-weight: bold !important;
   border-radius: 10px !important;
@@ -16,7 +16,17 @@
 }
 
 .Toastify__progress-bar {
-  background: #1E90FF !important; /* Blue progress bar */
+  background: #267bcf !important; /* Blue progress bar */
+}
+
+.Toastify__toast--error {
+  background: linear-gradient(135deg, #4f4848, #590303) !important; /* Dark Red to Bright Red Gradient */
+  color: #ffffff !important;
+  font-weight: bold !important;
+  border-radius: 10px !important;
+  padding: 15px !important;
+  text-align: center !important;
+  box-shadow: 0px 0px 10px #7b1818 !important; /* Orange-Red Glow */
 }
 
 /* Add to k.css */
