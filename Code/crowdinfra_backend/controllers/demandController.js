@@ -122,35 +122,43 @@ exports.getNearbyDemands = async (req, res) => {
 // **TO track which users have upvoted a demand**
 exports.toggleUpvote = async (req, res) => {
   try {
-    const Demand = await getDemandModel();
-    const { id } = req.params;
-    const userId = req.user.id; // your auth middleware populates req.user
-    
+    const Demand = await getDemandModel()
+    const { id } = req.params
+    const userId = req.user.id // your auth middleware populates req.user
+    console.log(JSON.stringify(req.user, null, 2).green)
+
     // Find the demand
-    const demand = await Demand.findById(id);
+    const demand = await Demand.findById(id)
+    console.log('demand ', demand)
     if (!demand) {
-      return res.status(404).json({ message: "Demand not found" });
+      return res.status(404).json({ message: 'Demand not found' })
     }
 
-    // Check if the user already upvoted
-    const hasUpvoted = demand.upvotedBy?.some(
-      (voterId) => voterId.toString() === userId.toString()
-    );
+    // Remove null values from upvotedBy
+    demand.upvotedBy = demand.upvotedBy.filter((voterId) => voterId !== null)
+
+    const hasUpvoted = demand.upvotedBy.some((voterId) => {
+      // console.log("voterId ", voterId)
+      return voterId.toString() === userId.toString()
+    })
+
+    console.log('hasUpvoted ', hasUpvoted)
 
     if (!hasUpvoted) {
       // Add vote
-      demand.upvotedBy.push(userId);
-      demand.up_votes += 1;
+      demand.upvotedBy.push(userId)
+      demand.up_votes += 1
     } else {
       // Remove vote
+      console.log('Removing vote...'.red)
       demand.upvotedBy = demand.upvotedBy.filter(
         (voterId) => voterId.toString() !== userId.toString()
-      );
-      demand.up_votes -= 1;
+      )
+      demand.up_votes -= 1
     }
 
-    await demand.save();
-    res.status(200).json({ data: demand });
+    await demand.save()
+    res.status(200).json({ data: demand })
   } catch (err) {
     console.error("Error toggling upvote:", err);
     res.status(500).json({ error: err.message });

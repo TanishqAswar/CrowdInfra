@@ -531,7 +531,8 @@ export default function GlobePage() {
               className='group flex items-center justify-center space-x-2 text-white rounded-full px-6 py-3 shadow-lg transition-all duration-300 z-50 relative overflow-hidden'
               style={{
                 background: 'linear-gradient(45deg, #40ffaa, #4079ff)',
-                marginTop: '1rem',
+                marginTop: '3rem',
+                marginBottom: '2rem',
                 display: 'inline-block',
                 marginLeft: '44%',
                 // transform: 'translateX(-50%)',
@@ -544,7 +545,7 @@ export default function GlobePage() {
                   // transform: 'translateX(-50%)',
                 }}
               >
-                <div className='relative overflow-hidden w-full text-center'>
+                <div className='relative overflow-hidden w-full text-center' >
                   <span className='block transition-all duration-300 transform group-hover:translate-y-[-100%] group-hover:opacity-0'>
                     Give us a Thumbs Up
                   </span>

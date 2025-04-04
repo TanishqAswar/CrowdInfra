@@ -40,6 +40,7 @@ const app = express();
     //dep
     // Serve static files from the "uploads" folder
     app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
+    app.use(express.static('public'))
     console.log(`${path.join(__dirname, 'uploads')}`.dim)
 
     // Routes

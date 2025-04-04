@@ -100,34 +100,39 @@ const sendOtp = async (req, res) => {
       to: email,
       subject: '🔑 Your Secure OTP Code - CrowdInfra',
       html: `
-    <div style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 40px 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6;">
+<div style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 40px 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6;">
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
       <td align="center">
         <table width="550px" style="background-color: #ffffff; border-radius: 16px; box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12); overflow: hidden; margin: 0 auto;">
-          <!-- Header with gradient -->
+          <!-- Header with enhanced gradient and animation -->
           <tr>
-            <td style="background: linear-gradient(90deg, #3a7bd5 0%, #00d2ff 100%); padding: 30px 0; text-align: center;">
-              <img src="https://api.dicebear.com/6.x/identicon/svg?seed=CrowdInfra&backgroundColor=ffffff" width="80" height="80" style="display: inline-block; border-radius: 50%; background: white; padding: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);" alt="CrowdInfra Logo">
-              <h1 style="color: #ffffff; font-size: 24px; margin: 15px 0 5px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); letter-spacing: 1px;">SECURITY VERIFICATION</h1>
-              <p style="color: rgba(255, 255, 255, 0.9); font-size: 14px; margin: 0; font-weight: 300;">Protecting your account with advanced security</p>
+            <td style="background: linear-gradient(90deg, #3a7bd5 0%, #00d2ff 100%); padding: 30px 0; text-align: center; position: relative; overflow: hidden;">
+              <!-- Animated particles background (fallback to static gradient) -->
+              <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('${process.env.NEXT_PUBLIC_BACKEND_URL}/particles-bg.png'); background-size: cover; opacity: 0.2;"></div>
+              
+              <div style="position: relative; z-index: 2;">
+                <img src="${process.env.NEXT_PUBLIC_BACKEND_URL}/logo.png" width="80" height="80" style="display: inline-block; border-radius: 50%; background: white; padding: 5px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); transition: transform 0.3s;" alt="CrowdInfra Logo">
+                <h1 style="color: #ffffff; font-size: 26px; margin: 15px 0 5px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); letter-spacing: 1.2px; font-weight: 600;">SECURITY VERIFICATION</h1>
+                <p style="color: rgba(255, 255, 255, 0.95); font-size: 14px; margin: 0; font-weight: 300; letter-spacing: 0.5px;">Protecting your account with advanced security</p>
+              </div>
             </td>
           </tr>
           
-          <!-- Main content -->
+          <!-- Main content with improved styling -->
           <tr>
             <td style="padding: 40px 50px 30px;">
-              <p style="font-size: 16px; color: #555555; margin-top: 0;">Hello,</p>
-              <p style="font-size: 16px; color: #555555;">We received a request to verify your identity. Use the verification code below to complete the process:</p>
+              <p style="font-size: 16px; color: #444444; margin-top: 0; font-weight: 500;">Hello,</p>
+              <p style="font-size: 16px; color: #555555; line-height: 1.7;">We received a request to verify your identity. Use the verification code below to complete the process:</p>
               
-              <!-- OTP Display -->
-              <div style="text-align: center; margin: 35px 0;">
+              <!-- Enhanced OTP Display with 3D effect -->
+              <div style="text-align: center; margin: 35px 0; perspective: 1000px;">
                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     <td align="center">
-                      <div style="display: inline-block; background: linear-gradient(90deg, #3a7bd5 0%, #00d2ff 100%); padding: 3px; border-radius: 12px; box-shadow: 0 8px 20px rgba(58, 123, 213, 0.3);">
-                        <div style="background-color: white; border-radius: 10px; padding: 5px;">
-                          <span style="display: block; font-size: 38px; font-weight: 700; letter-spacing: 6px; padding: 10px 30px; color: #333; font-family: 'Courier New', monospace;">
+                      <div style="display: inline-block; background: linear-gradient(90deg, #3a7bd5 0%, #00d2ff 100%); padding: 3px; border-radius: 12px; box-shadow: 0 15px 30px rgba(58, 123, 213, 0.4); transform: rotateX(10deg); transition: transform 0.3s;">
+                        <div style="background: radial-gradient(circle at center, #ffffff 0%, #f8f9fa 100%); border-radius: 10px; padding: 5px;">
+                          <span style="display: block; font-size: 42px; font-weight: 700; letter-spacing: 8px; padding: 15px 30px; color: #333; font-family: 'Courier New', monospace; text-shadow: 1px 1px 0 #fff, 2px 2px 0 rgba(0,0,0,0.1);">
                             ${otp}
                           </span>
                         </div>
@@ -137,62 +142,73 @@ const sendOtp = async (req, res) => {
                 </table>
               </div>
               
-              <!-- Timer section -->
+              <!-- Improved Timer section with fallback -->
               <div style="text-align: center; margin: 30px 0;">
-                <div style="display: inline-block; background-color: #f8f9fa; border-radius: 8px; padding: 15px 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                <div style="display: inline-block; background-color: #f8f9fa; border-radius: 10px; padding: 15px 25px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0">
                     <tr>
                       <td width="24" valign="middle">
-                        <img src="https://api.iconify.design/mdi:timer-outline.svg?color=%23666" width="24" height="24" alt="Timer">
+                        <!-- Video with image fallback -->
+                        <picture>
+                          <source srcset="${process.env.NEXT_PUBLIC_BACKEND_URL}/timer" type="video/gif">
+                          <img src="${process.env.NEXT_PUBLIC_BACKEND_URL}/timer.png" width="24" height="24" style="display: inline-block; margin-right: 10px;" alt="Timer">
+                        </picture>
                       </td>
                       <td valign="middle" style="padding-left: 10px; text-align: left;">
-                        <span style="font-size: 14px; color: #666;">This code expires in <strong>5 minutes</strong></span>
+                        <span style="font-size: 14px; color: #555; font-weight: 500;">This code expires in <strong style="color: #3a7bd5;">5 minutes</strong></span>
                       </td>
                     </tr>
                   </table>
                 </div>
               </div>
               
-              <p style="font-size: 16px; color: #555555;">If you didn't request this code, please ignore this email or <a href="#" style="color: #3a7bd5; text-decoration: none; font-weight: 500;">contact support</a> if you have concerns.</p>
+              <p style="font-size: 16px; color: #555555; line-height: 1.7;">If you didn't request this code, please ignore this email or <a href="#" style="color: #3a7bd5; text-decoration: none; font-weight: 500; position: relative; display: inline-block; padding-bottom: 2px; border-bottom: 1px solid rgba(58, 123, 213, 0.3); transition: all 0.2s;">contact support</a> if you have concerns.</p>
             </td>
           </tr>
           
-          <!-- Security tips -->
+          <!-- Enhanced Security tips section -->
           <tr>
             <td style="padding: 0 50px 40px;">
-              <div style="background-color: #f8f9fa; border-left: 4px solid #ffc107; border-radius: 6px; padding: 15px 20px;">
-                <h3 style="color: #444; font-size: 16px; margin: 0 0 10px; display: flex; align-items: center;">
-                  <span style="display: inline-block; width: 18px; height: 18px; margin-right: 8px;">
-                    <img src="https://api.iconify.design/mdi:shield-lock-outline.svg?color=%23ffc107" width="18" height="18" alt="Security">
+              <div style="background: linear-gradient(to right, #f8f9fa, #ffffff); border-left: 4px solid #ffc107; border-radius: 8px; padding: 20px; box-shadow: 0 3px 15px rgba(0,0,0,0.05);">
+                <h3 style="color: #333; font-size: 16px; margin: 0 0 12px; display: flex; align-items: center;">
+                  <span style="display: inline-block; width: 20px; height: 20px; margin-right: 10px; position: relative;">
+                    <img src="${process.env.NEXT_PUBLIC_BACKEND_URL}/tips.png" width="20" height="20" style="position: relative; z-index: 2;" alt="Security">
+                    <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 30px; height: 30px; background: rgba(255, 193, 7, 0.2); border-radius: 50%; z-index: 1;"></span>
                   </span>
                   Security Tip
                 </h3>
-                <p style="font-size: 14px; color: #666; margin: 0;">
+                <p style="font-size: 14px; color: #555; margin: 0; line-height: 1.7;">
                   CrowdInfra will never ask for your password or full account details via email. Always verify that login pages are secure before entering your credentials.
                 </p>
               </div>
             </td>
           </tr>
           
-          <!-- Footer -->
+          <!-- Visually enhanced Footer -->
           <tr>
-            <td style="background-color: #f5f7fa; padding: 30px 50px; border-top: 1px solid #eaeaea;">
+            <td style="background: linear-gradient(135deg, #f5f7fa 0%, #e8edf5 100%); padding: 30px 50px; border-top: 1px solid #eaeaea;">
               <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td style="text-align: center;">
-                    <p style="font-size: 13px; color: #999999; margin: 0 0 10px;">
+                    <p style="font-size: 13px; color: #888888; margin: 0 0 10px; letter-spacing: 0.5px;">
                       © 2025 CrowdInfra Technologies • All rights reserved
                     </p>
                     <div style="margin: 15px 0;">
-                      <!-- Social icons (using placeholder APIs for icons) -->
-                      <a href="#" style="display: inline-block; margin: 0 5px;"><img src="https://api.iconify.design/mdi:twitter.svg?color=%233a7bd5" width="20" height="20" alt="Twitter"></a>
-                      <a href="#" style="display: inline-block; margin: 0 5px;"><img src="https://api.iconify.design/mdi:linkedin.svg?color=%233a7bd5" width="20" height="20" alt="LinkedIn"></a>
-                      <a href="#" style="display: inline-block; margin: 0 5px;"><img src="https://api.iconify.design/mdi:facebook.svg?color=%233a7bd5" width="20" height="20" alt="Facebook"></a>
+                      <!-- Enhanced Social icons -->
+                      <a href="#" style="display: inline-block; margin: 0 8px; transition: transform 0.2s;">
+                        <img src="https://api.iconify.design/mdi:twitter.svg?color=%233a7bd5" width="22" height="22" alt="Twitter">
+                      </a>
+                      <a href="#" style="display: inline-block; margin: 0 8px; transition: transform 0.2s;">
+                        <img src="https://api.iconify.design/mdi:linkedin.svg?color=%233a7bd5" width="22" height="22" alt="LinkedIn">
+                      </a>
+                      <a href="#" style="display: inline-block; margin: 0 8px; transition: transform 0.2s;">
+                        <img src="https://api.iconify.design/mdi:facebook.svg?color=%233a7bd5" width="22" height="22" alt="Facebook">
+                      </a>
                     </div>
-                    <p style="font-size: 12px; color: #999999; margin: 10px 0 0;">
-                      <a href="#" style="color: #777; text-decoration: none; margin: 0 10px;">Privacy Policy</a>
-                      <a href="#" style="color: #777; text-decoration: none; margin: 0 10px;">Terms of Service</a>
-                      <a href="#" style="color: #777; text-decoration: none; margin: 0 10px;">Contact Us</a>
+                    <p style="font-size: 12px; color: #888888; margin: 15px 0 0;">
+                      <a href="#" style="color: #666; text-decoration: none; margin: 0 12px; transition: color 0.2s;">Privacy Policy</a>
+                      <a href="#" style="color: #666; text-decoration: none; margin: 0 12px; transition: color 0.2s;">Terms of Service</a>
+                      <a href="#" style="color: #666; text-decoration: none; margin: 0 12px; transition: color 0.2s;">Contact Us</a>
                     </p>
                   </td>
                 </tr>
@@ -209,6 +225,78 @@ const sendOtp = async (req, res) => {
     </tr>
   </table>
 </div>
+
+<!-- Embedded Three.js animated background (with fallback) -->
+<script type="text/javascript">
+  // This script will only run if the email client supports JavaScript (rare in emails)
+  // It's included as a progressive enhancement
+  try {
+    if(typeof THREE !== 'undefined') {
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ alpha: true });
+      
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+      
+      const particles = [];
+      const particleCount = 100;
+      
+      for(let i = 0; i < particleCount; i++) {
+        const particle = new THREE.Mesh(
+          new THREE.SphereGeometry(0.1, 8, 8),
+          new THREE.MeshBasicMaterial({ color: 0x3a7bd5 })
+        );
+        
+        particle.position.x = Math.random() * 10 - 5;
+        particle.position.y = Math.random() * 10 - 5;
+        particle.position.z = Math.random() * 10 - 5;
+        
+        scene.add(particle);
+        particles.push({
+          mesh: particle,
+          speed: Math.random() * 0.02
+        });
+      }
+      
+      camera.position.z = 5;
+      
+      function animate() {
+        requestAnimationFrame(animate);
+        
+        particles.forEach(p => {
+          p.mesh.rotation.x += p.speed;
+          p.mesh.rotation.y += p.speed;
+        });
+        
+        renderer.render(scene, camera);
+      }
+      
+      animate();
+    }
+  } catch(e) {
+    // Fallback is the static gradient already in place
+    console.log('Three.js not supported in this environment');
+  }
+</script>
+  `,
+      text: `
+CROWDINFRA SECURITY VERIFICATION
+
+Hello,
+
+We received a request to verify your identity. Use this verification code to complete the process:
+
+${otp}
+
+This code expires in 5 minutes.
+
+If you didn't request this code, please ignore this email or contact support if you have concerns.
+
+SECURITY TIP:
+CrowdInfra will never ask for your password or full account details via email. Always verify that login pages are secure before entering your credentials.
+
+© 2025 CrowdInfra Technologies • All rights reserved
   `,
     })
 

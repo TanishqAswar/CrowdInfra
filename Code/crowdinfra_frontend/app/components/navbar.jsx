@@ -58,7 +58,8 @@ export default function Navbar() {
   )
 
   return (
-    <nav className='
+    <nav
+      className='
       fixed top-3 left-1/2 -translate-x-1/2 z-50 
       bg-gradient-to-br from-gray-900/70 to-gray-800/70 
       backdrop-blur-2xl 
@@ -70,17 +71,20 @@ export default function Navbar() {
       border border-white/10
       transition-all duration-500 
       hover:shadow-blue-500/30
-    '>
+    '
+    >
       {/* Left Section - Logo and Text */}
       <div className='flex items-center gap-3'>
         {/* Logo */}
-        <Link href='/' className='group'>
-          <div className='
+        <Link href='/landing' className='group'>
+          <div
+            className='
             w-10 h-10 
             relative 
             transition-all duration-300 
             hover:scale-110
-          '>
+          '
+          >
             <Image
               className='object-contain transition-all duration-300'
               src='/logo.png'
@@ -94,7 +98,7 @@ export default function Navbar() {
         </Link>
 
         {/* Brand Name */}
-        <Link href='/home'>
+        <Link href='/'>
           <h1 className='text-gray-100  font-bold text-xl tracking-wide'>
             CrowdInfra
           </h1>
@@ -102,19 +106,21 @@ export default function Navbar() {
       </div>
 
       {/* Center Section - Navigation Icons */}
-      <div className='
+      <div
+        className='
         flex items-center 
         justify-center 
         space-x-8
         px-4
-      '>
+      '
+      >
         <NavItem href='/' icon={Home} title='Go Home' />
         <NavItem href='/raise-request' icon={MapPin} title='Raise a Request' />
-        <NavItem 
-          href='/property' 
-          icon={Route} 
-          title='Raise Property' 
-          isActive={overlayOn} 
+        <NavItem
+          href='/property'
+          icon={Route}
+          title='Raise Property'
+          isActive={overlayOn}
         />
         <NavItem href='/search-demands' icon={Search} title='Search Demands' />
       </div>
@@ -122,7 +128,8 @@ export default function Navbar() {
       {/* Right Section - Profile */}
       <div>
         <Link href='/profile' className='group'>
-          <div className='
+          <div
+            className='
             w-9 h-9 
             rounded-full 
             overflow-hidden 
@@ -130,14 +137,17 @@ export default function Navbar() {
             transition-all duration-300 
             hover:border-blue-500/50
             hover:scale-110 
-          '>
+          '
+          >
             <Image
-             src={profileImageUrl}
-             width={36}
-             height={36}
-             alt='Profile'
-             priority
-             className='
+              src={
+                 '/default-avatar.png'
+              }
+              width={36}
+              height={36}
+              alt='Profile'
+              priority
+              className='
                object-cover 
                w-full h-full 
                transition-all duration-300 
