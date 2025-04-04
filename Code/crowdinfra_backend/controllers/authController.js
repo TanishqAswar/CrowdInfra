@@ -476,11 +476,11 @@ const loginUser = async (req, res) => {
     const isProduction = process.env.NODE_ENV === 'production'
 
     res.cookie('crowdInfra_token', token, {
-      httpOnly: true, // Always HTTP-only for security
-      secure: true, // Secure in production
-      sameSite: isProduction ? 'None' : 'Lax', // None for cross-origin in prod, Lax for dev
-      partitioned: true, // Enable CHIPS for cross-origin cookies
-      maxAge: 10 * 60 * 60 * 1000, // 10 hours in milliseconds
+      httpOnly: true, 
+      secure: true,
+      sameSite: 'None', 
+      partitioned: true,
+      maxAge: 10 * 60 * 60 * 1000,
     })
 
     res.status(200).json({ message: 'Login successful', success: true })
