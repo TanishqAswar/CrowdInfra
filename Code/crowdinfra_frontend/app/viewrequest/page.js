@@ -31,7 +31,7 @@ export default function ViewRequest() {
           throw new Error('Request ID not found in URL')
         }
         const response = await fetch(
-          `http://localhost:5030/api/demand/getDemandById/${requestId}`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/demand/getDemandById/${requestId}`,
           { cache: 'no-store' }
         )
         if (!response.ok) {
