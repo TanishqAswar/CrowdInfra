@@ -90,7 +90,7 @@ export default function GlobePage() {
         }
       } catch (error) {
         console.error('Error verifying user:', error)
-        toast.error('Session expired. Please login again')
+        toast.error('Please login to continue')
         router.push('/landing')
       }
     }
