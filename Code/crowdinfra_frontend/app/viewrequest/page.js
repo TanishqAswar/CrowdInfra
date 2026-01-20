@@ -143,12 +143,27 @@ export default function ViewRequest() {
               "summary": "Overall summary"
             }
             `
-      const response = await axios({
-        url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
-        method: 'post',
-        headers: { 'Content-Type': 'application/json' },
-        data: { contents: [{ role: 'user', parts: [{ text: prompt }] }] },
-      })
+      const axios = require('axios')
+
+      const response = await axios.post(
+        `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+        {
+          contents: [
+            {
+              role: 'user',
+              parts: [{ text: prompt }],
+            },
+          ],
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+
+      console.log(response.data.candidates[0].content.parts[0].text)
+
       const responseText = response.data.candidates[0].content.parts[0].text
       try {
         const jsonMatch = responseText.match(/\{[\s\S]*\}/)
