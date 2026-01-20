@@ -31,9 +31,13 @@ const app = express();
     app.use(express.json())
     app.use(
       cors({
-      origin: ['http://localhost:3000', 'https://infra-crowd.vercel.app'], // 👈 Allow both frontend URLs
-      credentials: true, // 👈 Allow cookies & authorization headers
-      })
+        origin: [
+          'http://localhost:3000',
+          'https://infra-crowd.vercel.app',
+          'https://crowd-infra.vercel.app',
+        ], // 👈 Allow both frontend URLs
+        credentials: true, // 👈 Allow cookies & authorization headers
+      }),
     )
     app.use(cookieParser())
     app.use(morgan('dev'))
